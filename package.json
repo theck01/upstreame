@@ -7,5 +7,11 @@
     "express": "*",
     "jade": "*",
     "requirejs": "*"
+  },
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-contrib-jshint": "~0.6.4",
+    "jasmine-node": "*",
+    "grunt-contrib-jasmine": "~0.5.2"
   }
 }
