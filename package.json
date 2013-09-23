@@ -6,7 +6,8 @@
   "dependencies": {
     "express": "*",
     "jade": "*",
-    "requirejs": "*"
+    "requirejs": "*",
+    "underscore": "*"
   },
   "devDependencies": {
     "grunt": "*",
