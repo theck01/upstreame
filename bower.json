@@ -1,0 +1,10 @@
+{
+  "name": "script_invaders",
+  "description": "A classic arcade shooter in the likes of Space Invaders",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "requirejs": "*",
+    "underscore-amd": "*"
+  }
+}
