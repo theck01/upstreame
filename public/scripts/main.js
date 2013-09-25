@@ -6,11 +6,36 @@ require.config({
   }
 });
 
-require(["jquery", "underscore"],
-  function($,_){
-    // initializiation of client side application
-    console.log("hello");
-    console.log($);
-    console.log(_);
+require(["jquery", "graphics/pixelcanvas"],
+  function($, PixelCanvas){
+
+    var $canvas = $("#game-canvas");
+    var gameCanvas = new PixelCanvas(3, 2, "#game-canvas");
+
+    function sizeCanvas() {
+      $canvas[0].width = $(window).width();
+      $canvas[0].height = $(window).height();
+    }
+
+    function drawTestPattern() {
+      gameCanvas.setPixel(0, 0, { red: 255, green: 0, blue: 0 });
+      gameCanvas.setPixel(1, 0, { red: 255, green: 255, blue: 0 });
+      gameCanvas.setPixel(2, 0, { red: 0, green: 255, blue: 0 });
+      gameCanvas.setPixel(0, 1, { red: 0, green: 255, blue: 255 });
+      gameCanvas.setPixel(1, 1, { red: 0, green: 0, blue: 255 });
+      gameCanvas.setPixel(2, 1, { red: 255, green: 0, blue: 255 });
+      gameCanvas.paint();
+    }
+
+
+    $(function () {
+      sizeCanvas();
+      drawTestPattern();
+      
+      $(window).resize(function() {
+        sizeCanvas();
+        drawTestPattern();
+      });
+    });
   }
 );
