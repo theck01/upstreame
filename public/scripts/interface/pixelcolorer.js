@@ -107,11 +107,33 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       // paint writes all stored pixels to the PixelCanvas and calls the
       // PixelCanvas' paint method
       this.paint = function () {
+        var context = $htmlCanvas[0].getContext("2d");
+        var i = 0;
+        var sparams = pCanvas.screenParams(pixelWidth, pixelHeight);
+
         _.each(pixels, function(p) {
           pCanvas.setPixel(p.x, p.y, p.color);
         });
 
         pCanvas.paint();
+
+        // draw grid system after pixels have been painted, for visibility
+        for( ; i<=pixelWidth; i++){
+          context.moveTo(sparams.xoffset + i*sparams.pixelSize,
+                         sparams.yoffset);
+          context.lineTo(sparams.xoffset + i*sparams.pixelSize,
+                         sparams.yoffset + pixelHeight*sparams.pixelSize);
+        }
+
+        for(i=0 ; i<=pixelHeight; i++){
+          context.moveTo(sparams.xoffset,
+                         sparams.yoffset + i*sparams.pixelSize);
+          context.lineTo(sparams.xoffset + pixelWidth*sparams.pixelSize,
+                         sparams.yoffset + i*sparams.pixelSize);
+        }
+
+        context.strokeStyle = "#777777";
+        context.stroke();
       };
 
 

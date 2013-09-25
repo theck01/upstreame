@@ -1,0 +1,19 @@
+extend layout
+block sources
+  script(type="application/javascript" src="requirejs/require.js" data-main="scripts/pixelartmain")
+  link(rel="stylesheet", href="css/pixelart.css")
+block content
+  #nav-header.navbar.navbar-inverse.navbar-fixed-top
+    .navbar-inner
+      a.navbar-brand(href="#") PixelArtJS
+  .container-fluid
+    .row-fluid.vert-fill
+      .col-md-9.full-height
+        canvas#pixel-art-canvas
+      .col-md-3.full-height.well
+        .form-inline
+          label.control-label Pixel Color
+          input#pixel-color-input.form-control
+        .form-inline
+          label.control-label Backround Color
+          input#pixel-color-input.form-control

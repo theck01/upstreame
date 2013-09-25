@@ -17,4 +17,10 @@ app.get('/', function (req, res) {
   });
 });
 
+// pixel art route
+app.get('/pixelart', function (req, res) {
+  res.render('pixelart', {
+    title: 'PixelArt'
+  });
+});
 app.listen(3000);
