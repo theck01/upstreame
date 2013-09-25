@@ -1,5 +1,5 @@
-define(["jquery", "underscore"],
-  function ($,_) {
+define(["jquery", "underscore", "graphics/color"],
+  function ($, _, Color) {
 
     // PixelCanvas object abstracts the HTML canvas object and exposes an API to
     // draw meta-pixels on the canvas.
@@ -15,47 +15,21 @@ define(["jquery", "underscore"],
       var htmlCanvas = $(canvasID)[0];
       
       
-      // hexColor sanitizes a color object and converts it to a hexadecimal
-      // string in the format #RRGGBB
-      // grid contain only valid color values
-      // 
+      // getPixel returns the color of the meta-pixel at location x,y
+      //
       // Arguments:
-      //   color: A tuple containing an 8 bit value for red, green, and blue
-      // 
-      // Returns:
-      //   A hexadecimal color string
-      function hexColor(color) {
-        var colorString = "#";
-        var sanitizedColor = {};
-
-        _.defaults(color, { red: 0, blue: 0, green: 0 });
-        color = _.pick(color, ["red", "green", "blue"]);
-        _.each(color, function(v,k) {
-          sanitizedColor[k] = Math.min(Math.max(v,0), 255);
-        });
-
-        colorString += hexString(sanitizedColor.red);
-        colorString += hexString(sanitizedColor.green);
-        colorString += hexString(sanitizedColor.blue);
-        return colorString;
-      }
-
-
-      // hexString takes an 8 bit number and converts it into a two character
-      // hexadecimal string
-      //
-      // Argument:
-      //   eightBit: An integer in range 0-255
+      //   x: x position of the pixel in the grid from left most (0) to right
+      //      most (+ width)
+      //   y: y position of the pixel in the grid from top most (0) to bottom
+      //      most (+ height)
       //
       // Returns:
-      //   A two character hexadecimal string
-      function hexString(eightBit){
-        var str = eightBit.toString(16);
-        if(str.length === 1){
-          return "0" + str;
-        }
-        else return str;
-      }
+      //   A color object with fields for red, green, and blue components
+      this.getPixel = function (x, y) {
+        if(x > dim.width || x < 0 || y > dim.height || y < 0)
+          return { red: 0, green: 0, blue: 0 };
+        return Color.tuple(pixelBuffer[x][y]);
+      };
 
 
       // function creates a 2D array with given dimensions containin an RGB
@@ -146,14 +120,14 @@ define(["jquery", "underscore"],
       // Arguments:
       //   x: x position of the pixel in the grid from left most (0) to right
       //      most (+ width)
-      //   y: y position of the pixel in the grid from bottom most (0) to top
+      //   y: y position of the pixel in the grid from top most (0) to bottom
       //      most (+ height)
-      //   color: tuple containing fields for red, green, and blue 8 bit integer
-      //          values
-      this.setPixel = function (x, y, color) {
+      //   colorTuple: tuple containing fields for red, green, and blue 8 bit
+      //               integer values
+      this.setPixel = function (x, y, colorTuple) {
         // dont write to buffer if location is outside canvas bounds
         if(x > dim.width || x < 0 || y > dim.height || y < 0) return;
-        pixelBuffer[x][y] = hexColor(color);
+        pixelBuffer[x][y] = Color.hex(colorTuple);
       };
     };
 
