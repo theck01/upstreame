@@ -11,8 +11,8 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/bower_components'));
 
 // root route
-app.get('/', function(req, res){
-  res.render('index', {
+app.get('/', function (req, res) {
+  res.render('game', {
     title: 'ScriptInvaders'
   });
 });

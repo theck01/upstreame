@@ -10,8 +10,8 @@ require.config({
 require(["jquery", "graphics/pixelcanvas"],
   function($, PixelCanvas){
 
-    var $canvas = $("#game-canvas");
-    var gameCanvas = new PixelCanvas(3, 2, "#game-canvas");
+    var $canvas;
+    var gameCanvas;
 
     function sizeCanvas() {
       $canvas[0].width = $(window).width();
@@ -30,6 +30,9 @@ require(["jquery", "graphics/pixelcanvas"],
 
 
     $(function () {
+      $canvas = $("#game-canvas");
+      gameCanvas = new PixelCanvas(3, 2, "#game-canvas");
+
       sizeCanvas();
       drawTestPattern();
       
