@@ -1,6 +1,7 @@
 require.config({
   baseUrl: "scripts",
   paths: {
+    bootstrap: "/bootstrap/dist/js/bootstrap.min",
     jquery: "//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min",
     underscore: "/underscore-amd/underscore-min"
   }
