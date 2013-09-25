@@ -1,7 +1,7 @@
 define(["jquery", "underscore"],
   function ($,_) {
 
-    // pixelCanvas object abstracts the HTML canvas object and exposes an API to
+    // PixelCanvas object abstracts the HTML canvas object and exposes an API to
     // draw meta-pixels on the canvas.
     //
     // Constructor Arguments:
@@ -71,7 +71,7 @@ define(["jquery", "underscore"],
         for(i=0; i<width; i++){
           ary[i] = [];
           for(j=0; j<height; j++){
-            ary[i][j] = "#000000";
+            ary[i][j] = "#FFFFFF";
           }
         }
         
@@ -80,27 +80,27 @@ define(["jquery", "underscore"],
 
 
       // paint draws the pixel buffer to the HTML canvas and resets the buffer
-      // to contain all black pixels
+      // to contain all white pixels
       this.paint = function () {
 
         var context = htmlCanvas.getContext("2d");
         var sparams = this.screenParams(dim.width, dim.height);
-        var i, j, x, y;
+        var x, y;
 
         // clear the canvas
         context.clearRect(0,0,htmlCanvas.width,htmlCanvas.height);
 
         // draw each pixel individually
-        for(i=0; i<dim.width; i++){
-          for(j=0; j<dim.height; j++){
+        _.each(pixelBuffer, function(column, i){
+          _.each(column, function(color, j){
             x = sparams.xoffset + i*sparams.pixelSize;
             y = sparams.yoffset + j*sparams.pixelSize;
-            context.fillStyle = pixelBuffer[i][j];
+            context.fillStyle = color;
             context.fillRect(x,y,sparams.pixelSize,sparams.pixelSize);
-          }
-        }
+          });
+        });
 
-        // reset grid to all black 
+        // reset grid to all white 
         pixelBuffer = makePixelGrid(dim.width, dim.height);
       };
 
