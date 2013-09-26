@@ -7,8 +7,32 @@ module.exports = function(grunt) {
       options: {
         jshintrc: '.jshintrc'
       }
+    },
+    less: {
+      development: {
+        files: [{
+          expand: true,
+          cwd: 'public/less/',
+          src: '*.less',
+          dest: 'public/css/',
+          ext: '.css'
+        }]
+      },
+      production: {
+        options: {
+          yuicompress: true
+        },
+        files: [{
+          expand: true,
+          cwd: 'public/less/',
+          src: '*.less',
+          dest: 'public/css/',
+          ext: '.min.css'
+        }]
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-less');
 };
