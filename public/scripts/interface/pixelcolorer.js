@@ -11,21 +11,32 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
     //   canvasID: css selector style id of the canvas on the page
     var PixelColorer = function (width, height, canvasID) {
 
+      var $htmlCanvas = $(canvasID);
       var action = "set";
       var backgroundColor = "#FFFFFF";
+      var currentColor = "#000000";
+      var mouseDown = false;
+      var pCanvas = new PixelCanvas(width, height, backgroundColor, canvasID);
       var pixelWidth = width;
       var pixelHeight = height;
-      var postClickAction = function () {};
-      var currentColor = "#000000";
-      var $htmlCanvas = $(canvasID);
       var pixels = [];
-      var pCanvas = new PixelCanvas(pixelWidth, pixelHeight, backgroundColor,
-                                    canvasID);
+      var mouseMoveAction = function () {};
       var that = this;
 
 
-      // set up mouse listener for click events
-      $htmlCanvas.click(function (e) {
+      // on mouseup or mouseleave set mouseDown to false
+      $htmlCanvas.on("mouseup mouseleave", function () {
+        mouseDown = false;
+      });
+
+
+      // set up mouse listener for down and movement events
+      $htmlCanvas.on("mousedown mousemove", function (e) {
+
+        if(e.type === "mousedown") mouseDown = true;
+
+        // if user is not currently clicking, do nothing
+        if(!mouseDown) return;
 
         var canvasOffset = $htmlCanvas.offset();
         var relx = e.pageX - canvasOffset.left;
@@ -36,22 +47,30 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
         var x = Math.floor((relx - sparams.xoffset)/sparams.pixelSize);
         var y = Math.floor((rely - sparams.yoffset)/sparams.pixelSize);
 
+        var matchingPixel = _.find(pixels, function (p) {
+          return p.x === x && p.y === y;
+        });
+
         // if click was outside pixel region do nothing
         if(x > pixelWidth || x < 0 || y > pixelHeight || y < 0) return;
 
         if(action === "set"){
-          pixels.push({ x: x, y: y, color: currentColor });
-          that.paint();
+          if(matchingPixel){
+            if(matchingPixel.color !== currentColor){
+              matchingPixel.color = currentColor;
+              that.paint();
+            }
+          }
+          else{
+            pixels.push({ x: x, y: y, color: currentColor });
+            that.paint();
+          }
         }
         else if(action === "get"){
-          var matchingPixel = _.find(pixels, function (p) {
-            return p.x === x && p.y === y;
-          });
-
-          if(matchingPixel === undefined)
-            currentColor = _.clone(pCanvas.getPixel(x, y));
-          else
+          if(matchingPixel)
             currentColor = matchingPixel.color;
+          else
+            currentColor = _.clone(pCanvas.getPixel(x, y));
         }
         else if(action === "clear"){
           pixels = _.reject(pixels, function (p) {
@@ -60,7 +79,7 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
           that.paint();
         }
 
-        postClickAction(e);
+        mouseMoveAction(e);
       });
 
 
@@ -162,8 +181,8 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       // Arguments:
       //   callbackFunction: A function that may optionally take a jQuery click
       //                     event to do further processing with the click
-      this.click = function (callbackFunction) {
-        postClickAction = callbackFunction;
+      this.mousemove = function (callbackFunction) {
+        mouseMoveAction = callbackFunction;
       };
 
 
