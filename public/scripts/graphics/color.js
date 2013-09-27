@@ -46,22 +46,41 @@ define(["underscore"],
     // for red, green, and blue with values from 0 to 255
     //
     // Arguments:
-    //   colorTuple: An object intended to have fields for red, green, and
-    //               blue with 8 bit integer values
+    //   color: Either an object intended to have fields for red, green, and
+    //          blue with 8 bit integer values or a hexadecimal string in the
+    //          format #RRGGBB
     //
     // Returns:
-    //   A color tuple with only fields for red, green, and blue with 8 bit
-    //   integer values
-    Color.sanitize = function (colorTuple) {
-      var sanitizedColor = {};
-      var color = {};
+    //   Either color tuple with only fields for red, green, and blue with 8 bit
+    //   integer values, or a hexadecimal string in the format #RRGGBB, where
+    //   the output type matches the input type. If neither of the appropriate
+    //   types are provided as an argument then null is returned
+    Color.sanitize = function (color) {
+      var sanitizedColor = null;
+      var colorTuple = null;
 
-      _.extend(color, colorTuple);
-      _.defaults(color, { red: 0, blue: 0, green: 0 });
-      color = _.pick(color, ["red", "green", "blue"]);
-      _.each(color, function(v,k) {
-        sanitizedColor[k] = Math.min(Math.max(v,0), 255);
-      });
+      if(typeof color === "object"){
+        sanitizedColor = {};
+        colorTuple = _.extend({}, color);
+        colorTuple = _.defaults(colorTuple, { red: 0, blue: 0, green: 0 });
+        colorTuple = _.pick(colorTuple, ["red", "green", "blue"]);
+        _.each(colorTuple, function(v,k) {
+          sanitizedColor[k] = Math.min(Math.max(v,0), 255);
+        });
+      }
+      else if(typeof color === "string"){
+        if(color[0] !== "#"){
+          color = "#" + color;
+        }
+
+        // check for format "#RRGGBB" and "#RGB"
+        if(color.match(/^#[A-Fa-f0-9]{6}$/g)) sanitizedColor = color;
+        else if(color.match(/^#[A-Fa-f0-9]{3}$/g)){
+          sanitizedColor = "#" + color[1] + color[1] + color[2] + color[2];
+          sanitizedColor += color[3] + color[3];
+        }
+        else sanitizedColor = "#000000";
+      }
 
       return sanitizedColor;
     };
@@ -78,6 +97,8 @@ define(["underscore"],
     //   integer values
     Color.tuple = function (colorHex) {
       var colorTuple = {};
+      
+      colorHex = Color.sanitize(colorHex);
 
       colorTuple.red = parseInt(colorHex.substring(1,3),16);
       colorTuple.green = parseInt(colorHex.substring(3,5),16);
