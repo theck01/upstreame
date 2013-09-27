@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+var views = require('./routes/views');
 
 // configure express
 app.set('views', __dirname + '/views');
@@ -10,17 +11,8 @@ app.use(express.logger('dev'));
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/bower_components'));
 
-// root route
-app.get('/', function (req, res) {
-  res.render('game', {
-    title: 'ScriptInvaders'
-  });
-});
+// routes
+app.get('/', views.index);
+app.get('/pixelart', views.pixelart);
 
-// pixel art route
-app.get('/pixelart', function (req, res) {
-  res.render('pixelart', {
-    title: 'PixelArt'
-  });
-});
 app.listen(3000);
