@@ -10,17 +10,21 @@ define(["underscore"],
     //
     // Arguments:
     //   A color tuple with fields for red, green, and blue with 8 bit
-    //   integer values
+    //   integer values, or a hexadecimal string "#RRGGBB"
     //
     // Returns:
     //   A color string in the form "#RRGGBB"
-    Color.hex = function (colorTuple) {
+    Color.hex = function (color) {
       var colorString = "#";
-      var sanitizedColor = Color.sanitize(colorTuple);
+      var sanitizedColor = sanitize(color);
 
-      colorString += hexString(sanitizedColor.red);
-      colorString += hexString(sanitizedColor.green);
-      colorString += hexString(sanitizedColor.blue);
+      if(typeof sanitizedColor === "object"){
+        colorString += hexString(sanitizedColor.red);
+        colorString += hexString(sanitizedColor.green);
+        colorString += hexString(sanitizedColor.blue);
+      }
+      else colorString = sanitizedColor;
+
       return colorString;
     };
 
@@ -54,8 +58,8 @@ define(["underscore"],
     //   Either color tuple with only fields for red, green, and blue with 8 bit
     //   integer values, or a hexadecimal string in the format #RRGGBB, where
     //   the output type matches the input type. If neither of the appropriate
-    //   types are provided as an argument then null is returned
-    Color.sanitize = function (color) {
+    //   types are provided as an argument then #FFFFFF is returned
+    function sanitize(color) {
       var sanitizedColor = null;
       var colorTuple = null;
 
@@ -79,30 +83,37 @@ define(["underscore"],
           sanitizedColor = "#" + color[1] + color[1] + color[2] + color[2];
           sanitizedColor += color[3] + color[3];
         }
-        else sanitizedColor = "#000000";
+        else sanitizedColor = "#FFFFFF";
       }
+      else sanitizedColor = "#FFFFFF";
 
       return sanitizedColor;
-    };
+    }
 
 
     // tuple takes a color in the format "#RRGGBB" and generates a tuple
     // with red, green, and blue fields
     //
     // Arguments:
-    //   A color string in the form "#RRGGBB"
+    //   color: Either an object intended to have fields for red, green, and
+    //          blue with 8 bit integer values or a hexadecimal string in the
+    //          format #RRGGBB
     //
     // Returns:
     //   A color tuple with only fields for red, green, and blue with 8 bit
     //   integer values
-    Color.tuple = function (colorHex) {
+    Color.tuple = function (color) {
       var colorTuple = {};
+      var sanitizedColor = {};
       
-      colorHex = Color.sanitize(colorHex);
+      sanitizedColor = sanitize(color);
 
-      colorTuple.red = parseInt(colorHex.substring(1,3),16);
-      colorTuple.green = parseInt(colorHex.substring(3,5),16);
-      colorTuple.blue = parseInt(colorHex.substring(5,7),16);
+      if(typeof color === "string"){
+        colorTuple.red = parseInt(sanitizedColor.substring(1,3),16);
+        colorTuple.green = parseInt(sanitizedColor.substring(3,5),16);
+        colorTuple.blue = parseInt(sanitizedColor.substring(5,7),16);
+      }
+      else colorTuple = sanitizedColor;
 
       return colorTuple;
     };

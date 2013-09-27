@@ -188,10 +188,11 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       // clicked on
       //
       // Arguments:
-      //   colorTuple: A tuple containing fields for red, green, and blue with
-      //               8 bit integer values
-      this.setColor = function (colorTuple) {
-        currentColor = Color.sanitize(colorTuple);
+      //   color: Either a tuple containing fields for red, green, and blue with
+      //          8 bit integer values or a hexadecimal string in the format
+      //          "#RRGGBB"
+      this.setColor = function (color) {
+        currentColor = Color.tuple(color);
       };
     };
 
