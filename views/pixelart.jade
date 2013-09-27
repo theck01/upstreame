@@ -17,3 +17,13 @@ block content
         .form-inline
           label.control-label Backround Color
           input#background-color-input.form-control
+        .btn-group.btn-group-justified(data-toggle="buttons")
+          label.btn.btn-default
+            input(type="radio" name="action" value="set") 
+            |Fill
+          label.btn.btn-default
+            input(type="radio" name="action" value="get")
+            |Get Color
+          label.btn.btn-default
+            input(type="radio" name="action" value="clear")
+            |Clear

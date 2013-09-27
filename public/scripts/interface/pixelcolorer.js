@@ -14,6 +14,7 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       var action = "set";
       var pixelWidth = width;
       var pixelHeight = height;
+      var postClickAction = function () {};
       var currentColor = { red: 0, green: 0, blue: 0 };
       var $htmlCanvas = $(canvasID);
       var pixels = [];
@@ -33,12 +34,22 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
         var x = Math.floor((relx - sparams.xoffset)/sparams.pixelSize);
         var y = Math.floor((rely - sparams.yoffset)/sparams.pixelSize);
 
+        // if click was outside pixel region do nothing
+        if(x > pixelWidth || x < 0 || y > pixelHeight || y < 0) return;
+
         if(action === "set"){
           pixels.push({ x: x, y: y, color: currentColor });
           that.paint();
         }
         else if(action === "get"){
-          currentColor = _.clone(pCanvas.getPixel(x, y));
+          var matchingPixel = _.find(pixels, function (p) {
+            return p.x === x && p.y === y;
+          });
+
+          if(matchingPixel === undefined)
+            currentColor = _.clone(pCanvas.getPixel(x, y));
+          else
+            currentColor = matchingPixel.color;
         }
         else if(action === "clear"){
           pixels = _.reject(pixels, function (p) {
@@ -46,6 +57,8 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
           });
           that.paint();
         }
+
+        postClickAction(e);
       });
 
 
@@ -129,6 +142,17 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
 
         context.strokeStyle = "#777777";
         context.stroke();
+      };
+
+
+      // click registers onclick callback for canvas to run after the body
+      // PixelCanvas onclick event has run
+      //
+      // Arguments:
+      //   callbackFunction: A function that may optionally take a jQuery click
+      //                     event to do further processing with the click
+      this.click = function (callbackFunction) {
+        postClickAction = callbackFunction;
       };
 
 
