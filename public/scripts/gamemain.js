@@ -19,19 +19,19 @@ require(["jquery", "graphics/pixelcanvas"],
     }
 
     function drawTestPattern() {
-      gameCanvas.setPixel(0, 0, { red: 255, green: 0, blue: 0 });
-      gameCanvas.setPixel(1, 0, { red: 255, green: 255, blue: 0 });
-      gameCanvas.setPixel(2, 0, { red: 0, green: 255, blue: 0 });
-      gameCanvas.setPixel(0, 1, { red: 0, green: 255, blue: 255 });
-      gameCanvas.setPixel(1, 1, { red: 0, green: 0, blue: 255 });
-      gameCanvas.setPixel(2, 1, { red: 255, green: 0, blue: 255 });
+      gameCanvas.setPixel(0, 0, "#FF0000");
+      gameCanvas.setPixel(1, 0, "#FFFF00");
+      gameCanvas.setPixel(2, 0, "#00FF00");
+      gameCanvas.setPixel(0, 1, "#00FFFF");
+      gameCanvas.setPixel(1, 1, "#0000FF");
+      gameCanvas.setPixel(2, 1, "#FF00FF");
       gameCanvas.paint();
     }
 
 
     $(function () {
       $canvas = $("#game-canvas");
-      gameCanvas = new PixelCanvas(3, 2, "#game-canvas");
+      gameCanvas = new PixelCanvas(3, 2, "#FFFFFF", "#game-canvas");
 
       sizeCanvas();
       drawTestPattern();

@@ -12,13 +12,15 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
     var PixelColorer = function (width, height, canvasID) {
 
       var action = "set";
+      var backgroundColor = "#FFFFFF";
       var pixelWidth = width;
       var pixelHeight = height;
       var postClickAction = function () {};
-      var currentColor = { red: 0, green: 0, blue: 0 };
+      var currentColor = "#000000";
       var $htmlCanvas = $(canvasID);
       var pixels = [];
-      var pCanvas = new PixelCanvas(pixelWidth, pixelHeight, canvasID);
+      var pCanvas = new PixelCanvas(pixelWidth, pixelHeight, backgroundColor,
+                                    canvasID);
       var that = this;
 
 
@@ -75,7 +77,7 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       //
       // Returns:
       //   A JSON string representing an object with the fields:
-      //   pixels: An array of objects with x, y, and colorTuple fields
+      //   pixels: An array of objects with x, y, and color fields
       //   imageWidth: The minimum width of a PixelCanvas required to show the
       //               complete image
       //   imageHeight: The minimum height of a PixelCanvas required to show the
@@ -101,14 +103,23 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       };
 
 
+      // getBackgroundColor returns the current color that will be set to pixels
+      // that have not been clicked on
+      //
+      // Returns:
+      //   A color hexadecimal string in the form "#RRGGBB"
+      this.getBackgroundColor = function () {
+        return backgroundColor;
+      };
+
+
       // getColor returns the current color that will be set to pixels when
       // clicked on
       //
       // Returns:
-      //   A tuple containing fields for red, green, and blue 8 bit integer
-      //   values
+      //   A color hexadecimal string in the form "#RRGGBB"
       this.getColor = function () {
-        return _.clone(currentColor);
+        return currentColor;
       };
 
 
@@ -165,7 +176,8 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       this.resizeCanvas = function (width, height){
         pixelWidth = width;
         pixelHeight = height;
-        pCanvas = PixelCanvas(pixelWidth, pixelHeight, canvasID);
+        pCanvas = PixelCanvas(pixelWidth, pixelHeight, backgroundColor,
+                              canvasID);
         this.paint();
       };
 
@@ -184,15 +196,26 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       };
 
 
+      // setBackgroundColor sets the background color of the pixel canvas,
+      // where the default is #FFFFFF
+      //
+      // Arguments:
+      //   color: a hexadecimal string "#RRGGBB"
+      this.setBackgroundColor = function (color) {
+        backgroundColor = Color.sanitize(color);
+        pCanvas = new PixelCanvas(pixelWidth, pixelHeight, backgroundColor,
+                                  canvasID);
+        this.paint();
+      };
+
+
       // setColor sets the current color that will be drawn on pixels that are
       // clicked on
       //
       // Arguments:
-      //   color: Either a tuple containing fields for red, green, and blue with
-      //          8 bit integer values or a hexadecimal string in the format
-      //          "#RRGGBB"
+      //   color: a hexadecimal string in the format "#RRGGBB"
       this.setColor = function (color) {
-        currentColor = Color.tuple(color);
+        currentColor = Color.sanitize(color);
       };
     };
 

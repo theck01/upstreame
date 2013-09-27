@@ -7,10 +7,12 @@ define(["jquery", "underscore", "graphics/color"],
     // Constructor Arguments:
     //   width: width of the pixel canvas in meta-pixels
     //   height: height of the pixel canvas in meta-pixels
+    //   backgroundColor: default color of pixels not drawn to, "#RRGGBB" string
     //   canvasID: css selector style id of the canvas on the page
-    var PixelCanvas = function (width, height, canvasID) {
+    var PixelCanvas = function (width, height, backgroundColor, canvasID) {
 
       var dim = { width: width, height: height };
+      var backgroundHexColor = Color.sanitize(backgroundColor);
       var pixelBuffer = makePixelGrid(dim.width, dim.height);
       var htmlCanvas = $(canvasID)[0];
       
@@ -24,11 +26,11 @@ define(["jquery", "underscore", "graphics/color"],
       //      most (+ height)
       //
       // Returns:
-      //   A color object with fields for red, green, and blue components
+      //   A color hexadecimal string in the format "#RRGGBB"
       this.getPixel = function (x, y) {
         if(x > dim.width || x < 0 || y > dim.height || y < 0)
-          return { red: 0, green: 0, blue: 0 };
-        return Color.tuple(pixelBuffer[x][y]);
+          return "#000000";
+        return pixelBuffer[x][y];
       };
 
 
@@ -45,7 +47,7 @@ define(["jquery", "underscore", "graphics/color"],
         for(i=0; i<width; i++){
           ary[i] = [];
           for(j=0; j<height; j++){
-            ary[i][j] = "#FFFFFF";
+            ary[i][j] = backgroundHexColor;
           }
         }
         
@@ -122,12 +124,11 @@ define(["jquery", "underscore", "graphics/color"],
       //      most (+ width)
       //   y: y position of the pixel in the grid from top most (0) to bottom
       //      most (+ height)
-      //   colorTuple: tuple containing fields for red, green, and blue 8 bit
-      //               integer values
-      this.setPixel = function (x, y, colorTuple) {
+      //   color: A hexadecimal string in the format "#RRGGBB"
+      this.setPixel = function (x, y, color) {
         // dont write to buffer if location is outside canvas bounds
         if(x > dim.width || x < 0 || y > dim.height || y < 0) return;
-        pixelBuffer[x][y] = Color.hex(colorTuple);
+        pixelBuffer[x][y] = Color.sanitize(color);
       };
     };
 
