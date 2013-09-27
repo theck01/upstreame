@@ -32,11 +32,6 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
 
         var x = Math.floor((relx - sparams.xoffset)/sparams.pixelSize);
         var y = Math.floor((rely - sparams.yoffset)/sparams.pixelSize);
-        
-        console.log(relx);
-        console.log(rely);
-        console.log(x);
-        console.log(y);
 
         if(action === "set"){
           pixels.push({ x: x, y: y, color: currentColor });

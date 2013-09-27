@@ -7,9 +7,10 @@ require.config({
   }
 });
 
-require(["jquery", "interface/pixelcolorer"],
-  function ($, PixelColorer) {
+require(["jquery", "interface/pixelcolorer", "graphics/color"],
+  function ($, PixelColorer, Color) {
     var $canvas;
+    var $pixelColorInput;
     var pixelArtCanvas;
 
     function sizeCanvas() {
@@ -19,10 +20,16 @@ require(["jquery", "interface/pixelcolorer"],
 
     $(function () {
       $canvas = $("#pixel-art-canvas");
+
       sizeCanvas();
 
       pixelArtCanvas = new PixelColorer(16, 16, "#pixel-art-canvas");
       pixelArtCanvas.paint();
+
+      $pixelColorInput = $("#pixel-color-input");
+      $pixelColorInput.keyup(function () {
+        pixelArtCanvas.setColor(Color.tuple($pixelColorInput.val()));
+      });
       
       $(window).resize(function() {
         sizeCanvas();
