@@ -12,12 +12,15 @@ require.config({
   }
 });
 
+
 require(["jquery", "interface/pixelcolorer", "bootstrap"],
   function ($, PixelColorer) {
     var $backgroundColorInput;
+    var $backgroundColorPreview;
     var $canvas;
     var pixelArtCanvas;
     var $pixelColorInput;
+    var $pixelColorPreview;
 
     function sizeCanvas() {
       $canvas[0].width = $canvas.parent().width();
@@ -34,20 +37,32 @@ require(["jquery", "interface/pixelcolorer", "bootstrap"],
 
       pixelArtCanvas = new PixelColorer(16, 16, "#pixel-art-canvas");
       pixelArtCanvas.mousemove(function () {
-        if($("input:radio[name=action]:checked").val() === "get")
+        if($("input:radio[name=action]:checked").val() === "get"){
           $pixelColorInput.val(pixelArtCanvas.getColor());
+          $pixelColorPreview.css("background-color", pixelArtCanvas.getColor());
+        }
       });
       pixelArtCanvas.paint();
+
+      $pixelColorPreview = $("#pixel-color-preview");
+      $pixelColorPreview.css("background-color", pixelArtCanvas.getColor());
 
       $pixelColorInput = $("#pixel-color-input");
       $pixelColorInput.keyup(function () {
         pixelArtCanvas.setColor($pixelColorInput.val());
+        $pixelColorPreview.css("background-color", pixelArtCanvas.getColor());
       });
       $pixelColorInput.val(pixelArtCanvas.getColor());
+
+      $backgroundColorPreview = $("#background-color-preview");
+      $backgroundColorPreview.css("background-color",
+                                  pixelArtCanvas.getBackgroundColor());
 
       $backgroundColorInput = $("#background-color-input");
       $backgroundColorInput.keyup(function () {
         pixelArtCanvas.setBackgroundColor($backgroundColorInput.val());
+        $backgroundColorPreview.css("background-color",
+                                    pixelArtCanvas.getBackgroundColor());
       });
       $backgroundColorInput.val(pixelArtCanvas.getBackgroundColor());
 
@@ -57,6 +72,5 @@ require(["jquery", "interface/pixelcolorer", "bootstrap"],
         pixelArtCanvas.paint();
       });
     });
-
   }
 );
