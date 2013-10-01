@@ -1,16 +1,18 @@
 extend layout
+
 block sources
   script(type="application/javascript" src="requirejs/require.js" data-main="scripts/pixelartmain")
   link(rel="stylesheet", href="css/pixelart.css")
+
 block content
   #nav-header.navbar.navbar-inverse.navbar-fixed-top
     .navbar-inner
       a.navbar-brand(href="#") Pixel Artist
   .container-fluid
-    .row-fluid.vert-fill
-      .col-md-9.full-height
+    .row-fluid.content-container
+      .canvas-container
         canvas#pixel-art-canvas
-      .col-md-3.full-height.well
+      .control-container.well
         .control-row
           .btn-group.btn-group-justified(data-toggle="buttons")
             label.btn.btn-default.active
@@ -22,21 +24,21 @@ block content
             label.btn.btn-default
               input(type="radio" name="action" value="clear")
               |Clear
-        .control-row-indented
+        .control-row
           .form-inline
             input#pixel-width-input.dimension-input.form-control
             label.control-label.dimension-label Pixels Wide
-        .control-row-indented
-          .form-inline
             input#pixel-height-input.dimension-input.form-control
             label.control-label.dimension-label Pixels Tall
         .control-row
-          .color-controls
-            label.control-label Pixel Color
-            input#pixel-color-input.form-control
           .color-preview#pixel-color-preview
+          .color-controls.form-inline
+            label.control-label Pixel Color
+            input#pixel-color-input.form-control.color-input
+          .float-spacer
         .control-row
-          .color-controls
-            label.control-label Backround Color
-            input#background-color-input.form-control
           .color-preview#background-color-preview
+          .color-controls.form-inline
+            label.control-label Backround Color
+            input#background-color-input.form-control.color-input
+          .float-spacer

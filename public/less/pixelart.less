@@ -1,8 +1,11 @@
 @import "/bower_components/bootstrap/less/variables.less";
 
-@control-row-tb-margin: 20px;
+@color-preview-size: 60px;
+@control-container-width: 400px;
+@control-row-margin: 20px;
 
-.vert-fill {
+
+.content-container {
   position: absolute;
   top: @navbar-height;
   left: 0px; 
@@ -10,42 +13,55 @@
   bottom: 0px; 
 }
 
-.full-height {
-  height: 100%;
+.canvas-container {
+  position: absolute;
+  height: 100%;  
+  left: 0px;
+  right: @control-container-width;
+}
+
+.color-controls {
+  float: left;
+  width: 130px; 
+}
+
+.color-input {
+  width: 90px;
 }
 
 .color-preview {
-  float: right;
-  width: 20%;
-  height: 0;
-  padding-bottom: 20%;
-  margin: 5%;
+  float: left;
+  width: @color-preview-size;
+  height: @color-preview-size;
+  margin: 0px @control-row-margin;
   border: 1px solid;
   border-color: #555;
   border-radius: 5px;
   box-shadow: 2px 2px 1px #888;
 }
 
-.color-controls {
-  float: left;
-  width: 70%;
-  padding: 5%;
+.control-container {
+  position: absolute;
+  height: 100%;  
+  right: 0px;
+  width: @control-container-width;
 }
 
 .control-row {
-  margin: @control-row-tb-margin 0px;
-}
-
-.control-row-indented {
-  margin: @control-row-tb-margin 0px;
-  padding: 0% 5%;
+  margin: @control-row-margin 0px;
 }
 
 .dimension-input {
-  width: 50%;
+  margin-left: 20px;
+  width: 50px;
 }
 
 .dimension-label {
-  width: 50%;
-  padding-left: 20px;
+  margin-right: 20px;
+  padding-left: 5px;
+  width: 90px;
+}
+
+.float-spacer {
+  clear: both;
 }
