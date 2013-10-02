@@ -155,7 +155,10 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
 
         pCanvas.paint();
 
+
         // draw grid system after pixels have been painted, for visibility
+        context.beginPath();
+
         for( ; i<=pixelWidth; i++){
           context.moveTo(sparams.xoffset + i*sparams.pixelSize,
                          sparams.yoffset);
@@ -170,6 +173,7 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
                          sparams.yoffset + i*sparams.pixelSize);
         }
 
+        context.closePath();
         context.strokeStyle = "#777777";
         context.stroke();
       };
@@ -186,17 +190,17 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       };
 
 
-      // resizeCanvas resizes the number of meta-pixels available for drawing
+      // resize resizes the number of meta-pixels available for drawing
       // on the canvas element
       //
       // Arguments:
       //   width: width of the pixel canvas in meta-pixels
       //   height: height of the pixel canvas in meta-pixels
-      this.resizeCanvas = function (width, height){
+      this.resize = function (width, height){
         pixelWidth = width;
         pixelHeight = height;
-        pCanvas = PixelCanvas(pixelWidth, pixelHeight, backgroundColor,
-                              canvasID);
+        pCanvas = new PixelCanvas(pixelWidth, pixelHeight, backgroundColor,
+                                  canvasID);
         this.paint();
       };
 

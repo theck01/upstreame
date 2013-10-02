@@ -5,8 +5,7 @@ require.config({
     jquery: "//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min",
     underscore: "/underscore-amd/underscore-min"
   },
-  shim: {
-    "bootstrap": {
+  shim: { "bootstrap": {
       deps: ["jquery"]
     }
   }
@@ -15,17 +14,26 @@ require.config({
 
 require(["jquery", "interface/pixelcolorer", "bootstrap"],
   function ($, PixelColorer) {
+    // persistent UI variables
     var $backgroundColorInput;
     var $backgroundColorPreview;
     var $canvas;
     var pixelArtCanvas;
     var $pixelColorInput;
     var $pixelColorPreview;
+    var $pixelHeight;
+    var $pixelWidth;
+
+    // initial canvas sizing variable
+    var initialSize = 16;
+
+
 
     function sizeCanvas() {
       $canvas[0].width = $canvas.parent().width();
       $canvas[0].height = $canvas.parent().height();
     }
+
 
     $(function () {
       $("input:radio[name=action]").change(function () {
@@ -35,7 +43,8 @@ require(["jquery", "interface/pixelcolorer", "bootstrap"],
       $canvas = $("#pixel-art-canvas");
       sizeCanvas();
 
-      pixelArtCanvas = new PixelColorer(16, 16, "#pixel-art-canvas");
+      pixelArtCanvas = new PixelColorer(initialSize, initialSize,
+                                        "#pixel-art-canvas");
       pixelArtCanvas.mousemove(function () {
         if($("input:radio[name=action]:checked").val() === "get"){
           $pixelColorInput.val(pixelArtCanvas.getColor());
@@ -43,6 +52,20 @@ require(["jquery", "interface/pixelcolorer", "bootstrap"],
         }
       });
       pixelArtCanvas.paint();
+
+      $pixelHeight = $("#pixel-height-input");
+      $pixelHeight.keyup(function () {
+        pixelArtCanvas.resize(parseInt($pixelWidth.val(), 10) || 1,
+                              parseInt($pixelHeight.val(), 10) || 1);
+      });
+      $pixelHeight.val(initialSize.toString());
+
+      $pixelWidth = $("#pixel-width-input");
+      $pixelWidth.keyup(function () {
+        pixelArtCanvas.resize(parseInt($pixelWidth.val(), 10) || 1,
+                              parseInt($pixelHeight.val(), 10) || 1);
+      });
+      $pixelWidth.val(initialSize.toString());
 
       $pixelColorPreview = $("#pixel-color-preview");
       $pixelColorPreview.css("background-color", pixelArtCanvas.getColor());
@@ -66,7 +89,6 @@ require(["jquery", "interface/pixelcolorer", "bootstrap"],
       });
       $backgroundColorInput.val(pixelArtCanvas.getBackgroundColor());
 
-      
       $(window).resize(function() {
         sizeCanvas();
         pixelArtCanvas.paint();
