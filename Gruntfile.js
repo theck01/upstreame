@@ -30,9 +30,18 @@ module.exports = function(grunt) {
           ext: '.min.css'
         }]
       }
+    },
+    simplemocha: {
+      all: {
+        src: ['spec/**/*.spec.js']
+      },
+      options: {
+        reporter: 'spec'
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-simple-mocha');
 };
