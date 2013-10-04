@@ -110,13 +110,13 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
         var yvalues = _.map(pixels, function (p) {
           return p.y;
         });
+        var imageWidth = Math.max(xvalues) - Math.min(xvalues) + 1;
+        var imageHeight = Math.max(yvalues) - Math.min(yvalues) + 1;
 
 
         image.pixels = pixels;
-        image.imageWidth = Math.max(xvalues) - Math.min(xvalues) + 1;
-        image.imageHeight = Math.max(yvalues) - Math.min(yvalues) + 1;
-        image.center = { x: Math.floor(image.Width/2),
-                         y: Math.floor(image.Height/2) };
+        image.center = { x: Math.floor(imageWidth/2),
+                         y: Math.floor(imageHeight/2) };
 
         return JSON.stringify(image);
       };
