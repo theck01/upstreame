@@ -1,5 +1,5 @@
 {
-  "name": "script_invaders",
+  "name": "script-invaders",
   "description": "A classic arcade shooter in the likes of Space Invaders",
   "version": "0.1.0",
   "private": true,
@@ -10,13 +10,9 @@
     "verifier": "~0.1.1"
   },
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-jshint": "~0.6.4",
-    "grunt-contrib-less": "~0.7.0",
     "less": "~1.4.2",
     "mocha": "~1.13.0",
     "supertest": "~0.8.0",
-    "grunt-simple-mocha": "~0.4.0",
     "should": "~1.3.0"
   }
 }
