@@ -4,8 +4,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "bootstrap": "*",
-    "requirejs": "*",
-    "underscore-amd": "*"
+    "bootstrap": "~3.0.0",
+    "requirejs": "~2.1.8",
+    "underscore-amd": "~1.5.2",
+    "typeahead.js": "~0.9.3",
+    "typeahead.js-bootstrap.css": "*"
   }
 }
