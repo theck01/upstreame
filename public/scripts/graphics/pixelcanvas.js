@@ -127,7 +127,7 @@ define(["jquery", "underscore", "graphics/color"],
       //   color: A hexadecimal string in the format "#RRGGBB"
       this.setPixel = function (x, y, color) {
         // dont write to buffer if location is outside canvas bounds
-        if(x > dim.width || x < 0 || y > dim.height || y < 0) return;
+        if(x >= dim.width || x < 0 || y >= dim.height || y < 0) return;
         pixelBuffer[x][y] = Color.sanitize(color);
       };
     };

@@ -3,6 +3,9 @@ extend layout
 block sources
   script(type="application/javascript" src="requirejs/require.js" data-main="scripts/pixelartmain")
   link(rel="stylesheet", href="css/pixelart.css")
+  link(rel="stylesheet", href="animate.css/animate.min.css")
+  link(rel="stylesheet", href="css/typeahead-patch.css")
+  link(rel="stylesheet", href="typeahead.js-bootstrap.css/typeahead.js-bootstrap.css")
 
 block content
   #nav-header.navbar.navbar-inverse.navbar-fixed-top
@@ -31,14 +34,27 @@ block content
             input#pixel-height-input.dimension-input.form-control
             label.control-label.dimension-label Pixels Tall
         .control-row
-          .color-preview#pixel-color-preview
+          #pixel-color-preview.color-preview
           .color-controls.form-inline
             label.control-label Pixel Color
             input#pixel-color-input.form-control.color-input
           .float-spacer
         .control-row
-          .color-preview#background-color-preview
+          #background-color-preview.color-preview
           .color-controls.form-inline
             label.control-label Backround Color
             input#background-color-input.form-control.color-input
           .float-spacer
+        #sprite-save-alert.alert.alert-danger(hidden)
+        .control-row
+          .input-group
+            input#sprite-name-input.form-control
+            span.input-group-btn
+              #sprite-action-button.btn.btn-primary Load Sprite
+              #sprite-action-select.btn.btn-primary.dropdown-toggle(data-toggle="dropdown")
+                span.caret
+              ul.dropdown-menu(role="menu")
+                li
+                  a#sprite-save-link(href="#") Save Sprite
+                li
+                  a#sprite-load-link(href="#") Load Sprite

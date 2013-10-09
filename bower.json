@@ -8,6 +8,7 @@
     "requirejs": "~2.1.8",
     "underscore-amd": "~1.5.2",
     "typeahead.js": "~0.9.3",
-    "typeahead.js-bootstrap.css": "*"
+    "typeahead.js-bootstrap.css": "*",
+    "animate.css": "~2.1.0"
   }
 }

@@ -22,7 +22,7 @@ build:
 clean:
 	@rm -rf node_modules
 	@rm -rf bower_components
-	@rm -f $(CSS_DIR)/*.css
+	@rm -f $(CSS_FILES)
 
 # server start tasks
 

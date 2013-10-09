@@ -110,15 +110,30 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
         var yvalues = _.map(pixels, function (p) {
           return p.y;
         });
-        var imageWidth = Math.max(xvalues) - Math.min(xvalues) + 1;
-        var imageHeight = Math.max(yvalues) - Math.min(yvalues) + 1;
+
+        var xRange = _.reduce(xvalues, function(memo, x) {
+          if(memo[0] > x) memo[0] = x;
+          if(memo[1] < x) memo[1] = x;
+          return memo;
+        }, [Infinity, -Infinity]);
+
+        var yRange = _.reduce(yvalues, function(memo, y) {
+          if(memo[0] > y) memo[0] = y;
+          if(memo[1] < y) memo[1] = y;
+          return memo;
+        }, [Infinity, -Infinity]);
+
+        var imageWidth = xRange[1] - xRange[0] + 1;
+        var imageHeight = yRange[1] - yRange[0] + 1;
 
 
-        image.pixels = pixels;
-        image.center = { x: Math.floor(imageWidth/2),
-                         y: Math.floor(imageHeight/2) };
+        image.pixels = _.filter(pixels, function (p) {
+          return p.x >=0 && p.x < pixelWidth && p.y >= 0 && p.y < pixelHeight; 
+        });
+        image.center = { x: Math.floor(imageWidth/2) + xRange[0],
+                         y: Math.floor(imageHeight/2) + yRange[0] };
 
-        return JSON.stringify(image);
+        return image;
       };
 
 
@@ -142,19 +157,21 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       };
 
 
+      // importImage loads a pixel array as the current image
+      this.importImage = function (pixelAry) {
+        pixels = _.map(pixelAry, function (p) {
+          return _.pick(p, ['x', 'y', 'color']);
+        });
+        this.paint();
+      }
+
+
       // paint writes all stored pixels to the PixelCanvas and calls the
       // PixelCanvas' paint method
       this.paint = function () {
         var context = $htmlCanvas[0].getContext("2d");
         var i = 0;
         var sparams = pCanvas.screenParams(pixelWidth, pixelHeight);
-
-        _.each(pixels, function(p) {
-          pCanvas.setPixel(p.x, p.y, p.color);
-        });
-
-        pCanvas.paint();
-
 
         // draw grid system after pixels have been painted, for visibility
         context.beginPath();
@@ -176,6 +193,14 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
         context.closePath();
         context.strokeStyle = "#777777";
         context.stroke();
+
+        _.each(pixels, function(p) {
+          if(p.x >= 0 && p.x < pixelWidth && p.y >= 0 && p.y < pixelHeight){
+            pCanvas.setPixel(p.x, p.y, p.color);
+          }
+        });
+
+        pCanvas.paint();
       };
 
 
