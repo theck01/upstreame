@@ -173,6 +173,14 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
         var i = 0;
         var sparams = pCanvas.screenParams(pixelWidth, pixelHeight);
 
+        _.each(pixels, function(p) {
+          if(p.x >= 0 && p.x < pixelWidth && p.y >= 0 && p.y < pixelHeight){
+            pCanvas.setPixel(p.x, p.y, p.color);
+          }
+        });
+
+        pCanvas.paint();
+
         // draw grid system after pixels have been painted, for visibility
         context.beginPath();
 
@@ -193,14 +201,6 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
         context.closePath();
         context.strokeStyle = "#777777";
         context.stroke();
-
-        _.each(pixels, function(p) {
-          if(p.x >= 0 && p.x < pixelWidth && p.y >= 0 && p.y < pixelHeight){
-            pCanvas.setPixel(p.x, p.y, p.color);
-          }
-        });
-
-        pCanvas.paint();
       };
 
 
