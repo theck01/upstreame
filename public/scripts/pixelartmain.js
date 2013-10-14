@@ -6,7 +6,7 @@ require.config({
 		typeahead: "/typeahead.js/dist/typeahead.min",
     underscore: "/underscore-amd/underscore-min"
   },
-  shim: { 
+  shim: {
     bootstrap: {
       deps: ["jquery"]
     }
@@ -14,8 +14,9 @@ require.config({
 });
 
 
-require(["jquery", "interface/pixelcolorer", "bootstrap", "typeahead"],
-  function ($, PixelColorer) {
+require(["jquery", "underscore", "interface/pixelcolorer", "bootstrap",
+         "typeahead"],
+  function ($, _, PixelColorer) {
     // persistent UI variables
     var $backgroundColorInput;
     var $backgroundColorPreview;
@@ -45,7 +46,7 @@ require(["jquery", "interface/pixelcolorer", "bootstrap", "typeahead"],
         type: "GET",
         dataType: "json",
         success: function (data) {
-          $spriteNameInput.typeahead('destroy');
+          $spriteNameInput.typeahead("destroy");
           $spriteNameInput.typeahead({ autoselect: "first", local: data });
         }
       });
@@ -53,6 +54,10 @@ require(["jquery", "interface/pixelcolorer", "bootstrap", "typeahead"],
 
 
     $(function () {
+      $("#hide-grid-button").click(function () {
+        pixelArtCanvas.toggleGrid();
+      });
+
       $("input:radio[name=action]").change(function () {
         pixelArtCanvas.setAction($(this).val());
       });
@@ -116,11 +121,11 @@ require(["jquery", "interface/pixelcolorer", "bootstrap", "typeahead"],
       $spriteSaveAlert = $("#sprite-save-alert");
 
       $spriteActionButton = $("#sprite-action-button");
-      $spriteActionButton.click(function (e) {
+      $spriteActionButton.click(function () {
         var name = $spriteNameInput.val();
         var sprite = pixelArtCanvas.exportImage();
 
-        if(_.isEmpty(sprite.pixels) && 
+        if(_.isEmpty(sprite.pixels) &&
            $spriteActionButton.text() === "Save Sprite"){
           $spriteSaveAlert.text("Please draw a sprite before saving");
           $spriteSaveAlert.addClass("alert-danger");

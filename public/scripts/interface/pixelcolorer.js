@@ -21,6 +21,7 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       var pixelHeight = height;
       var pixels = [];
       var mouseMoveAction = function () {};
+      var showGrid = true;
       var that = this;
 
 
@@ -128,7 +129,7 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
 
 
         image.pixels = _.filter(pixels, function (p) {
-          return p.x >=0 && p.x < pixelWidth && p.y >= 0 && p.y < pixelHeight; 
+          return p.x >=0 && p.x < pixelWidth && p.y >= 0 && p.y < pixelHeight;
         });
         image.center = { x: Math.floor(imageWidth/2) + xRange[0],
                          y: Math.floor(imageHeight/2) + yRange[0] };
@@ -160,14 +161,14 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       // importImage loads a pixel array as the current image
       this.importImage = function (pixelAry) {
         pixels = _.map(pixelAry, function (p) {
-          return _.pick(p, ['x', 'y', 'color']);
+          return _.pick(p, ["x", "y", "color"]);
         });
         this.paint();
-      }
+      };
 
 
       // paint writes all stored pixels to the PixelCanvas and calls the
-      // PixelCanvas' paint method
+      // PixelCanvas" paint method
       this.paint = function () {
         var context = $htmlCanvas[0].getContext("2d");
         var i = 0;
@@ -180,6 +181,8 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
         });
 
         pCanvas.paint();
+
+        if(!showGrid) return;
 
         // draw grid system after pixels have been painted, for visibility
         context.beginPath();
@@ -264,6 +267,13 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       //   color: a hexadecimal string in the format "#RRGGBB"
       this.setColor = function (color) {
         currentColor = Color.sanitize(color);
+      };
+
+
+      // toggleGrid toggles whether to display the grid of pixel boundrys or not
+      this.toggleGrid = function () {
+        showGrid = !showGrid;
+        this.paint();
       };
     };
 
