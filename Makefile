@@ -31,15 +31,15 @@ dev: less
 
 # test tasks
 
-test:
+test: build
 	@$(MOCHA) $(MOCHA_OPTS) $(SPECS)
 
-test-debug:
+test-debug: build
 	@$(MOCHA) debug $(MOCHA_OPTS) $(SPECS)
 
 # resource preparation tasks
 
-less: $(CSS_FILES)
+less: build $(CSS_FILES)
 
 $(CSS_DIR)/%.css: $(LESS_DIR)/%.less
 	$(LESSC) $< > $@
