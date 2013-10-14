@@ -58,6 +58,10 @@ require(["jquery", "underscore", "interface/pixelcolorer", "bootstrap",
         pixelArtCanvas.toggleGrid();
       });
 
+      $("#clear-canvas-button").click(function () {
+        pixelArtCanvas.clearCanvas();
+      });
+
       $("input:radio[name=action]").change(function () {
         pixelArtCanvas.setAction($(this).val());
       });

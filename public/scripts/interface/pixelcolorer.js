@@ -88,6 +88,7 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       // color
       this.clearCanvas = function () {
         pixels = [];
+        this.paint();
       };
 
 

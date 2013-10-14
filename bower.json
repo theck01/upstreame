@@ -9,6 +9,7 @@
     "underscore-amd": "~1.5.2",
     "typeahead.js": "~0.9.3",
     "typeahead.js-bootstrap.css": "*",
-    "animate.css": "~2.1.0"
+    "animate.css": "~2.1.0",
+    "font-awesome": "~3.2.1"
   }
 }

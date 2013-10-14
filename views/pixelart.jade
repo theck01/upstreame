@@ -5,31 +5,42 @@ block sources
   link(rel="stylesheet", href="css/pixelart.css")
   link(rel="stylesheet", href="animate.css/animate.min.css")
   link(rel="stylesheet", href="css/typeahead-patch.css")
+  link(rel="stylesheet", href="font-awesome/css/font-awesome.min.css")
   link(rel="stylesheet", href="typeahead.js-bootstrap.css/typeahead.js-bootstrap.css")
 
 block content
   #nav-header.navbar.navbar-inverse.navbar-fixed-top
     .navbar-inner
-      a.navbar-brand(href="#") Pixel Artist
+      a.navbar-brand(href="#") Sprite Canvas
   .container-fluid
     .row-fluid.content-container
       .canvas-container
         canvas#pixel-art-canvas
       .control-container.well
+        #sprite-save-alert.alert.alert-danger(hidden)
         .control-row
-          .btn-group.btn-group-justified
-            a#hide-grid-button.btn.btn-default(href="#" data-toggle="buttons") Hide Grid
+          .input-group
+            input#sprite-name-input.form-control
+            span.input-group-btn
+              #sprite-action-button.btn.btn-primary Load Sprite
+              #sprite-action-select.btn.btn-primary.dropdown-toggle(data-toggle="dropdown")
+                span.caret
+              ul.dropdown-menu(role="menu")
+                li
+                  a#sprite-save-link(href="#") Save Sprite
+                li
+                  a#sprite-load-link(href="#") Load Sprite
         .control-row
           .btn-group.btn-group-justified(data-toggle="buttons")
             label.btn.btn-default.active
               input(type="radio" name="action" value="set") 
-              |Fill
+              i.icon-pencil.icon-large
             label.btn.btn-default
               input(type="radio" name="action" value="get")
-              |Get Color
+              i.icon-pencil.icon-tint
             label.btn.btn-default
               input(type="radio" name="action" value="clear")
-              |Clear
+              i.icon-pencil.icon-eraser
         .control-row
           .form-inline
             input#pixel-width-input.dimension-input.form-control
@@ -48,16 +59,9 @@ block content
             label.control-label Backround Color
             input#background-color-input.form-control.color-input
           .float-spacer
-        #sprite-save-alert.alert.alert-danger(hidden)
         .control-row
-          .input-group
-            input#sprite-name-input.form-control
-            span.input-group-btn
-              #sprite-action-button.btn.btn-primary Load Sprite
-              #sprite-action-select.btn.btn-primary.dropdown-toggle(data-toggle="dropdown")
-                span.caret
-              ul.dropdown-menu(role="menu")
-                li
-                  a#sprite-save-link(href="#") Save Sprite
-                li
-                  a#sprite-load-link(href="#") Load Sprite
+          .btn-group.btn-group-justified
+            a#hide-grid-button.btn.btn-default(href="#" data-toggle="buttons")
+              i.icon-th.icon-large
+            a#clear-canvas-button.btn.btn-default(href="#")
+              i.icon-trash.icon-large
