@@ -7,11 +7,13 @@ require.config({
   }
 });
 
-require(["jquery", "graphics/pixelcanvas"],
-  function($, PixelCanvas){
+require(["jquery", "graphics/layeredcanvas", "graphics/sprite"],
+  function($, LayeredCanvas, Sprite){
 
     var $canvas;
     var gameCanvas;
+    var humanShipSprite;
+    var lizardShipSprite;
 
     function sizeCanvas() {
       $canvas[0].width = $(window).width();
@@ -19,23 +21,56 @@ require(["jquery", "graphics/pixelcanvas"],
     }
 
     function drawTestPattern() {
-      gameCanvas.setPixel(0, 0, "#FF0000");
-      gameCanvas.setPixel(1, 0, "#FFFF00");
-      gameCanvas.setPixel(2, 0, "#00FF00");
-      gameCanvas.setPixel(0, 1, "#00FFFF");
-      gameCanvas.setPixel(1, 1, "#0000FF");
-      gameCanvas.setPixel(2, 1, "#FF00FF");
+      humanShipSprite.paint(gameCanvas, { x: 128, y: 192 }, 0);
+      lizardShipSprite.paint(gameCanvas, { x: 128, y: 64 }, 0);
       gameCanvas.paint();
     }
 
+    $.ajax({
+      type: "GET",
+      url: "/sprite/human-ship",
+      dataType: 'json',
+      success: function (data) {
+        humanShipSprite = new Sprite(data.pixels, data.center);
+      }
+    });
+
+    $.ajax({
+      type: "GET",
+      url: "/sprite/lizard-ship",
+      dataType: 'json',
+      success: function (data) {
+        lizardShipSprite = new Sprite(data.pixels, data.center);
+      }
+    });
 
     $(function () {
       $canvas = $("#game-canvas");
-      gameCanvas = new PixelCanvas(3, 2, "#FFFFFF", "#game-canvas");
+      gameCanvas = new LayeredCanvas(256, 256, "#000000", "#game-canvas");
+
+      $.ajax({
+        async: false,
+        type: "GET",
+        url: "/sprite/human-ship",
+        dataType: "json",
+        success: function (data) {
+          humanShipSprite = new Sprite(data.pixels, data.center);
+        }
+      });
+
+      $.ajax({
+        async: false,
+        type: "GET",
+        url: "/sprite/lizard-ship",
+        dataType: "json",
+        success: function (data) {
+          lizardShipSprite = new Sprite(data.pixels, data.center);
+        }
+      });
 
       sizeCanvas();
       drawTestPattern();
-      
+ 
       $(window).resize(function() {
         sizeCanvas();
         drawTestPattern();

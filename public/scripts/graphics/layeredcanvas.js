@@ -54,5 +54,7 @@ define(["underscore", "graphics/pixelcanvas", "util/encoder"],
       this.layers[scalar] = this.layers[scalar] || [];
       this.layers[scalar][layer] = color;
     };
+
+    return LayeredCanvas;
   }
 );
