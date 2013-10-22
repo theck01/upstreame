@@ -11,18 +11,16 @@ describe("sprite routes", function () {
   var sprite = { pixels: [{ x: 1, y: 2, color: "#000000" }],
                  center: { x: 1, y: 2 } };
   
-  describe("GET /sprite/:name", function () {
+  describe("GET /sprite/all", function () {
     
     before(function () {
-      fs.writeFileSync(filename, "dummy file");
+      fs.writeFileSync(filename, JSON.stringify(sprite));
     });
 
     it("should return a list of all sprite names", function (done) {
         request(app).get("/sprite/all" )
                     .end(function (err, res) {
-                      _.find(res.body, function (name) {
-                        return name === "__test__";
-                      }).should.eql("__test__");
+                      _.isEqual(res.body.__test__, sprite).should.be.ok
                       done();
                     });
     });

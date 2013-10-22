@@ -47,7 +47,8 @@ require(["jquery", "underscore", "interface/pixelcolorer", "bootstrap",
         dataType: "json",
         success: function (data) {
           $spriteNameInput.typeahead("destroy");
-          $spriteNameInput.typeahead({ autoselect: "first", local: data });
+          $spriteNameInput.typeahead({ autoselect: "first",
+                                       local: _.keys(data) });
         }
       });
     }

@@ -9,16 +9,21 @@ var spriteTemplate = {
 };
 
 exports.all = function (req, res) {
+  var sprites;
   var spriteDir = __dirname + '/../public/assets/sprites/';
+
   fs.readdir(spriteDir, function (err, files) {
-    var names;
 
     if(err) res.send(500);
     else{
-      names = _.map(files, function (f) {
-        return path.basename(f, '.json');
-      });
-      res.json(200, names);
+      sprites = _.reduce(files, function (memo, f) {
+        var file = __dirname + '/../public/assets/sprites/' + f;
+        var name = path.basename(f, '.json');
+        memo[name] = JSON.parse(fs.readFileSync(file, { encoding: 'utf8' }));
+        return memo;
+      }, Object.create(null));
+
+      res.json(200, sprites);
     }
   });
 };

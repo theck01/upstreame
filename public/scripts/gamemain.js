@@ -26,24 +26,6 @@ require(["jquery", "graphics/layeredcanvas", "graphics/sprite"],
       gameCanvas.paint();
     }
 
-    $.ajax({
-      type: "GET",
-      url: "/sprite/human-ship",
-      dataType: 'json',
-      success: function (data) {
-        humanShipSprite = new Sprite(data.pixels, data.center);
-      }
-    });
-
-    $.ajax({
-      type: "GET",
-      url: "/sprite/lizard-ship",
-      dataType: 'json',
-      success: function (data) {
-        lizardShipSprite = new Sprite(data.pixels, data.center);
-      }
-    });
-
     $(function () {
       $canvas = $("#game-canvas");
       gameCanvas = new LayeredCanvas(256, 256, "#000000", "#game-canvas");
@@ -51,20 +33,13 @@ require(["jquery", "graphics/layeredcanvas", "graphics/sprite"],
       $.ajax({
         async: false,
         type: "GET",
-        url: "/sprite/human-ship",
+        url: "/sprite/all",
         dataType: "json",
         success: function (data) {
-          humanShipSprite = new Sprite(data.pixels, data.center);
-        }
-      });
-
-      $.ajax({
-        async: false,
-        type: "GET",
-        url: "/sprite/lizard-ship",
-        dataType: "json",
-        success: function (data) {
-          lizardShipSprite = new Sprite(data.pixels, data.center);
+          humanShipSprite = new Sprite(data["human-ship"].pixels,
+                                       data["human-ship"].center);
+          lizardShipSprite = new Sprite(data["lizard-ship"].pixels,
+                                        data["lizard-ship"].center);
         }
       });
 
