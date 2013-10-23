@@ -7,12 +7,15 @@ require.config({
   }
 });
 
-require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive"],
-  function($, LayeredCanvas, SpriteArchive){
+require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
+         "actors/base", "interface/keypoll"],
+  function($, LayeredCanvas, SpriteArchive, BaseActor, KeyPoll){
 
     var $canvas;
     var gameCanvas;
     var sprites;
+    var shipActor;
+    var keys;
 
     function sizeCanvas() {
       $canvas[0].width = $(window).width();
@@ -20,13 +23,14 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive"],
     }
 
     function drawTestPattern() {
-      sprites.get("human-ship").paint(gameCanvas, { x: 128, y: 192 }, 0);
+      shipActor.paint(gameCanvas);
       sprites.get("lizard-ship").paint(gameCanvas, { x: 128, y: 64 }, 0);
       gameCanvas.paint();
     }
 
     $(function () {
       $canvas = $("#game-canvas");
+      keys = new KeyPoll();
       gameCanvas = new LayeredCanvas(256, 256, "#000000", "#game-canvas");
 
       $.ajax({
@@ -36,6 +40,8 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive"],
         dataType: "json",
         success: function (data) {
           sprites = new SpriteArchive(data);
+          shipActor = new BaseActor(sprites.get("human-ship"),
+                                    { x: 128, y: 192 }, 0, []);
         }
       });
 
@@ -46,6 +52,13 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive"],
         sizeCanvas();
         drawTestPattern();
       });
+
+      setInterval(function () {
+        var directions = [];
+        if (keys.poll(87)) directions.push("UP");
+        shipActor.shift(directions);
+        drawTestPattern();
+      }, 33);
     });
   }
 );
