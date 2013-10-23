@@ -7,13 +7,12 @@ require.config({
   }
 });
 
-require(["jquery", "graphics/layeredcanvas", "graphics/sprite"],
-  function($, LayeredCanvas, Sprite){
+require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive"],
+  function($, LayeredCanvas, SpriteArchive){
 
     var $canvas;
     var gameCanvas;
-    var humanShipSprite;
-    var lizardShipSprite;
+    var sprites;
 
     function sizeCanvas() {
       $canvas[0].width = $(window).width();
@@ -21,8 +20,8 @@ require(["jquery", "graphics/layeredcanvas", "graphics/sprite"],
     }
 
     function drawTestPattern() {
-      humanShipSprite.paint(gameCanvas, { x: 128, y: 192 }, 0);
-      lizardShipSprite.paint(gameCanvas, { x: 128, y: 64 }, 0);
+      sprites.get("human-ship").paint(gameCanvas, { x: 128, y: 192 }, 0);
+      sprites.get("lizard-ship").paint(gameCanvas, { x: 128, y: 64 }, 0);
       gameCanvas.paint();
     }
 
@@ -36,10 +35,7 @@ require(["jquery", "graphics/layeredcanvas", "graphics/sprite"],
         url: "/sprite/all",
         dataType: "json",
         success: function (data) {
-          humanShipSprite = new Sprite(data["human-ship"].pixels,
-                                       data["human-ship"].center);
-          lizardShipSprite = new Sprite(data["lizard-ship"].pixels,
-                                        data["lizard-ship"].center);
+          sprites = new SpriteArchive(data);
         }
       });
 
