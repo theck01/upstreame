@@ -18,8 +18,11 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
     var keys;
 
     function sizeCanvas() {
-      $canvas[0].width = $(window).width();
-      $canvas[0].height = $(window).height();
+      if ($canvas[0].width !== $(window).width() ||
+          $canvas[0].height !== $(window).height()){
+        $canvas[0].width = $(window).width();
+        $canvas[0].height = $(window).height();
+      }
     }
 
     function drawTestPattern() {
@@ -31,7 +34,7 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
     $(function () {
       $canvas = $("#game-canvas");
       keys = new KeyPoll();
-      gameCanvas = new LayeredCanvas(256, 256, "#000000", "#game-canvas");
+      gameCanvas = new LayeredCanvas(256, 256, "#game-canvas", "#000000");
 
       $.ajax({
         async: false,
@@ -56,9 +59,12 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
       setInterval(function () {
         var directions = [];
         if (keys.poll(87)) directions.push("UP");
+        if (keys.poll(65)) directions.push("LEFT");
+        if (keys.poll(68)) directions.push("RIGHT");
+        if (keys.poll(83)) directions.push("DOWN");
         shipActor.shift(directions);
         drawTestPattern();
-      }, 33);
+      }, Math.floor(1000/30));
     });
   }
 );

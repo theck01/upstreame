@@ -10,12 +10,13 @@ define(["underscore", "graphics/pixelcanvas", "util/encoder"],
     // Constructor Arguments:
     //   width: width of the pixel canvas in meta-pixels
     //   height: height of the pixel canvas in meta-pixels
-    //   backgroundColor: default color of pixels not drawn to, "#RRGGBB" string
     //   canvasID: css selector style id of the canvas on the page
-    var LayeredCanvas = function (width, height, backgroundColor, canvasID) {
+    //   backgroundColor: default color of pixels not drawn to, "#RRGGBB" string
+    //                    Optional, default is undefined (transparent)
+    var LayeredCanvas = function (width, height, canvasID, backgroundColor) {
       this.dim = { width: width, height: height };
       this.layers = Object.create(null);
-      this.pCanvas = new PixelCanvas(width, height, backgroundColor, canvasID);
+      this.pCanvas = new PixelCanvas(width, height, canvasID, backgroundColor);
     };
 
 

@@ -17,11 +17,10 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       this.backgroundColor = "#FFFFFF";
       this.canvasID = canvasID;
       this.currentColor = "#000000";
+      this.dim = { width: width, height: height };
       this.mouseDown = false;
-      this.pCanvas = new PixelCanvas(width, height, this.backgroundColor,
-                                     canvasID);
-      this.pixelWidth = width;
-      this.pixelHeight = height;
+      this.pCanvas = new PixelCanvas(width, height, canvasID,
+                                     this.backgroundColor);
       this.pixels = [];
       this.mouseMoveAction = function () {};
       this.showGrid = true;
@@ -45,8 +44,7 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
         var relx = e.pageX - canvasOffset.left;
         var rely = e.pageY - canvasOffset.top;
 
-        var sparams = that.pCanvas.screenParams(that.pixelWidth,
-                                                that.pixelHeight);
+        var sparams = that.pCanvas.screenParams();
 
         var x = Math.floor((relx - sparams.xoffset)/sparams.pixelSize);
         var y = Math.floor((rely - sparams.yoffset)/sparams.pixelSize);
@@ -56,7 +54,7 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
         });
 
         // if click was outside pixel region do nothing
-        if(x > that.pixelWidth || x < 0 || y > that.pixelHeight || y < 0)
+        if(x > that.dim.width || x < 0 || y > that.dim.height || y < 0)
           return;
 
         if(that.action === "set"){
@@ -93,6 +91,7 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
     // color
     PixelColorer.prototype.clearCanvas = function () {
       this.pixels = [];
+      this.pCanvas.clear();
       this.paint();
     };
 
@@ -135,8 +134,8 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
 
 
       image.pixels = _.filter(this.pixels, function (p) {
-        return p.x >=0 && p.x < this.pixelWidth && p.y >= 0 &&
-               p.y < this.pixelHeight;
+        return p.x >=0 && p.x < this.dim.width && p.y >= 0 &&
+               p.y < this.dim.height;
       }, this);
       image.center = { x: Math.floor(imageWidth/2) + xRange[0],
                        y: Math.floor(imageHeight/2) + yRange[0] };
@@ -179,12 +178,12 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
     PixelColorer.prototype.paint = function () {
       var context = this.$htmlCanvas[0].getContext("2d");
       var i = 0;
-      var sparams = this.pCanvas.screenParams(this.pixelWidth,
-                                              this.pixelHeight);
+      var sparams = this.pCanvas.screenParams(this.dim.width,
+                                              this.dim.height);
 
       _.each(this.pixels, function(p) {
-        if(p.x >= 0 && p.x < this.pixelWidth && p.y >= 0 &&
-           p.y < this.pixelHeight){
+        if(p.x >= 0 && p.x < this.dim.width && p.y >= 0 &&
+           p.y < this.dim.height){
           this.pCanvas.setPixel(p.x, p.y, p.color);
         }
       }, this);
@@ -196,17 +195,17 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       // draw grid system after pixels have been painted, for visibility
       context.beginPath();
 
-      for( ; i<=this.pixelWidth; i++){
+      for( ; i<=this.dim.width; i++){
         context.moveTo(sparams.xoffset + i*sparams.pixelSize,
                        sparams.yoffset);
         context.lineTo(sparams.xoffset + i*sparams.pixelSize,
-                       sparams.yoffset + this.pixelHeight*sparams.pixelSize);
+                       sparams.yoffset + this.dim.height*sparams.pixelSize);
       }
 
-      for(i=0 ; i<=this.pixelHeight; i++){
+      for(i=0 ; i<=this.dim.height; i++){
         context.moveTo(sparams.xoffset,
                        sparams.yoffset + i*sparams.pixelSize);
-        context.lineTo(sparams.xoffset + this.pixelWidth*sparams.pixelSize,
+        context.lineTo(sparams.xoffset + this.dim.width*sparams.pixelSize,
                        sparams.yoffset + i*sparams.pixelSize);
       }
 
@@ -234,10 +233,9 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
     //   width: width of the pixel canvas in meta-pixels
     //   height: height of the pixel canvas in meta-pixels
     PixelColorer.prototype.resize = function (width, height){
-      this.pixelWidth = width;
-      this.pixelHeight = height;
-      this.pCanvas = new PixelCanvas(this.pixelWidth, this.pixelHeight,
-                                     this.backgroundColor, this.canvasID);
+      this.dim = { width: width, height: height };
+      this.pCanvas = new PixelCanvas(this.dim.width, this.dim.height,
+                                     this.canvasID, this.backgroundColor);
       this.paint();
     };
 
@@ -263,8 +261,8 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
     //   color: a hexadecimal string "#RRGGBB"
     PixelColorer.prototype.setBackgroundColor = function (color) {
       this.backgroundColor = Color.sanitize(color);
-      this.pCanvas = new PixelCanvas(this.pixelWidth, this.pixelHeight,
-                                     this.backgroundColor, this.canvasID);
+      this.pCanvas = new PixelCanvas(this.dim.width, this.dim.height,
+                                     this.canvasID, this.backgroundColor);
       this.paint();
     };
 
@@ -282,6 +280,7 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
     // toggleGrid toggles whether to display the grid of pixel boundrys or not
     PixelColorer.prototype.toggleGrid = function () {
       this.showGrid = !this.showGrid;
+      this.pCanvas.clear();
       this.paint();
     };
 

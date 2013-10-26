@@ -35,8 +35,11 @@ require(["jquery", "underscore", "interface/pixelcolorer", "bootstrap",
 
 
     function sizeCanvas() {
-      $canvas[0].width = $canvas.parent().width();
-      $canvas[0].height = $canvas.parent().height();
+      if ($canvas[0].width !== $canvas.parent().width() ||
+          $canvas[0].height !== $canvas.parent().height()){
+        $canvas[0].width = $canvas.parent().width();
+        $canvas[0].height = $canvas.parent().height();
+      }
     }
 
 
