@@ -25,10 +25,20 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
       }
     }
 
-    function drawTestPattern() {
+    function mainLoop() {
+
+      var directions = [];
+      if (keys.poll(87)) directions.push("UP");
+      if (keys.poll(65)) directions.push("LEFT");
+      if (keys.poll(68)) directions.push("RIGHT");
+      if (keys.poll(83)) directions.push("DOWN");
+      shipActor.shift(directions);
+
       shipActor.paint(gameCanvas);
       sprites.get("lizard-ship").paint(gameCanvas, { x: 128, y: 64 }, 0);
       gameCanvas.paint();
+
+      requestAnimationFrame(mainLoop);
     }
 
     $(function () {
@@ -49,22 +59,12 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
       });
 
       sizeCanvas();
-      drawTestPattern();
  
       $(window).resize(function() {
         sizeCanvas();
-        drawTestPattern();
       });
 
-      setInterval(function () {
-        var directions = [];
-        if (keys.poll(87)) directions.push("UP");
-        if (keys.poll(65)) directions.push("LEFT");
-        if (keys.poll(68)) directions.push("RIGHT");
-        if (keys.poll(83)) directions.push("DOWN");
-        shipActor.shift(directions);
-        drawTestPattern();
-      }, Math.floor(1000/30));
+      requestAnimationFrame(mainLoop);
     });
   }
 );
