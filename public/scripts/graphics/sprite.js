@@ -7,10 +7,10 @@ define(['underscore'], function (_) {
   //   pixels: An array of objects containing fields 'x', 'y', and 'color'
   //   center: An object with 'x' and 'y', the center of all pixels
   var Sprite = function (pixels, center) {
-    this.pixels = pixels;
+    this.pxls = pixels;
     
     // recenter sprite around the origin
-    _.each(this.pixels, function (p) {
+    _.each(this.pxls, function (p) {
       p.x -= center.x;
       p.y -= center.y;
     });
@@ -21,13 +21,30 @@ define(['underscore'], function (_) {
   // center specified.
   //
   // Arguments:
-  //   *Canvas: An instance of either PixelCanvas or LayeredCanvas
+  //   canvas: An instance of either PixelCanvas or LayeredCanvas
   //   center: An object with 'x' and 'y', the center of all pixels
   Sprite.prototype.paint = function (canvas, center, layer) {
-    _.each(this.pixels, function (p) {
+    _.each(this.pxls, function (p) {
       canvas.setPixel(p.x + center.x, p.y + center.y, p.color, layer);
     });
   };
+
+
+  // pixels returns an array of objects with 'x' 'y' field representing the
+  // pixel locations of the sprite shifted to have given center
+  //
+  // Arguments:
+  //   center: an object with 'x' and 'y' integer fields
+  //
+  // Returns:
+  //   An array of objects with 'x' and 'y' fields
+  Sprite.prototype.pixels = function (center) {
+    return _.reduce(this.pxls, function (memo, p) {
+      memo.push({ x: p.x + center.x, y: p.y + center.y });
+      return memo;
+    }, []);
+  };
+
 
   return Sprite;
 });

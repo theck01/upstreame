@@ -8,13 +8,14 @@ require.config({
 });
 
 require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
-         "actors/base", "interface/keypoll"],
-  function($, LayeredCanvas, SpriteArchive, BaseActor, KeyPoll){
+         "actors/base", "interface/keypoll", "world/collisionframe"],
+  function($, LayeredCanvas, SpriteArchive, BaseActor, KeyPoll, CollisionFrame){
 
     var $canvas;
     var gameCanvas;
     var sprites;
     var shipActor;
+    var lizardActor;
     var keys;
 
     function sizeCanvas() {
@@ -26,6 +27,7 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
     }
 
     function mainLoop() {
+      var cFrame = new CollisionFrame(256,256);
 
       var directions = [];
       if (keys.poll(87)) directions.push("UP");
@@ -34,8 +36,12 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
       if (keys.poll(83)) directions.push("DOWN");
       shipActor.shift(directions);
 
+      cFrame.set(shipActor);
+      cFrame.set(lizardActor);
+      cFrame.resolve();
+
       shipActor.paint(gameCanvas);
-      sprites.get("lizard-ship").paint(gameCanvas, { x: 128, y: 64 }, 0);
+      lizardActor.paint(gameCanvas);
       gameCanvas.paint();
 
       requestAnimationFrame(mainLoop);
@@ -54,7 +60,9 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
         success: function (data) {
           sprites = new SpriteArchive(data);
           shipActor = new BaseActor(sprites.get("human-ship"),
-                                    { x: 128, y: 192 }, 0, []);
+                                    { x: 128, y: 192 }, 0, ["Base"]);
+          lizardActor = new BaseActor(sprites.get("lizard-ship"),
+                                      { x: 128, y: 64 }, 0, ["Base"]);
         }
       });
 
