@@ -1,7 +1,7 @@
 define(['underscore'], function (_) {
 
   // CONSTANT Pixels per frame
-  var BASE_SPEED = 3;
+  var BASE_SPEED = 2;
 
 
   // SHARED VARIABLES
@@ -13,15 +13,15 @@ define(['underscore'], function (_) {
   //   sprite: Instance of Sprite representing visual object
   //   center: Center of the object, essentially location in the world
   //   layer: Layer that it occupies in a LayeredCanvas heirarchy
-  //   collidables: Array of strings describing types with which the new
-  //                instance can collide
-  var Base = function (sprite, center, layer, collidables) {
+  //   noncollidables: Array of strings describing types with which the new
+  //                instance cannot collide
+  var Base = function (sprite, center, layer, noncollidables) {
     this.serial = ('000000' + serial++).slice(-7);
     this.type = 'Base';
     this.sprite = sprite;
     this.center = _.clone(center);
     this.layer = layer;
-    this.collidables = _.reduce(collidables, function (memo, c) {
+    this.noncollidables = _.reduce(noncollidables, function (memo, c) {
       memo[c] = true;
       return memo;
     }, Object.create(null));
@@ -64,7 +64,7 @@ define(['underscore'], function (_) {
   // possibleCollision checks to see if this and the argument can collide, and
   // if so delegates collision handling to collision method
   Base.prototype.possibleCollision = function (actor) {
-    if (this.collidables[actor.type]) this.collision();
+    if (!this.noncollidables[actor.type]) this.collision();
   };
 
 

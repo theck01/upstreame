@@ -1,11 +1,17 @@
 exports.index = function (req, res) {
-  res.render('game', {
-    title: 'ScriptInvaders'
+  res.render('home', {
+    title: 'upstrea.me'
+  });
+};
+
+exports.invaders = function (req, res) {
+  res.render('invaders', {
+    title: 'Invaders'
   });
 };
 
 exports.pixelart = function (req, res) {
   res.render('pixelart', {
-    title: 'PixelArt'
+    title: 'Pixel Art'
   });
 };

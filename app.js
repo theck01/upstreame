@@ -19,6 +19,7 @@ app.use(express.json());
 
 // view routes
 app.get('/', views.index);
+app.get('/invaders', views.invaders);
 app.get('/pixelart', views.pixelart);
 
 // sprite routes
