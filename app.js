@@ -1,19 +1,50 @@
+var auth = require('./lib/auth');
 var express = require('express');
-var views = require('./routes/views');
+var LocalStrategy = require('passport-local').Strategy;
+var passport = require('passport');
+var sessions = require('./routes/sessions');
 var sprites = require('./routes/sprites');
+var views = require('./routes/views');
+
+if (!process.env.SESSION_SECRET) {
+  console.log('Environment variable SESSION_SECRET must be set');
+  process.exit(1);
+}
 
 var app = express();
 module.exports = app;
 
-// CONFIGURATION
-app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
 
-// MIDDLEWARE
-if(process.env.NODE_ENV !== 'test') app.use(express.logger('dev'));
-app.use(express.static(__dirname + '/public'));
-app.use(express.static(__dirname + '/bower_components'));
-app.use(express.json());
+// MIDDLEWARE CONFIGURATION
+
+passport.use(new LocalStrategy(auth.authenticate));
+passport.serializeUser(function (user, done) {
+	done(null, JSON.stringify(user));
+});
+passport.deserializeUser(function (user, done) {
+	done(null, JSON.parse(user));
+});
+
+
+// APP CONFIGURATION
+
+app.configure(function () {
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'jade');
+  if(process.env.NODE_ENV !== 'test') app.use(express.logger('dev'));
+  app.use(express.json());
+  app.use(express.bodyParser());
+  app.use(express.cookieParser());
+  app.use(express.session({
+    secret: process.env.SESSION_SECRET
+  }));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(app.router);
+  app.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '/bower_components'));
+});
+
 
 // ROUTES
 
@@ -22,10 +53,14 @@ app.get('/', views.index);
 app.get('/invaders', views.invaders);
 app.get('/pixelart', views.pixelart);
 
+// authentication routes
+app.post('/login', passport.authenticate('local'), sessions.login);
+app.post('/logout', auth.ensureLoggedIn, sessions.logout);
+
 // sprite routes
 app.get('/sprite/all', sprites.all);
 app.get('/sprite/:name', sprites.load);
-app.post('/sprite/:name', sprites.save);
+app.post('/sprite/:name', auth.ensureLoggedIn, sprites.save);
 
 
 app.listen(3000);

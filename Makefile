@@ -29,6 +29,9 @@ clean:
 dev: less
 	@node app.js
 
+dev-debug: less
+	@node debug app.js
+
 # test tasks
 
 test: build
