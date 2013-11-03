@@ -49,3 +49,6 @@
 .float-spacer {
   clear: both;
 }
+.form-group {
+  margin-right: 10px;
+}

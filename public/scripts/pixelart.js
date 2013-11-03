@@ -27,7 +27,7 @@ require(["jquery", "underscore", "interface/pixelcolorer", "bootstrap",
     var $pixelHeight;
     var $pixelWidth;
     var $spriteNameInput;
-    var $spriteSaveAlert;
+    var $statusAlert;
     var $spriteActionButton;
 
     // initial canvas sizing variable
@@ -56,8 +56,68 @@ require(["jquery", "underscore", "interface/pixelcolorer", "bootstrap",
       });
     }
 
+    function displayAlert (message, error) {
+      if (error) {
+        $statusAlert.addClass("alert-danger");
+        $statusAlert.removeClass("alert-success");
+      }
+      else {
+        $statusAlert.removeClass("alert-danger");
+        $statusAlert.addClass("alert-success");
+      }
+
+      $statusAlert.text(message);
+      $statusAlert.attr("hidden", false);
+    }
+
 
     $(function () {
+      $statusAlert = $("#status-alert");
+
+      $("#login-button").click(function () {
+        $.ajax({
+          url: "/login",
+          type: "POST",
+          data: {
+            "username": $("#username-field").val(),
+            "password": $("#password-field").val()
+          },
+          success: function () {
+            displayAlert("Welcome back!", false);
+            $("#login-form").attr("hidden", true);
+            $("#logout-form").attr("hidden", false);
+          },
+          error: function (jqXHR) {
+            if(jqXHR.status  === 401) {
+              displayAlert("Username or password incorrect. Please try again.",
+                           true);
+            }
+            else displayAlert("Server error.", true);
+          }
+        });
+
+        $("#username-field").val("");
+        $("#password-field").val("");
+      });
+
+      $("#logout-button").click(function () {
+        $.ajax({
+          url: "/logout",
+          type: "POST",
+          success: function () {
+            $statusAlert.attr("hidden", true);
+            $("#login-form").attr("hidden", false);
+            $("#logout-form").attr("hidden", true);
+          },
+          error: function (jqXHR) {
+            if(jqXHR.status === 500) {
+              displayAlert("Server error.", true);
+            }
+            else displayAlert("Client error.", true);
+          }
+        });
+      });
+
       $("#hide-grid-button").click(function () {
         pixelArtCanvas.toggleGrid();
       });
@@ -126,8 +186,6 @@ require(["jquery", "underscore", "interface/pixelcolorer", "bootstrap",
         if(e.keyCode === 13) $spriteActionButton.click();
       });
 
-      $spriteSaveAlert = $("#sprite-save-alert");
-
       $spriteActionButton = $("#sprite-action-button");
       $spriteActionButton.click(function () {
         var name = $spriteNameInput.val();
@@ -135,24 +193,13 @@ require(["jquery", "underscore", "interface/pixelcolorer", "bootstrap",
 
         if(_.isEmpty(sprite.pixels) &&
            $spriteActionButton.text() === "Save Sprite"){
-          $spriteSaveAlert.text("Please draw a sprite before saving");
-          $spriteSaveAlert.addClass("alert-danger");
-          $spriteSaveAlert.removeClass("alert-success");
-          $spriteSaveAlert.attr("hidden", false);
+          displayAlert("Please draw a sprite before saving", true);
         }
-        else if(name === ""){
-          $spriteSaveAlert.text("Please specify a sprite name");
-          $spriteSaveAlert.addClass("alert-danger");
-          $spriteSaveAlert.removeClass("alert-success");
-          $spriteSaveAlert.attr("hidden", false);
-        }
+        else if(name === "") displayAlert("Please specify a sprite name", true);
         else if(name.match(/[^A-Za-z0-9-_]+/) !== null){
           var msg = "Valid sprite names can contain '-', '_', and ";
           msg += "alphanumeric characters";
-          $spriteSaveAlert.text(msg);
-          $spriteSaveAlert.addClass("alert-danger");
-          $spriteSaveAlert.removeClass("alert-success");
-          $spriteSaveAlert.attr("hidden", false);
+          displayAlert(msg, true);
         }
         else{
           if($spriteActionButton.text() === "Save Sprite"){
@@ -162,32 +209,20 @@ require(["jquery", "underscore", "interface/pixelcolorer", "bootstrap",
               contentType: "application/json",
               data: JSON.stringify(sprite),
               error: function (jqXHR) {
-                if(jqXHR.status  === 400){
-                  $spriteSaveAlert.text("Client error.");
-                  $spriteSaveAlert.addClass("alert-danger");
-                  $spriteSaveAlert.removeClass("alert-success");
-                  $spriteSaveAlert.attr("hidden", false);
+                if(jqXHR.status  === 400) displayAlert("Client error.", true);
+                else if(jqXHR.status === 401) {
+                  displayAlert("Please login before saving sprites.", true);
                 }
-                else{
-                  $spriteSaveAlert.text("Server error.");
-                  $spriteSaveAlert.addClass("alert-danger");
-                  $spriteSaveAlert.removeClass("alert-success");
-                  $spriteSaveAlert.attr("hidden", false);
-                }
+                else displayAlert("Server error.", true);
               },
               success: function () {
                 $spriteNameInput.typeahead("setQuery", "");
 
-                if($spriteSaveAlert.hasClass("alert-success")){
-                  $spriteSaveAlert.removeClass("animated bounce");
-                  $spriteSaveAlert.addClass("animated bounce");
+                if($statusAlert.hasClass("alert-success")){
+                  $statusAlert.removeClass("animated bounce");
+                  $statusAlert.addClass("animated bounce");
                 }
-                else{
-                  $spriteSaveAlert.addClass("alert-success");
-                  $spriteSaveAlert.removeClass("alert-danger");
-                }
-                $spriteSaveAlert.text("Saved!");
-                $spriteSaveAlert.attr("hidden", false);
+                displayAlert("Saved!", false);
 
                 refreshSpriteNames();
               }
@@ -200,21 +235,15 @@ require(["jquery", "underscore", "interface/pixelcolorer", "bootstrap",
               dataType: "json",
               error: function (jqXHR) {
                 if(jqXHR.status  === 404){
-                  $spriteSaveAlert.text(name + " not found");
-                  $spriteSaveAlert.addClass("alert-danger");
-                  $spriteSaveAlert.removeClass("alert-success");
-                  $spriteSaveAlert.attr("hidden", false);
+                  displayAlert(name + " not found.", true);
                 }
                 else{
-                  $spriteSaveAlert.text("Server error.");
-                  $spriteSaveAlert.addClass("alert-danger");
-                  $spriteSaveAlert.removeClass("alert-success");
-                  $spriteSaveAlert.attr("hidden", false);
+                  displayAlert("Server error.", true);
                 }
               },
               success: function (data) {
                 pixelArtCanvas.importImage(data.pixels);
-                $spriteSaveAlert.attr("hidden", true);
+                $statusAlert.attr("hidden", true);
                 $spriteNameInput.typeahead("setQuery", "");
               }
             });
