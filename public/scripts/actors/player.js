@@ -1,5 +1,12 @@
 define(['actors/base'], function (Base) {
   
+  // Player actor, controlled directly by keyboard (or other) input
+  //
+  // Arguments:
+  //   archive: SpriteArchive object
+  //   center: center of the player sprite
+  //   layer: layer to draw the player sprite
+  //   keypoll: KeyPoll object, used for controlling sprite
   var Player = function (archive, center, layer, keypoll) {
     Base.call(this, archive.get('human-ship'), center, layer, ['Player']);
 		this.archive = archive;
@@ -10,6 +17,7 @@ define(['actors/base'], function (Base) {
   Player.prototype.constructor = Player;
 
 
+  // update checks inputs and takes corresponding actions.
   Player.prototype.update = function () {
     var directions = [];
     var verticalChange = 0;
