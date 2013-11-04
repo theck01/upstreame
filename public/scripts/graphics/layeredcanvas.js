@@ -49,6 +49,11 @@ define(["underscore", "graphics/pixelcanvas", "util/encoder"],
     //   layer: A positive integer representing the layer at which the pixel
     //          should be drawn
     LayeredCanvas.prototype.setPixel = function (x, y, color, layer) {
+      // dont draw pixels outside range
+      if (x >= this.dim.width || x < 0 || y >= this.dim.height || y < 0) {
+        return;
+      }
+
       var coord = { x: x, y: y };
       var scalar = Encoder.coordToScalar(coord, this.dim);
 

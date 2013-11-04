@@ -31,12 +31,16 @@ define(['underscore', 'util/encoder'], function (_, Encoder) {
   //   actor: the actor object to be included in the frame
   CollisionFrame.prototype.set = function (actor) {
 
-
     // if actor has already been added to this frame, do nothing
     if (this.actors[actor.id()]) return;
 
     // add all pixels to collision frame's world
     _.each(actor.pixels(), function (p) {
+      // only add on screen elements to collision frame
+      if (p.x >= this.dim.width || p.x < 0 || p.y >= this.dim.height ||
+          p.y < 0) {
+        return;
+      }
       var scalar = Encoder.coordToScalar(p, this.dim);
 
       // if other actors occupy the same pixel, update collisions with the
