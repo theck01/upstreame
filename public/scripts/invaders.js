@@ -8,15 +8,15 @@ require.config({
 });
 
 require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
-         "actors/base", "actors/player", "interface/keypoll",
+         "actors/player", "actors/testenemy", "interface/keypoll",
          "world/collisionframe"],
-  function($, LayeredCanvas, SpriteArchive, Base, Player, KeyPoll,
+  function($, LayeredCanvas, SpriteArchive, Player, TestEnemy, KeyPoll,
            CollisionFrame){
 
     var $canvas;
     var gameCanvas;
     var sprites;
-    var shipActor;
+    var playerActor;
     var lizardActor;
     var keys;
 
@@ -31,13 +31,14 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
     function mainLoop() {
       var cFrame = new CollisionFrame(256,256);
       
-      shipActor.act();
+      playerActor.act();
+      lizardActor.act();
 
-      cFrame.set(shipActor);
+      cFrame.set(playerActor);
       cFrame.set(lizardActor);
       cFrame.resolve();
 
-      shipActor.paint(gameCanvas);
+      playerActor.paint(gameCanvas);
       lizardActor.paint(gameCanvas);
       gameCanvas.paint();
 
@@ -56,9 +57,10 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
         dataType: "json",
         success: function (data) {
           sprites = new SpriteArchive(data);
-          shipActor = new Player(sprites, { x: 128, y: 192 }, 0, keys);
-          lizardActor = new Base(sprites.get("lizard-ship"),
-                                 { x: 128, y: 64 }, 0, []);
+          playerActor = new Player(sprites, { x: 128, y: 192 }, 1, keys);
+          lizardActor = new TestEnemy(sprites, { x: 128, y: 64 }, 0,
+                                      { topmost: 25, bottommost: 128,
+                                        leftmost: 25, rightmost: 256-25 });
         }
       });
 
