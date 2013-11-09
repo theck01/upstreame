@@ -1,9 +1,5 @@
 define(['underscore'], function (_) {
 
-  // CONSTANT Pixels per frame
-  var BASE_SPEED = 2;
-
-
   // SHARED VARIABLES
   var serial = 0;
   
@@ -25,6 +21,14 @@ define(['underscore'], function (_) {
       memo[c] = true;
       return memo;
     }, Object.create(null));
+  };
+
+
+  // act method should be overloaded by subclasses of Base, method is called
+  // once per game loop, and should update the actor to handle the current
+  // game state
+  Base.prototype.act = function () {
+    throw new Error('Base.act called, subclass must override');
   };
 
   
@@ -66,22 +70,6 @@ define(['underscore'], function (_) {
   Base.prototype.possibleCollision = function (actor) {
     if (!this.noncollidables[actor.type]) this.collision();
   };
-
-
-  // phift the actor on the screen in each direction
-  //
-  // Argument:
-  //   directions: Array of strings from the set:
-  //               [ 'UP', 'DOWN', 'LEFT', 'RIGHT' ]
-  Base.prototype.shift = function (directions) {
-    _.each(directions, function (d) {
-      if (d === 'UP') this.center.y -= BASE_SPEED;
-      else if (d === 'DOWN') this.center.y += BASE_SPEED;
-      else if (d === 'LEFT') this.center.x -= BASE_SPEED;
-      else if (d === 'RIGHT') this.center.x += BASE_SPEED;
-    }, this);
-  };
-
 
   return Base;
 });

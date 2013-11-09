@@ -1,4 +1,7 @@
 define(['actors/base'], function (Base) {
+
+  // CONSTANTS
+  var PLAYER_SPEED = 2;
   
   // Player actor, controlled directly by keyboard (or other) input
   //
@@ -17,26 +20,21 @@ define(['actors/base'], function (Base) {
   Player.prototype.constructor = Player;
 
 
-  // update checks inputs and takes corresponding actions.
-  Player.prototype.update = function () {
-    var directions = [];
+  // overloaded Base.act function
+  Player.prototype.act = function () {
     var verticalChange = 0;
+    var horizontalChange = 0;
 
-    if (this.keypoll.poll(87)) {
-      directions.push('UP');
-      verticalChange += 1;
-    }
-    if (this.keypoll.poll(83)) {
-			directions.push('DOWN');
-      verticalChange -= 1;
-    }
-    if (this.keypoll.poll(65)) directions.push('LEFT');
-    if (this.keypoll.poll(68)) directions.push('RIGHT');
+    if (this.keypoll.poll(87)) verticalChange -= 1;
+    if (this.keypoll.poll(83)) verticalChange += 1;
+    if (this.keypoll.poll(65)) horizontalChange -= 1;
+    if (this.keypoll.poll(68)) horizontalChange += 1;
 
-    this.shift(directions);
-    
+    this.center.x += PLAYER_SPEED * horizontalChange;
+    this.center.y += PLAYER_SPEED * verticalChange;
+
     // change sprite to reflect movement, if any
-    if (verticalChange === 1) {
+    if (verticalChange === -1) {
       this.sprite = this.archive.get('human-ship-accelerating');
     }
     else if (verticalChange === 0) {

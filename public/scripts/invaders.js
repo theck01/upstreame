@@ -31,7 +31,7 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
     function mainLoop() {
       var cFrame = new CollisionFrame(256,256);
       
-      shipActor.update();
+      shipActor.act();
 
       cFrame.set(shipActor);
       cFrame.set(lizardActor);
