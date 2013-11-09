@@ -12,9 +12,9 @@ define(['actors/base'], function (Base) {
   //   layer: layer to draw the player sprite
   //   keypoll: KeyPoll object, used for controlling sprite
   var Player = function (archive, center, layer, keypoll) {
-    Base.call(this, archive.get('human-ship'), center, layer, ['Player']);
+    Base.call(this, 'Player', archive.get('human-ship'), center, layer,
+              ['Player']);
 		this.archive = archive;
-    this.type = 'Player';
     this.keypoll = keypoll;
   };
   Player.prototype = Object.create(Base.prototype);

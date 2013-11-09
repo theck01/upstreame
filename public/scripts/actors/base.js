@@ -10,14 +10,15 @@ define(['underscore'], function (_) {
   // Base object for all actors
   //
   // Arguments:
+  //   type: String typename for actor (i.e. 'Player', 'Rocket', etc.)
   //   sprite: Instance of Sprite representing visual object
   //   center: Center of the object, essentially location in the world
   //   layer: Layer that it occupies in a LayeredCanvas heirarchy
   //   noncollidables: Array of strings describing types with which the new
   //                instance cannot collide
-  var Base = function (sprite, center, layer, noncollidables) {
+  var Base = function (type, sprite, center, layer, noncollidables) {
     this.serial = ('000000' + serial++).slice(-7);
-    this.type = 'Base';
+    this.type = type;
     this.sprite = sprite;
     this.center = _.clone(center);
     this.layer = layer;
