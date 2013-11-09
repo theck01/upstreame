@@ -2,6 +2,10 @@ define(['underscore'], function (_) {
 
   // SHARED VARIABLES
   var serial = 0;
+
+  function intCenter (center) {
+    return { x: Math.round(center.x), y: Math.round(center.y) };
+  }
   
   // Base object for all actors
   //
@@ -53,7 +57,7 @@ define(['underscore'], function (_) {
   // Arguments:
   //   canvas: An instance of *Canvas to paint this actors sprite on
   Base.prototype.paint = function (canvas) {
-    this.sprite.paint(canvas, this.center, this.layer);
+    this.sprite.paint(canvas, intCenter(this.center), this.layer);
   };
 
 
@@ -61,7 +65,7 @@ define(['underscore'], function (_) {
   //
   // Returns an array of objects with 'x' and 'y' integer fields
   Base.prototype.pixels = function () {
-    return this.sprite.pixels(this.center);
+    return this.sprite.pixels(intCenter(this.center));
   };
 
 

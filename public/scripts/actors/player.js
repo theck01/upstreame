@@ -1,7 +1,8 @@
 define(['actors/base'], function (Base) {
 
   // CONSTANTS
-  var PLAYER_SPEED = 2;
+  var SPEED = 2;
+  var DIAGONAL_SPEED = SPEED / Math.sqrt(2);
   
   // Player actor, controlled directly by keyboard (or other) input
   //
@@ -30,9 +31,6 @@ define(['actors/base'], function (Base) {
     if (this.keypoll.poll(65)) horizontalChange -= 1;
     if (this.keypoll.poll(68)) horizontalChange += 1;
 
-    this.center.x += PLAYER_SPEED * horizontalChange;
-    this.center.y += PLAYER_SPEED * verticalChange;
-
     // change sprite to reflect movement, if any
     if (verticalChange === -1) {
       this.sprite = this.archive.get('human-ship-accelerating');
@@ -42,6 +40,17 @@ define(['actors/base'], function (Base) {
     }
     else {
       this.sprite = this.archive.get('human-ship-braking');
+    }
+  
+    if (horizontalChange && verticalChange) {
+      this.center.x += DIAGONAL_SPEED * horizontalChange;
+      this.center.y += DIAGONAL_SPEED * verticalChange;
+    }
+    else if (horizontalChange) {
+      this.center.x += SPEED * horizontalChange;
+    }
+    else {
+      this.center.y += SPEED * verticalChange;
     }
   };
 
