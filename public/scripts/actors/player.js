@@ -23,6 +23,7 @@ define(['actors/base'], function (Base) {
 
   // overloaded Base.act function
   Player.prototype.act = function () {
+    var spriteName = 'human-ship';
     var verticalChange = 0;
     var horizontalChange = 0;
 
@@ -32,15 +33,12 @@ define(['actors/base'], function (Base) {
     if (this.keypoll.poll(68)) horizontalChange += 1;
 
     // change sprite to reflect movement, if any
-    if (verticalChange === -1) {
-      this.sprite = this.archive.get('human-ship-accelerating');
-    }
-    else if (verticalChange === 0) {
-      this.sprite = this.archive.get('human-ship');
-    }
-    else {
-      this.sprite = this.archive.get('human-ship-braking');
-    }
+    if (horizontalChange === -1) spriteName += '-left-turn';
+    else if (horizontalChange === 1) spriteName += '-right-turn';
+    if (verticalChange === -1) spriteName += '-accelerating';
+    else if (verticalChange === 1) spriteName += '-braking';
+
+    this.sprite = this.archive.get(spriteName);
   
     if (horizontalChange && verticalChange) {
       this.center.x += DIAGONAL_SPEED * horizontalChange;
