@@ -8,16 +8,16 @@ require.config({
 });
 
 require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
-         "actors/player", "actors/testenemy", "interface/keypoll",
+         "actors/player", "actors/energyenemy", "interface/keypoll",
          "world/collisionframe"],
-  function($, LayeredCanvas, SpriteArchive, Player, TestEnemy, KeyPoll,
+  function($, LayeredCanvas, SpriteArchive, Player, EnergyEnemy, KeyPoll,
            CollisionFrame){
 
     var $canvas;
     var gameCanvas;
     var sprites;
     var playerActor;
-    var lizardActor;
+    var energyActor;
     var keys;
 
     function sizeCanvas() {
@@ -32,14 +32,14 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
       var cFrame = new CollisionFrame(256,256);
       
       playerActor.act();
-      lizardActor.act();
+      energyActor.act();
 
       cFrame.set(playerActor);
-      cFrame.set(lizardActor);
+      cFrame.set(energyActor);
       cFrame.resolve();
 
       playerActor.paint(gameCanvas);
-      lizardActor.paint(gameCanvas);
+      energyActor.paint(gameCanvas);
       gameCanvas.paint();
 
       requestAnimationFrame(mainLoop);
@@ -58,9 +58,7 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
         success: function (data) {
           sprites = new SpriteArchive(data);
           playerActor = new Player(sprites, { x: 128, y: 192 }, 1, keys);
-          lizardActor = new TestEnemy(sprites, { x: 128, y: 64 }, 0,
-                                      { topmost: 25, bottommost: 128,
-                                        leftmost: 25, rightmost: 256-25 });
+          energyActor = new EnergyEnemy(sprites, { x: 128, y: 64 }, 0);
         }
       });
 
