@@ -7,13 +7,14 @@ define(['actors/base'], function (Base) {
   // Player actor, controlled directly by keyboard (or other) input
   //
   // Arguments:
+  //   group: Collision group that the new player will belong to
   //   archive: SpriteArchive object
   //   center: center of the player sprite
   //   layer: layer to draw the player sprite
   //   keypoll: KeyPoll object, used for controlling sprite
-  var Player = function (archive, center, layer, keypoll) {
-    Base.call(this, 'Player', archive.get('human-ship'), center, layer,
-              ['Player']);
+  var Player = function (group, archive, center, layer, keypoll) {
+    Base.call(this, group, archive.get('human-ship'), center, layer,
+              [group]);
 		this.archive = archive;
     this.keypoll = keypoll;
   };

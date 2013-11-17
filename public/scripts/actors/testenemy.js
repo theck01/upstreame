@@ -14,9 +14,9 @@ define(['actors/base'], function (Base) {
   //   layer: layer to draw the actor's sprite
   //   bounds: Object with four fields: 'topmost', 'bottommost', 'leftmost',
   //           'rightmost' representing the area in which the actor may move
-  var TestEnemy = function (frameClock, archive, center, layer, bounds) {
-    Base.call(this, 'TestEnemy', archive.get('lizard-ship'), center, layer,
-              ['TestEnemy']);
+  var TestEnemy = function (group, archive, center, layer, bounds, frameClock) {
+    Base.call(this, group, archive.get('lizard-ship'), center, layer,
+              [group]);
 
     this.archive = archive;
     this.bounds = bounds;
@@ -27,10 +27,11 @@ define(['actors/base'], function (Base) {
       // randomly select direction in which to move
       enemy.velocity.x = Math.floor(Math.random() * 3) - 1;
       enemy.velocity.y = Math.floor(Math.random() * 3) - 1;
-    }, 45);
+    }, 30);
   };
   TestEnemy.prototype = Object.create(Base.prototype);
   TestEnemy.prototype.constructor = TestEnemy;
+
 
   // overloaded Base.act function
   TestEnemy.prototype.act = function () {

@@ -10,15 +10,15 @@ define(['underscore'], function (_) {
   // Base object for all actors
   //
   // Arguments:
-  //   type: String typename for actor (i.e. 'Player', 'Rocket', etc.)
+  //   group: String group name of the object ['Enemy', 'Player', etc]
   //   sprite: Instance of Sprite representing visual object
   //   center: Center of the object, essentially location in the world
   //   layer: Layer that it occupies in a LayeredCanvas heirarchy
-  //   noncollidables: Array of strings describing types with which the new
-  //                instance cannot collide
-  var Base = function (type, sprite, center, layer, noncollidables) {
+  //   noncollidables: Array of strings describing groups with which the new
+  //                   instance cannot collide
+  var Base = function (group, sprite, center, layer, noncollidables) {
     this.serial = ('000000' + serial++).slice(-7);
-    this.type = type;
+    this.group = group;
     this.sprite = sprite;
     this.center = _.clone(center);
     this.layer = layer;
@@ -73,7 +73,7 @@ define(['underscore'], function (_) {
   // possibleCollision checks to see if this and the argument can collide, and
   // if so delegates collision handling to collision method
   Base.prototype.possibleCollision = function (actor) {
-    if (!this.noncollidables[actor.type]) this.collision();
+    if (!this.noncollidables[actor.group]) this.collision();
   };
 
   return Base;

@@ -50,12 +50,14 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
         dataType: "json",
         success: function (data) {
           sprites = new SpriteArchive(data);
-          gameWorld.add(new Player(sprites, { x: 128, y: 192 }, 1, keys));
-          gameWorld.add(new TestEnemy(gameClock, sprites, { x: 128, y: 45 }, 2,
+          gameWorld.add(new Player("Allies", sprites, { x: 128, y: 192 }, 1,
+                                   keys));
+          gameWorld.add(new TestEnemy("Enemies", sprites, { x: 128, y: 45 }, 2,
                                       { leftmost: 25, rightmost: 230,
-                                        topmost: 25, bottommost: 100 }));
-          gameWorld.add(new EnergyEnemy(gameClock, sprites, { x: 128, y: 64 },
-                                        0));
+                                        topmost: 25, bottommost: 100 },
+                                      gameClock));
+          gameWorld.add(new EnergyEnemy("Enemies", sprites, { x: 128, y: 64 },
+                                        0, gameClock));
           requestAnimationFrame(mainLoop);
         }
       });

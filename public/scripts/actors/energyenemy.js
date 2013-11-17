@@ -7,13 +7,14 @@ define(['actors/base'], function (Base) {
   // EnergyEnemy actor
   //
   // Arguments:
-  //   frameClock: FrameClock object
+  //   group: Group that the EnergyEnemy will belong to
   //   archive: SpriteArchive object
   //   center: center of the actor's sprite
   //   layer: layer to draw the actor's sprite
-  var EnergyEnemy = function (frameClock, archive, center, layer) {
-    Base.call(this, 'EnergyEnemy', archive.get('energy-ship-big1'), center,
-              layer, ['EnergyEnemy']);
+  //   frameClock: FrameClock object
+  var EnergyEnemy = function (group, archive, center, layer, frameClock) {
+    Base.call(this, group, archive.get('energy-ship-big1'), center,
+              layer, [group]);
 
     var enemy = this;
     var frame = 0;
