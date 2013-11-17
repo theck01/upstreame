@@ -11,17 +11,37 @@ define(["jquery", "underscore", "graphics/color"],
     //          undefined the pixels not drawn to are transparent
     function makePixelGrid (width, height, color) {
       var ary = [];
-      var i, j;
 
-      for(i=0; i<width; i++){
+      for(var i=0; i<width; i++){
         ary[i] = [];
-        for(j=0; j<height; j++){
-          ary[i][j] = _.clone(color);
+        for(var j=0; j<height; j++){
+          ary[i][j] = color;
         }
       }
       
       return ary;
     }
+
+
+    // clearPixelGrid clears a 2D color array to contain only the given color
+    // color
+    //
+    // Arguments:
+    //   grid: existing pixel grid
+    //   color: default color of pixels not drawn to, "#RRGGBB" string. If
+    //          undefined the pixels not drawn to are transparent
+    function clearPixelGrid (grid, color) {
+      var ary = [];
+
+      for(var i=0; i<grid.length; i++){
+        for(var j=0; j<grid[i].length; j++){
+          grid[i][j] = color;
+        }
+      }
+      
+      return ary;
+    }
+
 
 
     // diffFrames returns the change between the current pixel grid and the
@@ -68,7 +88,8 @@ define(["jquery", "underscore", "graphics/color"],
         this.backgroundColor = Color.sanitize(backgroundColor);
       }
       else this.backgroundColor = undefined;
-      this.pastBuffer = undefined;
+      this.pastBuffer = makePixelGrid(this.dim.width, this.dim.height,
+                                      undefined);
       this.pixelBuffer = makePixelGrid(this.dim.width, this.dim.height,
                                        this.backgroundColor);
       this.htmlCanvas = $(canvasID)[0];
@@ -80,7 +101,8 @@ define(["jquery", "underscore", "graphics/color"],
     PixelCanvas.prototype.clear = function () {
       var context = this.htmlCanvas.getContext("2d");
       context.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
-      this.pastBuffer = undefined;
+      this.pastBuffer = makePixelGrid(this.dim.width, this.dim.height,
+                                      undefined);
     };
 
       
@@ -138,9 +160,10 @@ define(["jquery", "underscore", "graphics/color"],
       });
 
       // reset grid to background color
+      var tmp = this.pastBuffer;
       this.pastBuffer = this.pixelBuffer;
-      this.pixelBuffer = makePixelGrid(this.dim.width, this.dim.height,
-                                       this.backgroundColor);
+      this.pixelBuffer = tmp;
+      clearPixelGrid(this.pixelBuffer, this.backgroundColor);
     };
 
 
