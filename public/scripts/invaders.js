@@ -14,6 +14,8 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
   function($, LayeredCanvas, SpriteArchive, Player, TestEnemy, EnergyEnemy,
            KeyPoll, FrameClock, Starfield, World){
 
+    var DIMENSIONS = { x: 400, y: 300 };
+
     var $canvas;
     var gameCanvas;
     var gameClock;
@@ -41,11 +43,11 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
     $(function () {
       $canvas = $("#game-canvas");
       keys = new KeyPoll();
-      gameCanvas = new LayeredCanvas(256, 256, "#game-canvas", "#000000");
+      gameCanvas = new LayeredCanvas(DIMENSIONS.x, DIMENSIONS.y, "#game-canvas",
+                                     "#000000");
       gameClock = new FrameClock();
-      starfield = new Starfield({ x: 256, y: 256}, { x: 0.5, y: 1 }, 0,
-                                gameClock);
-      gameWorld = new World({ x: 256, y: 256 }, starfield);
+      starfield = new Starfield(DIMENSIONS, { x: 0.5, y: 1 }, 0, gameClock);
+      gameWorld = new World(DIMENSIONS, starfield);
 
       $.ajax({
         async: false,
@@ -54,14 +56,25 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
         dataType: "json",
         success: function (data) {
           sprites = new SpriteArchive(data);
-          gameWorld.add(new Player("Allies", sprites, { x: 128, y: 192 }, 1,
-                                   keys));
-          gameWorld.add(new TestEnemy("Enemies", sprites, { x: 128, y: 45 }, 2,
-                                      { leftmost: 25, rightmost: 230,
-                                        topmost: 25, bottommost: 100 },
-                                      gameClock));
-          gameWorld.add(new EnergyEnemy("Enemies", sprites, { x: 128, y: 64 },
-                                        0, gameClock));
+
+          gameWorld.add(new Player("Allies", sprites, {
+            x: Math.floor(DIMENSIONS.x * 0.5),
+            y: Math.floor(DIMENSIONS.y * 0.75)
+          }, 2, keys));
+
+          gameWorld.add(new TestEnemy("Enemies", sprites, {
+            x: Math.floor(DIMENSIONS.x * 0.5),
+            y: Math.floor(DIMENSIONS.y * 0.25)
+          }, 3, {
+            leftmost: 25, rightmost: DIMENSIONS.x - 25,
+            topmost: 25, bottommost: DIMENSIONS.y - 25
+          }, gameClock));
+
+          gameWorld.add(new EnergyEnemy("Enemies", sprites, {
+            x: Math.floor(DIMENSIONS.x * 0.5),
+            y: Math.floor(DIMENSIONS.y * 0.25)
+          }, 1, gameClock));
+
           requestAnimationFrame(mainLoop);
         }
       });
