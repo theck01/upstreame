@@ -9,9 +9,10 @@ require.config({
 
 require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
          "actors/player", "actors/testenemy", "actors/energyenemy",
-         "interface/keypoll", "util/frameclock", "world/world"],
+         "interface/keypoll", "util/frameclock", "scene/starfield",
+         "world/world"],
   function($, LayeredCanvas, SpriteArchive, Player, TestEnemy, EnergyEnemy,
-           KeyPoll, FrameClock, World){
+           KeyPoll, FrameClock, Starfield, World){
 
     var $canvas;
     var gameCanvas;
@@ -19,6 +20,7 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
     var gameWorld;
     var keys;
     var sprites;
+    var starfield;
 
     function sizeCanvas() {
       if ($canvas[0].width !== $(window).width() ||
@@ -41,7 +43,9 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
       keys = new KeyPoll();
       gameCanvas = new LayeredCanvas(256, 256, "#game-canvas", "#000000");
       gameClock = new FrameClock();
-      gameWorld = new World({ x: 256, y: 256 });
+      starfield = new Starfield({ x: 256, y: 256}, { x: 0.5, y: 1 }, 0,
+                                gameClock);
+      gameWorld = new World({ x: 256, y: 256 }, starfield);
 
       $.ajax({
         async: false,
