@@ -7,7 +7,7 @@ define(['underscore', 'world/collisionframe'], function (_, CollisionFrame) {
   //   dimensions: An object with 'x' and 'y' fields
   //   background: Background object
   var World = function (dimensions, background) {
-    this.actors = [];
+    this.actors = Object.create(null);
     this.dim = dimensions;
     this.background = background;
   };
@@ -18,8 +18,7 @@ define(['underscore', 'world/collisionframe'], function (_, CollisionFrame) {
   // Arguments:
   //   actor: Actor to add to the world
   World.prototype.add = function (actor) {
-    this.remove(actor);
-    this.actors.push(actor);
+    this.actors[actor.id()] = actor;
   };
 
 
@@ -39,9 +38,7 @@ define(['underscore', 'world/collisionframe'], function (_, CollisionFrame) {
   // Arguments:
   //   actor: Actor to remove from the world
   World.prototype.remove = function (actor) {
-    this.actors = _.filter(this.actors, function (a) {
-      return actor.id() !== a.id();
-    });
+    delete this.actors[actor.id()];
   };
 
 
@@ -56,6 +53,14 @@ define(['underscore', 'world/collisionframe'], function (_, CollisionFrame) {
     });
     
     cFrame.resolve();
+
+    // remove actors from 
+    _.each(this.actors, function (a) {
+      var p = a.position();
+      if (p.x < 0 || p.x >= this.dim.x || p.y < 0 || p.y >= this.dim.y) {
+        this.remove(a);
+      }
+    }, this);
   };
 
   return World;

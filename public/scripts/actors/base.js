@@ -70,6 +70,14 @@ define(['underscore'], function (_) {
   };
 
 
+  // position in space that the actor occupies
+  //
+  // Returns an object with 'x' and 'y' integer fields
+  Base.prototype.position = function () {
+    return { x: Math.floor(this.center.x), y: Math.floor(this.center.y) };
+  };
+
+
   // possibleCollision checks to see if this and the argument can collide, and
   // if so delegates collision handling to collision method
   Base.prototype.possibleCollision = function (actor) {
