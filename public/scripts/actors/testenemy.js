@@ -1,4 +1,4 @@
-define(['actors/base'], function (Base) {
+define(['actors/base', 'util/game'], function (Base, Game) {
 
   // CONTANTS
   var SPEED = 2;
@@ -62,6 +62,11 @@ define(['actors/base'], function (Base) {
     }
   };
 
+
+  // overloaded Base.collision function
+  TestEnemy.prototype.collision = function () {
+    Game.world.remove(this);
+  };
 
   return TestEnemy;
 });

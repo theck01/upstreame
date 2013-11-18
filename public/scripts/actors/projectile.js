@@ -1,4 +1,4 @@
-define(['actors/base'], function (Base) {
+define(['actors/base', 'util/game'], function (Base, Game) {
 
   // Projectile objects are simple actors that follow a trajectory
   //
@@ -25,6 +25,12 @@ define(['actors/base'], function (Base) {
   // overloaded act specific to projectiles
   Projectile.prototype.act = function () {
     this.center = this.path();
+  };
+
+
+  // overloaded collision specific to projectiles
+  Projectile.prototype.collision = function () {
+    Game.world.remove(this);
   };
 
   return Projectile;
