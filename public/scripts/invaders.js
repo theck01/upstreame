@@ -53,23 +53,23 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
         success: function (data) {
           var sprites = new SpriteArchive(data);
 
-          Game.world.add(new Player("Allies", sprites, {
+          new Player("Allies", sprites, {
             x: Math.floor(DIMENSIONS.x * 0.5),
             y: Math.floor(DIMENSIONS.y * 0.75)
-          }, 2, Game.keys));
+          }, 2, Game.keys);
 
-          Game.world.add(new TestEnemy("Enemies", sprites, {
+          new TestEnemy("Enemies", sprites, {
             x: Math.floor(DIMENSIONS.x * 0.5),
             y: Math.floor(DIMENSIONS.y * 0.25)
           }, 3, {
             leftmost: 25, rightmost: DIMENSIONS.x - 25,
             topmost: 25, bottommost: DIMENSIONS.y - 25
-          }, Game.clock));
+          }, Game.clock);
 
-          Game.world.add(new EnergyEnemy("Enemies", sprites, {
+          new EnergyEnemy("Enemies", sprites, {
             x: Math.floor(DIMENSIONS.x * 0.5),
             y: Math.floor(DIMENSIONS.y * 0.25)
-          }, 1, Game.clock));
+          }, 1, Game.clock);
 
           requestAnimationFrame(mainLoop);
         }

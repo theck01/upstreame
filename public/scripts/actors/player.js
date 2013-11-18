@@ -80,12 +80,10 @@ define(['underscore', 'actors/base', 'actors/projectile', 'util/game'],
         var p = new Projectile(this.group, this.archive.get('human-ship-laser'),
                                leftCenter, this.layer, [this.group],
                                simplePath);
-        Game.world.add(p);
 
         p = new Projectile(this.group, this.archive.get('human-ship-laser'),
                            rightCenter, this.layer, [this.group],
                            simplePath);
-        Game.world.add(p);
       };
 
 

@@ -1,4 +1,4 @@
-define(['underscore'], function (_) {
+define(['underscore', 'util/game'], function (_, Game) {
 
   // SHARED VARIABLES
   var serial = 0;
@@ -26,6 +26,8 @@ define(['underscore'], function (_) {
       memo[c] = true;
       return memo;
     }, Object.create(null));
+
+    Game.world.add(this);
   };
 
 
