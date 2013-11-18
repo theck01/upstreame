@@ -9,20 +9,14 @@ require.config({
 
 require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
          "actors/player", "actors/testenemy", "actors/energyenemy",
-         "interface/keypoll", "util/frameclock", "scene/starfield",
+         "interface/keypoll", "util/frameclock", "util/game", "scene/starfield",
          "world/world"],
   function($, LayeredCanvas, SpriteArchive, Player, TestEnemy, EnergyEnemy,
-           KeyPoll, FrameClock, Starfield, World){
+           KeyPoll, FrameClock, Game, Starfield, World){
 
     var DIMENSIONS = { x: 400, y: 300 };
 
     var $canvas;
-    var gameCanvas;
-    var gameClock;
-    var gameWorld;
-    var keys;
-    var sprites;
-    var starfield;
 
     function sizeCanvas() {
       if ($canvas[0].width !== $(window).width() ||
@@ -33,21 +27,23 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
     }
 
     function mainLoop() {
-      gameClock.tick();
-      gameWorld.timestep();
-      gameWorld.paint(gameCanvas);
-      gameCanvas.paint();
+      Game.clock.tick();
+      Game.world.timestep();
+      Game.world.paint(Game.canvas);
+      Game.canvas.paint();
       requestAnimationFrame(mainLoop);
     }
 
     $(function () {
       $canvas = $("#game-canvas");
-      keys = new KeyPoll();
-      gameCanvas = new LayeredCanvas(DIMENSIONS.x, DIMENSIONS.y, "#game-canvas",
-                                     "#000000");
-      gameClock = new FrameClock();
-      starfield = new Starfield(DIMENSIONS, { x: 0.5, y: 1 }, 0, gameClock);
-      gameWorld = new World(DIMENSIONS, starfield);
+      Game.keys = new KeyPoll();
+      Game.canvas = new LayeredCanvas(DIMENSIONS.x, DIMENSIONS.y,
+                                      "#game-canvas", "#000000");
+      Game.clock = new FrameClock();
+
+      var starfield = new Starfield(DIMENSIONS, { x: 0.5, y: 1 }, 0,
+                                    Game.clock);
+      Game.world = new World(DIMENSIONS, starfield);
 
       $.ajax({
         async: false,
@@ -55,25 +51,25 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
         url: "/sprite/all",
         dataType: "json",
         success: function (data) {
-          sprites = new SpriteArchive(data);
+          var sprites = new SpriteArchive(data);
 
-          gameWorld.add(new Player("Allies", sprites, {
+          Game.world.add(new Player("Allies", sprites, {
             x: Math.floor(DIMENSIONS.x * 0.5),
             y: Math.floor(DIMENSIONS.y * 0.75)
-          }, 2, keys));
+          }, 2, Game.keys));
 
-          gameWorld.add(new TestEnemy("Enemies", sprites, {
+          Game.world.add(new TestEnemy("Enemies", sprites, {
             x: Math.floor(DIMENSIONS.x * 0.5),
             y: Math.floor(DIMENSIONS.y * 0.25)
           }, 3, {
             leftmost: 25, rightmost: DIMENSIONS.x - 25,
             topmost: 25, bottommost: DIMENSIONS.y - 25
-          }, gameClock));
+          }, Game.clock));
 
-          gameWorld.add(new EnergyEnemy("Enemies", sprites, {
+          Game.world.add(new EnergyEnemy("Enemies", sprites, {
             x: Math.floor(DIMENSIONS.x * 0.5),
             y: Math.floor(DIMENSIONS.y * 0.25)
-          }, 1, gameClock));
+          }, 1, Game.clock));
 
           requestAnimationFrame(mainLoop);
         }
