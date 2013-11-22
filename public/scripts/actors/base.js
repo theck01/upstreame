@@ -10,19 +10,20 @@ define(['underscore', 'util/game'], function (_, Game) {
   // Base object for all actors
   //
   // Arguments:
-  //   group: String group name of the object ['Enemy', 'Player', etc]
-  //   sprite: Instance of Sprite representing visual object
-  //   center: Center of the object, essentially location in the world
-  //   layer: Layer that it occupies in a LayeredCanvas heirarchy
-  //   noncollidables: Array of strings describing groups with which the new
-  //                   instance cannot collide
-  var Base = function (group, sprite, center, layer, noncollidables) {
+  //   opts: object with the following required fields
+  //     group: String group name of the object ['Enemy', 'Player', etc]
+  //     sprite: Instance of Sprite representing visual object
+  //     center: Center of the object, essentially location in the world
+  //     layer: Layer that it occupies in a LayeredCanvas heirarchy
+  //     noncollidables: Array of strings describing groups with which the new
+  //                     instance cannot collide
+  var Base = function (opts) {
     this.serial = ('000000' + serial++).slice(-7);
-    this.group = group;
-    this.sprite = sprite;
-    this.center = _.clone(center);
-    this.layer = layer;
-    this.noncollidables = _.reduce(noncollidables, function (memo, c) {
+    this.group = opts.group;
+    this.sprite = opts.sprite;
+    this.center = _.clone(opts.center);
+    this.layer = opts.layer;
+    this.noncollidables = _.reduce(opts.noncollidables, function (memo, c) {
       memo[c] = true;
       return memo;
     }, Object.create(null));
@@ -46,6 +47,13 @@ define(['underscore', 'util/game'], function (_, Game) {
   };
 
 
+  // destroy actor, removing it from the game world
+  // Overload in subtype but ensure that this version is called
+  Base.prototype.destroy = function () {
+    Game.world.remove(this);
+  };
+
+
   // id gets the actors serial number as a 7 digit string
   //
   // Return:
@@ -59,8 +67,8 @@ define(['underscore', 'util/game'], function (_, Game) {
   //
   // Arguments:
   //   canvas: An instance of *Canvas to paint this actors sprite on
-  Base.prototype.paint = function (canvas) {
-    this.sprite.paint(canvas, intCenter(this.center), this.layer);
+  Base.prototype.paint = function () {
+    this.sprite.paint(Game.canvas, intCenter(this.center), this.layer);
   };
 
 

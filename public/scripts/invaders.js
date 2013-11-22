@@ -53,23 +53,46 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
         success: function (data) {
           var sprites = new SpriteArchive(data);
 
-          new Player("Allies", sprites, {
-            x: Math.floor(DIMENSIONS.x * 0.5),
-            y: Math.floor(DIMENSIONS.y * 0.75)
-          }, 2, Game.keys);
+          new Player({
+            group: "Allies",
+            archive: sprites,
+            center: {
+              x: Math.floor(DIMENSIONS.x * 0.5),
+              y: Math.floor(DIMENSIONS.y * 0.75)
+            },
+            layer: 2,
+            noncollidables: ["Allies"],
+            frameClock: Game.clock,
+            keypoll: Game.keys
+          });
 
-          new TestEnemy("Enemies", sprites, {
-            x: Math.floor(DIMENSIONS.x * 0.5),
-            y: Math.floor(DIMENSIONS.y * 0.25)
-          }, 3, {
-            leftmost: 25, rightmost: DIMENSIONS.x - 25,
-            topmost: 25, bottommost: DIMENSIONS.y - 25
-          }, Game.clock);
+          new TestEnemy({
+            group: "Enemies",
+            sprite: sprites.get("lizard-ship"),
+            center: {
+              x: Math.floor(DIMENSIONS.x * 0.5),
+              y: Math.floor(DIMENSIONS.y * 0.25)
+            },
+            layer: 3,
+            noncollidables: ["Enemies"],
+            bounds: {
+              leftmost: 25, rightmost: DIMENSIONS.x - 25,
+              topmost: 25, bottommost: DIMENSIONS.y - 25
+            },
+            frameClock: Game.clock
+          });
 
-          new EnergyEnemy("Enemies", sprites, {
-            x: Math.floor(DIMENSIONS.x * 0.5),
-            y: Math.floor(DIMENSIONS.y * 0.25)
-          }, 1, Game.clock);
+          new EnergyEnemy({
+            group: "Enemies",
+            archive: sprites,
+            center: {
+              x: Math.floor(DIMENSIONS.x * 0.5),
+              y: Math.floor(DIMENSIONS.y * 0.25)
+            },
+            layer: 1,
+            noncollidables: ["Enemies"],
+            frameClock: Game.clock
+          });
 
           requestAnimationFrame(mainLoop);
         }

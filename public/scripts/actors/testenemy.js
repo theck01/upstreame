@@ -1,4 +1,4 @@
-define(['actors/base', 'util/game'], function (Base, Game) {
+define(['actors/base'], function (Base) {
 
   // CONTANTS
   var SPEED = 2;
@@ -8,22 +8,24 @@ define(['actors/base', 'util/game'], function (Base, Game) {
   // TestEnemy actor, performs simplistic actions with no situational awareness
   //
   // Arguments:
-  //   frameClock: FrameClock object
-  //   archive: SpriteArchive object
-  //   center: center of the actor's sprite
-  //   layer: layer to draw the actor's sprite
-  //   bounds: Object with four fields: 'topmost', 'bottommost', 'leftmost',
-  //           'rightmost' representing the area in which the actor may move
-  var TestEnemy = function (group, archive, center, layer, bounds, frameClock) {
-    Base.call(this, group, archive.get('lizard-ship'), center, layer,
-              [group]);
+  //   opts: object with the following required fields
+  //     group: String group name of the object ['Enemy', 'Player', etc]
+  //     sprite: Instance of Sprite representing visual object
+  //     center: Center of the object, essentially location in the world
+  //     layer: Layer that it occupies in a LayeredCanvas heirarchy
+  //     noncollidables: Array of strings describing groups with which the new
+  //                     instance cannot collide
+  //     frameClock: FrameClock object
+  //     bounds: Object with four fields: 'topmost', 'bottommost', 'leftmost',
+  //             'rightmost' representing the area in which the actor may move
+  var TestEnemy = function (opts) {
+    Base.call(this, opts);
 
-    this.archive = archive;
-    this.bounds = bounds;
+    this.bounds = opts.bounds;
     this.velocity = { x: 0, y: 0 };
 
     var enemy = this;
-    frameClock.recurring(function () {
+    opts.frameClock.recurring(function () {
       // randomly select direction in which to move
       enemy.velocity.x = Math.floor(Math.random() * 3) - 1;
       enemy.velocity.y = Math.floor(Math.random() * 3) - 1;
@@ -65,7 +67,7 @@ define(['actors/base', 'util/game'], function (Base, Game) {
 
   // overloaded Base.collision function
   TestEnemy.prototype.collision = function () {
-    Game.world.remove(this);
+    this.destroy();
   };
 
   return TestEnemy;

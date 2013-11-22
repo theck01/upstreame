@@ -1,5 +1,5 @@
-define(['underscore', 'actors/base', 'actors/projectile', 'util/game'],
-    function (_, Base, Projectile, Game) {
+define(['underscore', 'actors/base', 'actors/projectile'],
+    function (_, Base, Projectile) {
 
       // CONSTANTS
       var SPEED = 2;
@@ -9,17 +9,22 @@ define(['underscore', 'actors/base', 'actors/projectile', 'util/game'],
       // Player actor, controlled directly by keyboard (or other) input
       //
       // Arguments:
-      //   group: Collision group that the new player will belong to
-      //   archive: SpriteArchive object
-      //   center: center of the player sprite
-      //   layer: layer to draw the player sprite
-      //   keypoll: KeyPoll object, used for controlling sprite
-      var Player = function (group, archive, center, layer, keypoll) {
-        Base.call(this, group, archive.get('human-ship'), center, layer,
-                  [group]);
-        this.archive = archive;
-        this.keypoll = keypoll;
+      //   opts: object with the following required fields
+      //     group: Collision group that the new player will belong to
+      //     archive: SpriteArchive object
+      //     center: center of the player sprite
+      //     layer: layer to draw the player sprite
+      //     noncollidables: Array of strings describing groups with which the
+      //                     new instance cannot collide
+      //     frameClock: FrameClock object
+      //     keypoll: KeyPoll object, used for controlling sprite
+      var Player = function (opts) {
+        opts.sprite = opts.archive.get('human-ship');
+        Base.call(this, opts);
+        this.archive = opts.archive;
+        this.frameClock = opts.frameClock;
         this.fireReady = true;
+        this.keypoll = opts.keypoll;
       };
       Player.prototype = Object.create(Base.prototype);
       Player.prototype.constructor = Player;
@@ -58,6 +63,11 @@ define(['underscore', 'actors/base', 'actors/projectile', 'util/game'],
       };
 
 
+      Player.prototype.collision = function () {
+        this.destroy();
+      };
+
+
       // fire a laser shot from the center of the ship
       Player.prototype.fire = function () {
 
@@ -66,7 +76,7 @@ define(['underscore', 'actors/base', 'actors/projectile', 'util/game'],
         this.fireReady = false;
 
         var player = this;
-        Game.clock.schedule(function () {
+        this.frameClock.schedule(function () {
           player.fireReady = true;
         }, FIRE_COOLDOWN);
 
@@ -77,13 +87,22 @@ define(['underscore', 'actors/base', 'actors/projectile', 'util/game'],
         var leftCenter = { x: this.center.x - 10, y: this.center.y - 9 };
         var rightCenter = { x: this.center.x + 9, y: this.center.y - 9 };
 
-        var p = new Projectile(this.group, this.archive.get('human-ship-laser'),
-                               leftCenter, this.layer, [this.group],
-                               simplePath);
-
-        p = new Projectile(this.group, this.archive.get('human-ship-laser'),
-                           rightCenter, this.layer, [this.group],
-                           simplePath);
+        new Projectile({
+          group: this.group,
+          sprite: this.archive.get('human-ship-laser'),
+          center: leftCenter,
+          layer: this.layer,
+          noncollidables: [this.group],
+          path: simplePath
+        });
+        new Projectile({
+          group: this.group,
+          sprite: this.archive.get('human-ship-laser'),
+          center: rightCenter,
+          layer: this.layer,
+          noncollidables: [this.group],
+          path: simplePath
+        });
       };
 
 
