@@ -76,7 +76,7 @@ require(["jquery", "graphics/spritearchive", "graphics/viewport",
             layer: 3,
             noncollidables: ["Enemies"],
             bounds: {
-              leftmost: Math.floor(DIMENSIONS.width/2),
+              leftmost: Math.floor(DIMENSIONS.width/2) + 25,
               rightmost: DIMENSIONS.width - 25,
               topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
             },
@@ -93,7 +93,7 @@ require(["jquery", "graphics/spritearchive", "graphics/viewport",
             layer: 3,
             noncollidables: ["Enemies"],
             bounds: {
-              leftmost: 25, rightmost: Math.floor(DIMENSIONS.width/2),
+              leftmost: 25, rightmost: Math.floor(DIMENSIONS.width/2) - 25,
               topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
             },
             frameClock: Game.clock

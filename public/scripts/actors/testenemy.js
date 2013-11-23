@@ -27,9 +27,10 @@ define(['actors/base', 'actors/projectile'], function (Base, Projectile) {
     this.bounds = opts.bounds;
     this.velocity = { x: 0, y: 0 };
     this.frameClock = opts.frameClock;
+    this.fireID = undefined;
 
     var enemy = this;
-    enemy.frameClock.recurring(function () {
+    this.behaviorID = enemy.frameClock.recurring(function () {
       // randomly select direction in which to move
       if (Math.random() < FIRE_CHANCE) {
         enemy.velocity.x = 0;
@@ -82,11 +83,19 @@ define(['actors/base', 'actors/projectile'], function (Base, Projectile) {
   };
 
 
+  // overloaded Base.destroy function
+  TestEnemy.prototype.destroy = function () {
+    if (this.behaviorID) this.frameClock.cancel(this.behaviorID);
+    if (this.fireID) this.frameClock.cancel(this.fireID);
+    Base.prototype.destroy.call(this);
+  };
+
+
   TestEnemy.prototype.fire = function () {
     var enemy = this;
     enemy.sprite = enemy.archive.get('lizard-ship-prefire');
 
-    enemy.frameClock.schedule(function () {
+    enemy.fireID = enemy.frameClock.schedule(function () {
 
       enemy.sprite = enemy.archive.get('lizard-ship-firing');
       new Projectile({
@@ -100,13 +109,14 @@ define(['actors/base', 'actors/projectile'], function (Base, Projectile) {
         }
       });
 
-      enemy.frameClock.schedule(function () {
+      enemy.fireID = enemy.frameClock.schedule(function () {
 
         enemy.sprite = enemy.archive.get('lizard-ship-prefire');
 
-        enemy.frameClock.schedule(function () {
+        enemy.fireID = enemy.frameClock.schedule(function () {
 
           enemy.sprite = enemy.archive.get('lizard-ship');
+          enemy.fireID = undefined;
         }, 10);
       }, 5);
     }, 10);

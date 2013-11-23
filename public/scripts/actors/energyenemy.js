@@ -19,9 +19,11 @@ define(['actors/base'], function (Base) {
     opts.sprite = opts.archive.get('energy-ship-big1');
     Base.call(this, opts);
 
+    this.frameClock = opts.frameClock;
+
     var enemy = this;
     var frame = 0;
-    opts.frameClock.recurring(function () {
+    this.animationID = this.frameClock.recurring(function () {
       var spriteName = 'energy-ship-big';
       spriteName += (Math.floor(frame/ANIMATION_FRAME_RATE) + 1).toString();
       frame = (frame + 1) % (ANIMATION_FRAME_RATE * ANIMATION_CELLS);
@@ -39,6 +41,13 @@ define(['actors/base'], function (Base) {
   // overloaded collision function
   EnergyEnemy.prototype.collision = function () {
     this.destroy();
+  };
+
+
+  // overload destroy function
+  EnergyEnemy.prototype.destroy = function () {
+    this.frameClock.cancel(this.animationID);
+    Base.prototype.destroy.call(this);
   };
 
 
