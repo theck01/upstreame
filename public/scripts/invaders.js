@@ -7,11 +7,11 @@ require.config({
   }
 });
 
-require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
+require(["jquery", "graphics/spritearchive", "graphics/viewport",
          "actors/player", "actors/testenemy", "actors/energyenemy",
          "interface/keypoll", "util/frameclock", "util/game", "scene/starfield",
          "world/world"],
-  function($, LayeredCanvas, SpriteArchive, Player, TestEnemy, EnergyEnemy,
+  function($, SpriteArchive, Viewport, Player, TestEnemy, EnergyEnemy,
            KeyPoll, FrameClock, Game, Starfield, World){
 
     var DIMENSIONS = { width: 400, height: 300 };
@@ -29,15 +29,16 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
     function mainLoop() {
       Game.clock.tick();
       Game.world.timestep();
-      Game.world.paint(Game.canvas);
-      Game.canvas.paint();
+      Game.world.renderTo(Game.viewport);
+      Game.viewport.paint();
       requestAnimationFrame(mainLoop);
     }
 
     $(function () {
       $canvas = $("#game-canvas");
       Game.keys = new KeyPoll();
-      Game.canvas = new LayeredCanvas(DIMENSIONS, "#game-canvas", "#000000");
+      Game.viewport = new Viewport(DIMENSIONS, { x: 0, y: 0 }, "#game-canvas",
+                                   "#000000");
       Game.clock = new FrameClock();
 
       var starfield = new Starfield(DIMENSIONS, { x: 0.5, y: 1 }, 0,

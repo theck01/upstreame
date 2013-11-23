@@ -85,7 +85,7 @@ define(['underscore'], function (_) {
   //
   // Arguments:
   //   canvas: instance of *Canvas to paint on
-  Starfield.prototype.paint = function (canvas) {
+  Starfield.prototype.paintOn = function (canvas) {
     _.each(this.stars, function (s) {
       canvas.setPixel(Math.floor(s.x), Math.floor(s.y), STAR_COLOR, this.layer);
     }, this);

@@ -33,7 +33,7 @@ require(["jquery", "graphics/pixelcanvas", "graphics/sprite"],
         dataType: "json",
         success: function (data) {
           splashScreenSprite = new Sprite(data.pixels, data.center);
-          splashScreenSprite.paint(gameCanvas, { x: 64, y: 64 });
+          splashScreenSprite.paintOn(gameCanvas, { x: 64, y: 64 });
           gameCanvas.paint();
         }
       });
@@ -42,7 +42,7 @@ require(["jquery", "graphics/pixelcanvas", "graphics/sprite"],
  
       $(window).resize(function() {
         sizeCanvas();
-        splashScreenSprite.paint(gameCanvas, { x: 64, y: 64 });
+        splashScreenSprite.paintOn(gameCanvas, { x: 64, y: 64 });
         gameCanvas.paint();
       });
     });

@@ -63,12 +63,20 @@ define(['underscore', 'util/game'], function (_, Game) {
   };
 
 
-  // paint the actor's sprite onto a canvas
+  // paintOn the actor's sprite onto a canvas
   //
   // Arguments:
   //   canvas: An instance of *Canvas to paint this actors sprite on
-  Base.prototype.paint = function () {
-    this.sprite.paint(Game.canvas, intCenter(this.center), this.layer);
+  //   offset: Optional, an object with 'x' and 'y' fields that can be used to
+  //           shift the actor's sprite location
+  Base.prototype.paintOn = function (canvas, offset) {
+    var center;
+    if (offset) {
+      center = { x: this.center.x - offset.x, y: this.center.y - offset.y };
+    }
+    else center = this.center;
+
+    this.sprite.paintOn(canvas, intCenter(center), this.layer);
   };
 
 

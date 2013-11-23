@@ -17,13 +17,13 @@ define(['underscore'], function (_) {
   };
 
 
-  // paint draws the sprite to an instance of *Canvas relocated to have the
+  // paintOn draws the sprite to an instance of *Canvas relocated to have the
   // center specified.
   //
   // Arguments:
   //   canvas: An instance of either PixelCanvas or LayeredCanvas
   //   center: An object with 'x' and 'y', the center of all pixels
-  Sprite.prototype.paint = function (canvas, center, layer) {
+  Sprite.prototype.paintOn = function (canvas, center, layer) {
     _.each(this.pxls, function (p) {
       canvas.setPixel(p.x + center.x, p.y + center.y, p.color, layer);
     });

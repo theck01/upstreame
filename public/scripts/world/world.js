@@ -22,23 +22,23 @@ define(['underscore', 'world/collisionframe'], function (_, CollisionFrame) {
   };
 
 
-  // paint renders any background image and all actors in the world to the
-  // canvas
-  World.prototype.paint = function (canvas) {
-    if (this.background) this.background.paint(canvas);
-
-    _.each(this.actors, function (a) {
-      a.paint(canvas);
-    });
-  };
-
-
   // remove an actor from the world
   //
   // Arguments:
   //   actor: Actor to remove from the world
   World.prototype.remove = function (actor) {
     delete this.actors[actor.id()];
+  };
+
+
+  // renderTo paints any background image and all actors in the world to the
+  // viewport
+  World.prototype.renderTo = function (viewport) {
+    if (this.background) viewport.renderBackground(this.background);
+
+    _.each(this.actors, function (a) {
+      viewport.render(a);
+    });
   };
 
 
