@@ -8,6 +8,7 @@ define(['underscore', 'util/priorityqueue'], function (_, PriorityQueue) {
   // recurring events to be called after tick intervals
   var FrameClock = function () {
     this.ticks = 0;
+    this.cancelled = [];
     this.events = new PriorityQueue(function (a, b) {
       if (a.tick <= b.tick) return true;
       return false;
@@ -42,6 +43,16 @@ define(['underscore', 'util/priorityqueue'], function (_, PriorityQueue) {
   };
 
 
+  // cancel removes the event with given id from the schedule queue, never to
+  // be called again
+  FrameClock.prototype.cancel = function (id) {
+    this.events.filter(function (e) {
+      return e.id !== id;
+    });
+    this.cancelled.push(id);
+  };
+
+
   // schedule sets a callback function to be called n ticks from now
   //
   // Arguments:
@@ -62,12 +73,18 @@ define(['underscore', 'util/priorityqueue'], function (_, PriorityQueue) {
   // wait time has ended
   FrameClock.prototype.tick = function () {
     this.ticks++;
+    var clock = this;
 
     var events = [];
-    while(this.events.peek() && this.events.peek().tick <= this.ticks) {
-      events.push(this.events.pop());
+    while(clock.events.peek() && clock.events.peek().tick <= clock.ticks) {
+      events.push(clock.events.pop());
     }
-    _.each(events, function (e) { e.cb(); });
+    _.each(events, function (e) {
+      var wasCancelled = _.find(clock.cancelled, function (id) {
+        return id === e.id;
+      });
+      if (!wasCancelled) e.cb();
+    });
   };
 
 

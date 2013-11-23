@@ -1,4 +1,4 @@
-define([], function () {
+define(['underscore'], function (_) {
 
   function childrenIndicies (parentIndex) {
     return [parentIndex*2 + 1, parentIndex*2 + 2];
@@ -58,6 +58,20 @@ define([], function () {
   };
 
 
+  // filter removes all elements in the priority queue that do pass the
+  // predicate function
+  //
+  // Arguments:
+  //   pred: function that takes one argument and returns either true or false  
+  PriorityQueue.prototype.filter = function (pred) {
+    var filteredArray = _.filter(this.heap, pred);
+    this.heap = [];
+    _.each(filteredArray, function(e) {
+      this.push(e);
+    }, this);
+  };
+
+
   // peek returns highest priority element without removing it from the queue
   //
   // Returns:
@@ -89,6 +103,7 @@ define([], function () {
     this.heap.push(elem);
     upHeap(this.heap, this.heap.length - 1, this.comp);
   };
+
 
   return PriorityQueue;
 });

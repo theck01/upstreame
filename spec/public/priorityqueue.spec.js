@@ -31,6 +31,22 @@ describe('PriorityQueue', function () {
     done();
   });
 
+  describe('PriorityQueue#remove', function () {
+    it('should remove elements while preserving priority order',
+      function (done) {
+        pq.filter(function (e) {
+          return e !== 5;
+        });
+
+        _.each([9,6,4,2,1], function (i) {
+          pq.pop().should.eql(i);
+        });
+
+        done();
+      }
+    );
+  });
+
   describe('PriorityQueue#peek', function () {
     context('when queue is not empty', function () {
       it('should return the highest priority element without removal',

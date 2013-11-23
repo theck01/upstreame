@@ -20,6 +20,22 @@ describe('FrameClock', function () {
     fc = new FrameClock();
   });
 
+  describe('FrameClock#cancel', function () {
+    it('should stop an event from being run in the future', function (done) {
+      var called = false;
+      var eventID = fc.schedule(function () {
+        called = true;
+      }, 3);
+
+      fc.tick();
+      fc.cancel(eventID);
+      for (var i=0; i<3; i++) fc.tick();
+
+      called.should.be.false;
+      done();
+    });
+  });
+
   describe('FrameClock#schedule', function () {
     it('should run a function n ticks in the future', function (done) {
       var called = false;
