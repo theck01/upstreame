@@ -68,16 +68,33 @@ require(["jquery", "graphics/spritearchive", "graphics/viewport",
 
           new TestEnemy({
             group: "Enemies",
-            sprite: sprites.get("lizard-ship"),
+            archive: sprites,
             center: {
-              x: Math.floor(DIMENSIONS.width * 0.5),
+              x: Math.floor(DIMENSIONS.width * 0.67),
               y: Math.floor(DIMENSIONS.height * 0.25)
             },
             layer: 3,
             noncollidables: ["Enemies"],
             bounds: {
-              leftmost: 25, rightmost: DIMENSIONS.width - 25,
-              topmost: 25, bottommost: DIMENSIONS.height - 25
+              leftmost: Math.floor(DIMENSIONS.width/2),
+              rightmost: DIMENSIONS.width - 25,
+              topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
+            },
+            frameClock: Game.clock
+          });
+
+          new TestEnemy({
+            group: "Enemies",
+            archive: sprites,
+            center: {
+              x: Math.floor(DIMENSIONS.width * 0.33),
+              y: Math.floor(DIMENSIONS.height * 0.25)
+            },
+            layer: 3,
+            noncollidables: ["Enemies"],
+            bounds: {
+              leftmost: 25, rightmost: Math.floor(DIMENSIONS.width/2),
+              topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
             },
             frameClock: Game.clock
           });

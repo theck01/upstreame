@@ -1,8 +1,9 @@
-define(['actors/base'], function (Base) {
+define(['actors/base', 'actors/projectile'], function (Base, Projectile) {
 
   // CONTANTS
   var SPEED = 2;
   var DIAGONAL_SPEED = SPEED/Math.sqrt(2);
+  var FIRE_CHANCE = 0.25;
 
 
   // TestEnemy actor, performs simplistic actions with no situational awareness
@@ -10,7 +11,7 @@ define(['actors/base'], function (Base) {
   // Arguments:
   //   opts: object with the following required fields
   //     group: String group name of the object ['Enemy', 'Player', etc]
-  //     sprite: Instance of Sprite representing visual object
+  //     archive: Instance of Sprite representing visual object
   //     center: Center of the object, essentially location in the world
   //     layer: Layer that it occupies in a LayeredCanvas heirarchy
   //     noncollidables: Array of strings describing groups with which the new
@@ -19,16 +20,26 @@ define(['actors/base'], function (Base) {
   //     bounds: Object with four fields: 'topmost', 'bottommost', 'leftmost',
   //             'rightmost' representing the area in which the actor may move
   var TestEnemy = function (opts) {
+    opts.sprite = opts.archive.get('lizard-ship');
     Base.call(this, opts);
 
+    this.archive = opts.archive;
     this.bounds = opts.bounds;
     this.velocity = { x: 0, y: 0 };
+    this.frameClock = opts.frameClock;
 
     var enemy = this;
-    opts.frameClock.recurring(function () {
+    enemy.frameClock.recurring(function () {
       // randomly select direction in which to move
-      enemy.velocity.x = Math.floor(Math.random() * 3) - 1;
-      enemy.velocity.y = Math.floor(Math.random() * 3) - 1;
+      if (Math.random() < FIRE_CHANCE) {
+        enemy.velocity.x = 0;
+        enemy.velocity.y = 0;
+        enemy.fire();
+      }
+      else {
+        enemy.velocity.x = Math.floor(Math.random() * 3) - 1;
+        enemy.velocity.y = Math.floor(Math.random() * 3) - 1;
+      }
     }, 30);
   };
   TestEnemy.prototype = Object.create(Base.prototype);
@@ -68,6 +79,37 @@ define(['actors/base'], function (Base) {
   // overloaded Base.collision function
   TestEnemy.prototype.collision = function () {
     this.destroy();
+  };
+
+
+  TestEnemy.prototype.fire = function () {
+    var enemy = this;
+    enemy.sprite = enemy.archive.get('lizard-ship-prefire');
+
+    enemy.frameClock.schedule(function () {
+
+      enemy.sprite = enemy.archive.get('lizard-ship-firing');
+      new Projectile({
+        group: enemy.group,
+        sprite: enemy.archive.get('enemy-ship-laser'),
+        center: enemy.center,
+        layer: enemy.layer,
+        noncollidables: [enemy.group],
+        path: function () {
+          return { x: this.center.x, y: this.center.y + SPEED*2 };
+        }
+      });
+
+      enemy.frameClock.schedule(function () {
+
+        enemy.sprite = enemy.archive.get('lizard-ship-prefire');
+
+        enemy.frameClock.schedule(function () {
+
+          enemy.sprite = enemy.archive.get('lizard-ship');
+        }, 10);
+      }, 5);
+    }, 10);
   };
 
   return TestEnemy;
