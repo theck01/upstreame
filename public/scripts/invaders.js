@@ -14,7 +14,7 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
   function($, LayeredCanvas, SpriteArchive, Player, TestEnemy, EnergyEnemy,
            KeyPoll, FrameClock, Game, Starfield, World){
 
-    var DIMENSIONS = { x: 400, y: 300 };
+    var DIMENSIONS = { width: 400, height: 300 };
 
     var $canvas;
 
@@ -37,8 +37,7 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
     $(function () {
       $canvas = $("#game-canvas");
       Game.keys = new KeyPoll();
-      Game.canvas = new LayeredCanvas(DIMENSIONS.x, DIMENSIONS.y,
-                                      "#game-canvas", "#000000");
+      Game.canvas = new LayeredCanvas(DIMENSIONS, "#game-canvas", "#000000");
       Game.clock = new FrameClock();
 
       var starfield = new Starfield(DIMENSIONS, { x: 0.5, y: 1 }, 0,
@@ -57,8 +56,8 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
             group: "Allies",
             archive: sprites,
             center: {
-              x: Math.floor(DIMENSIONS.x * 0.5),
-              y: Math.floor(DIMENSIONS.y * 0.75)
+              x: Math.floor(DIMENSIONS.width * 0.5),
+              y: Math.floor(DIMENSIONS.height * 0.75)
             },
             layer: 2,
             noncollidables: ["Allies"],
@@ -70,14 +69,14 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
             group: "Enemies",
             sprite: sprites.get("lizard-ship"),
             center: {
-              x: Math.floor(DIMENSIONS.x * 0.5),
-              y: Math.floor(DIMENSIONS.y * 0.25)
+              x: Math.floor(DIMENSIONS.width * 0.5),
+              y: Math.floor(DIMENSIONS.height * 0.25)
             },
             layer: 3,
             noncollidables: ["Enemies"],
             bounds: {
-              leftmost: 25, rightmost: DIMENSIONS.x - 25,
-              topmost: 25, bottommost: DIMENSIONS.y - 25
+              leftmost: 25, rightmost: DIMENSIONS.width - 25,
+              topmost: 25, bottommost: DIMENSIONS.height - 25
             },
             frameClock: Game.clock
           });
@@ -86,8 +85,8 @@ require(["jquery", "graphics/layeredcanvas", "graphics/spritearchive",
             group: "Enemies",
             archive: sprites,
             center: {
-              x: Math.floor(DIMENSIONS.x * 0.5),
-              y: Math.floor(DIMENSIONS.y * 0.25)
+              x: Math.floor(DIMENSIONS.width * 0.5),
+              y: Math.floor(DIMENSIONS.height * 0.25)
             },
             layer: 1,
             noncollidables: ["Enemies"],

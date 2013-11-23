@@ -5,8 +5,8 @@ define(["jquery", "underscore", "graphics/color"],
     // string at each location in the array
     //
     // Arguments:
-    //   width: width of the pixel grid
-    //   height: height of the pixel grid
+    //   width: width of the pixel canvas in meta-pixels
+    //   height: height of the pixel canvas in meta-pixels
     //   color: default color of pixels not drawn to, "#RRGGBB" string. If
     //          undefined the pixels not drawn to are transparent
     function makePixelGrid (width, height, color) {
@@ -77,13 +77,12 @@ define(["jquery", "underscore", "graphics/color"],
     // draw meta-pixels on the canvas. Clears the canvas on creation
     //
     // Constructor Arguments:
-    //   width: width of the pixel canvas in meta-pixels
-    //   height: height of the pixel canvas in meta-pixels
+    //   dimensions: object with 'width' and 'height' fields
     //   canvasID: css selector style id of the canvas on the page
     //   backgroundColor: default color of pixels not drawn to, "#RRGGBB" string
     //                    Optional, default is undefined (transparent)
-    var PixelCanvas = function (width, height, canvasID, backgroundColor) {
-      this.dim = { width: width, height: height };
+    var PixelCanvas = function (dimensions, canvasID, backgroundColor) {
+      this.dim = _.clone(dimensions);
       if (backgroundColor) {
         this.backgroundColor = Color.sanitize(backgroundColor);
       }

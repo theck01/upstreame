@@ -6,10 +6,9 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
     // pixels on an HTML canvas
     //
     // Constructor Arguments;
-    //   width: width of the pixel canvas in meta-pixels
-    //   height: height of the pixel canvas in meta-pixels
+    //   dimensions: object with 'width' and 'height' fields
     //   canvasID: css selector style id of the canvas on the page
-    var PixelColorer = function (width, height, canvasID) {
+    var PixelColorer = function (dimensions, canvasID) {
       var that = this;
 
       this.$htmlCanvas = $(canvasID);
@@ -17,9 +16,9 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
       this.backgroundColor = "#FFFFFF";
       this.canvasID = canvasID;
       this.currentColor = "#000000";
-      this.dim = { width: width, height: height };
+      this.dim = _.clone(dimensions);
       this.mouseDown = false;
-      this.pCanvas = new PixelCanvas(width, height, canvasID,
+      this.pCanvas = new PixelCanvas(dimensions, canvasID,
                                      this.backgroundColor);
       this.pixels = [];
       this.mouseMoveAction = function () {};
@@ -234,8 +233,8 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
     //   height: height of the pixel canvas in meta-pixels
     PixelColorer.prototype.resize = function (width, height){
       this.dim = { width: width, height: height };
-      this.pCanvas = new PixelCanvas(this.dim.width, this.dim.height,
-                                     this.canvasID, this.backgroundColor);
+      this.pCanvas = new PixelCanvas(this.dim, this.canvasID,
+                                     this.backgroundColor);
       this.paint();
     };
 
@@ -261,8 +260,8 @@ define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
     //   color: a hexadecimal string "#RRGGBB"
     PixelColorer.prototype.setBackgroundColor = function (color) {
       this.backgroundColor = Color.sanitize(color);
-      this.pCanvas = new PixelCanvas(this.dim.width, this.dim.height,
-                                     this.canvasID, this.backgroundColor);
+      this.pCanvas = new PixelCanvas(this.dim, this.canvasID,
+                                     this.backgroundColor);
       this.paint();
     };
 

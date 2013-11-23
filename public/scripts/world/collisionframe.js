@@ -4,10 +4,9 @@ define(['underscore', 'util/encoder'], function (_, Encoder) {
   // metapixels
   //
   // Arguments:
-  //   width: width of the world in meta pixels
-  //   height: height of the world in meta pixels
-  var CollisionFrame = function (width, height) {
-    this.dim = { width: width, height: height };
+  //   dimensions: An object with 'width' and 'height' fields
+  var CollisionFrame = function (dimensions) {
+    this.dim = _.clone(dimensions);
     this.world = Object.create(null);
     this.collisions = Object.create(null);
     this.actors = Object.create(null);
@@ -49,7 +48,7 @@ define(['underscore', 'util/encoder'], function (_, Encoder) {
         _.each(this.world[scalar], function (a) {
           var key;
           if (a.id() < actor.id()) key = a.id() + actor.id();
-          else key = actor.id + a.id();
+          else key = actor.id() + a.id();
 
           this.collisions[key] = [a, actor];
         }, this);

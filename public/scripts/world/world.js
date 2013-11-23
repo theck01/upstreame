@@ -4,11 +4,11 @@ define(['underscore', 'world/collisionframe'], function (_, CollisionFrame) {
   // dimensions, appearance, actors within, etc.
   //
   // Arguments:
-  //   dimensions: An object with 'x' and 'y' fields
+  //   dimensions: An object with 'width' and 'height' fields
   //   background: Background object
   var World = function (dimensions, background) {
     this.actors = Object.create(null);
-    this.dim = dimensions;
+    this.dim = _.clone(dimensions);
     this.background = background;
   };
 
@@ -45,7 +45,7 @@ define(['underscore', 'world/collisionframe'], function (_, CollisionFrame) {
   // timestep advances the world simulation by one time unit, giving all
   // actors a chance to act and collisions to be resolved
   World.prototype.timestep = function () {
-    var cFrame = new CollisionFrame(this.dim.x, this.dim.y);
+    var cFrame = new CollisionFrame(this.dim);
 
     _.each(this.actors, function (a) {
       a.act();
@@ -57,7 +57,8 @@ define(['underscore', 'world/collisionframe'], function (_, CollisionFrame) {
     // remove actors from 
     _.each(this.actors, function (a) {
       var p = a.position();
-      if (p.x < 0 || p.x >= this.dim.x || p.y < 0 || p.y >= this.dim.y) {
+      if (p.x < 0 || p.x >= this.dim.width || p.y < 0 ||
+          p.y >= this.dim.height) {
         this.remove(a);
       }
     }, this);

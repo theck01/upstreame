@@ -24,7 +24,8 @@ require(["jquery", "graphics/pixelcanvas", "graphics/sprite"],
     
     $(function () {
       $canvas = $("#game-canvas");
-      gameCanvas = new PixelCanvas(128, 128, "#game-canvas", "#000000");
+      gameCanvas = new PixelCanvas({ width: 128, height: 128 }, "#game-canvas",
+                                   "#000000");
 
       $.ajax({
         type: "GET",

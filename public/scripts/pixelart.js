@@ -133,8 +133,11 @@ require(["jquery", "underscore", "interface/pixelcolorer", "bootstrap",
       $canvas = $("#pixel-art-canvas");
       sizeCanvas();
 
-      pixelArtCanvas = new PixelColorer(initialSize, initialSize,
-                                        "#pixel-art-canvas");
+      pixelArtCanvas = new PixelColorer({
+        width: initialSize,
+        height: initialSize
+      }, "#pixel-art-canvas");
+
       pixelArtCanvas.mousemove(function () {
         if($("input:radio[name=action]:checked").val() === "get"){
           $pixelColorInput.val(pixelArtCanvas.getColor());

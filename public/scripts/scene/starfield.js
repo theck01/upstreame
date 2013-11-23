@@ -9,7 +9,8 @@ define(['underscore'], function (_) {
   // stars
   //
   // Arguments:
-  //   dimensions: object with 'x' and 'y' fields, area stars can occupy
+  //   dimensions: object with 'width' and 'height' fields, area stars can
+  //               occupy
   //   driftVelocity: object with 'x' and 'y', shift distance per update 
   //   layer: layer on which to draw star fields in a *Canvas
   //   frameClock: FrameClock instance to register recurring drift event
@@ -17,8 +18,8 @@ define(['underscore'], function (_) {
     this.layer = layer;
 
     this.stars = [];
-    for (var i=0; i<dimensions.x; i++) {
-      for (var j=0; j<dimensions.y; j++) {
+    for (var i=0; i<dimensions.width; i++) {
+      for (var j=0; j<dimensions.height; j++) {
         if (Math.random() < STAR_DENSITY) this.stars.push({ x: i, y: j });
       }
     }
@@ -31,8 +32,8 @@ define(['underscore'], function (_) {
       // shift stars
       field.stars = _.reduce(field.stars, function (memo, s) {
         var drifted = { x: s.x + driftVelocity.x, y: s.y + driftVelocity.y };
-        if (drifted.x >= 0 && drifted.x  < dimensions.x && drifted.y >= 0 &&
-            drifted.y < dimensions.y) {
+        if (drifted.x >= 0 && drifted.x  < dimensions.width && drifted.y >= 0 &&
+            drifted.y < dimensions.height) {
           memo.push(drifted);
         }
 
@@ -46,11 +47,11 @@ define(['underscore'], function (_) {
         replaceBounds.leftmost = 0;
         replaceBounds.rightmost = Math.ceil(driftVelocity.x) - 1;
         replaceBounds.startx = replaceBounds.rightmost + 1;
-        replaceBounds.endx = dimensions.x - 1;
+        replaceBounds.endx = dimensions.width - 1;
       }
       else {
-        replaceBounds.leftmost = dimensions.x + Math.ceil(driftVelocity.x);
-        replaceBounds.rightmost = dimensions.x - 1;
+        replaceBounds.leftmost = dimensions.width + Math.ceil(driftVelocity.x);
+        replaceBounds.rightmost = dimensions.width - 1;
         replaceBounds.startx = 0;
         replaceBounds.endx = replaceBounds.leftmost - 1;
       }
@@ -60,13 +61,13 @@ define(['underscore'], function (_) {
         replaceBounds.bottommost = driftVelocity.y - 1;
       }
       else {
-        replaceBounds.topmost = dimensions.y + driftVelocity.y;
-        replaceBounds.bottommost = dimensions.y - 1;
+        replaceBounds.topmost = dimensions.height + driftVelocity.y;
+        replaceBounds.bottommost = dimensions.height - 1;
       }
 
       // add any new stars to the screen
       for (var i=replaceBounds.leftmost; i<=replaceBounds.rightmost; i++) {
-        for (var j=0; j<dimensions.y; j++) {
+        for (var j=0; j<dimensions.height; j++) {
           if (Math.random() < STAR_DENSITY) field.stars.push({ x: i, y: j });
         }
       }
