@@ -10,10 +10,10 @@ require.config({
 require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
          "invaders/actors/player", "core/interface/keypoll",
          "core/util/frameclock", "invaders/util/game",
-         "invaders/scene/starfield", "invaders/waves/gruntwave",
-         "invaders/world/world"],
+         "invaders/scene/starfield", "invaders/waves/energywave",
+         "invaders/waves/gruntwave", "invaders/world/world"],
   function($, SpriteArchive, Viewport, Player, KeyPoll, FrameClock, Game,
-           Starfield, GruntWave, World){
+           Starfield, EnergyWave, GruntWave, World){
 
     var DIMENSIONS = { width: 400, height: 300 };
     var $canvas;
@@ -38,29 +38,48 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
 
 
     function nextWave () {
-      var wave = new GruntWave([
-        {
-          center: {
-            x: Math.floor(DIMENSIONS.width * 0.67),
-            y: Math.floor(DIMENSIONS.height * 0.25)
+      var wave;
+
+      if (Math.random() < 0.5) {
+        wave = new GruntWave([
+          {
+            center: {
+              x: Math.floor(DIMENSIONS.width * 0.67),
+              y: Math.floor(DIMENSIONS.height * 0.25)
+            },
+            bounds: {
+              leftmost: Math.floor(DIMENSIONS.width/2) + 25,
+              rightmost: DIMENSIONS.width - 25,
+              topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
+            }
           },
-          bounds: {
-            leftmost: Math.floor(DIMENSIONS.width/2) + 25,
-            rightmost: DIMENSIONS.width - 25,
-            topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
+          {
+            center: {
+              x: Math.floor(DIMENSIONS.width * 0.33),
+              y: Math.floor(DIMENSIONS.height * 0.25)
+            },
+            bounds: {
+              leftmost: 25, rightmost: Math.floor(DIMENSIONS.width/2) - 25,
+              topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
+            }
           }
-        },
-        {
-          center: {
-            x: Math.floor(DIMENSIONS.width * 0.33),
-            y: Math.floor(DIMENSIONS.height * 0.25)
+        ]);
+      }
+      else {
+        wave = new EnergyWave([
+          {
+            center: {
+              x: Math.floor(DIMENSIONS.width * 0.5),
+              y: Math.floor(DIMENSIONS.height * 0.25)
+            },
+            bounds: {
+              leftmost: 25,
+              rightmost: DIMENSIONS.width - 25,
+              topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
+            }
           },
-          bounds: {
-            leftmost: 25, rightmost: Math.floor(DIMENSIONS.width/2) - 25,
-            topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
-          }
-        }
-      ]);
+        ]);
+      }
 
       wave.start(nextWave);
     }
@@ -97,35 +116,7 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
             keypoll: Game.keys
           });
 
-          var wave = new GruntWave([
-            {
-              center: {
-                x: Math.floor(DIMENSIONS.width * 0.67),
-                y: Math.floor(DIMENSIONS.height * 0.25)
-              },
-              bounds: {
-                leftmost: Math.floor(DIMENSIONS.width/2) + 25,
-                rightmost: DIMENSIONS.width - 25,
-                topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
-              }
-            },
-            {
-              center: {
-                x: Math.floor(DIMENSIONS.width * 0.33),
-                y: Math.floor(DIMENSIONS.height * 0.25)
-              },
-              bounds: {
-                leftmost: 25, rightmost: Math.floor(DIMENSIONS.width/2) - 25,
-                topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
-              }
-            }
-          ]);
-
-          var onComplete = function () {
-            wave.start(onComplete);
-          };
-
-          onComplete();
+          nextWave();
 
           requestAnimationFrame(mainLoop);
         }
