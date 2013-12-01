@@ -1,4 +1,4 @@
-define(['underscore', 'graphics/sprite'], function (_, Sprite) {
+define(['underscore', 'core/graphics/sprite'], function (_, Sprite) {
   
   // SpriteArchive loads raw sprites into Sprite objects, and provides
   // a method of retrieval by name

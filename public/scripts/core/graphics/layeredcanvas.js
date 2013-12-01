@@ -1,4 +1,4 @@
-define(["underscore", "graphics/pixelcanvas", "util/encoder"],
+define(["underscore", "core/graphics/pixelcanvas", "core/util/encoder"],
   function (_, PixelCanvas, Encoder) {
 
 

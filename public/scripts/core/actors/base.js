@@ -1,4 +1,4 @@
-define(['underscore', 'util/game'], function (_, Game) {
+define(['underscore'], function (_) {
 
   // SHARED VARIABLES
   var serial = 0;
@@ -27,8 +27,6 @@ define(['underscore', 'util/game'], function (_, Game) {
       memo[c] = true;
       return memo;
     }, Object.create(null));
-
-    Game.world.add(this);
   };
 
 
@@ -36,21 +34,21 @@ define(['underscore', 'util/game'], function (_, Game) {
   // once per game loop, and should update the actor to handle the current
   // game state
   Base.prototype.act = function () {
-    throw new Error('Base.act called, subclass must override');
+    throw new Error('Base#act called, subclass must override');
   };
 
   
   // collision resolves the effects of a collision on this actor.
   // Overload in subtype
   Base.prototype.collision = function () {
-    console.log(this.id() + ' experienced a collision!');
+    throw new Error('Base#collision called, subclass must override');
   };
 
 
   // destroy actor, removing it from the game world
-  // Overload in subtype but ensure that this version is called
+  // Overload in subtype
   Base.prototype.destroy = function () {
-    Game.world.remove(this);
+    throw new Error('Base#destroy called, subclass must override');
   };
 
 

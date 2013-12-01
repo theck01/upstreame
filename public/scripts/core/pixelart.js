@@ -14,7 +14,7 @@ require.config({
 });
 
 
-require(["jquery", "underscore", "interface/pixelcolorer", "bootstrap",
+require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap",
          "typeahead"],
   function ($, _, PixelColorer) {
     // persistent UI variables

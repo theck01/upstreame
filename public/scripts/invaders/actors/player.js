@@ -1,5 +1,6 @@
-define(['underscore', 'actors/base', 'actors/projectile'],
-    function (_, Base, Projectile) {
+define(['underscore', 'invaders/actors/baseinvader',
+        'invaders/actors/projectile'],
+    function (_, BaseInvader, Projectile) {
 
       // CONSTANTS
       var SPEED = 2;
@@ -20,17 +21,17 @@ define(['underscore', 'actors/base', 'actors/projectile'],
       //     keypoll: KeyPoll object, used for controlling sprite
       var Player = function (opts) {
         opts.sprite = opts.archive.get('human-ship');
-        Base.call(this, opts);
+        BaseInvader.call(this, opts);
         this.archive = opts.archive;
         this.frameClock = opts.frameClock;
         this.fireReady = true;
         this.keypoll = opts.keypoll;
       };
-      Player.prototype = Object.create(Base.prototype);
+      Player.prototype = Object.create(BaseInvader.prototype);
       Player.prototype.constructor = Player;
 
 
-      // overloaded Base.act function
+      // overloaded BaseInvader.act function
       Player.prototype.act = function () {
         var spriteName = 'human-ship';
         var verticalChange = 0;

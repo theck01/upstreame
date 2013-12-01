@@ -1,4 +1,4 @@
-define(['underscore', 'util/priorityqueue'], function (_, PriorityQueue) {
+define(['underscore', 'core/util/priorityqueue'], function (_, PriorityQueue) {
 
   // Shared Variable
   var serial = 0;

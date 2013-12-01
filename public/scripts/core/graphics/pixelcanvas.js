@@ -1,4 +1,4 @@
-define(["jquery", "underscore", "graphics/color"],
+define(["jquery", "underscore", "core/graphics/color"],
   function ($, _, Color) {
 
     // makePixelGrid creates a 2D array with given dimensions containin an RGB

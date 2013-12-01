@@ -7,7 +7,7 @@ require.config({
   }
 });
 
-require(["jquery", "graphics/pixelcanvas", "graphics/sprite"],
+require(["jquery", "core/graphics/pixelcanvas", "core/graphics/sprite"],
   function ($, PixelCanvas, Sprite) {
 
     var $canvas;

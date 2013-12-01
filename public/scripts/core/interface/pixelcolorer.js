@@ -1,4 +1,5 @@
-define(["jquery", "underscore", "graphics/pixelcanvas", "graphics/color"],
+define(["jquery", "underscore", "core/graphics/pixelcanvas",
+        "core/graphics/color"],
   function($, _, PixelCanvas, Color){
     
     // PixelColorer provides methods for creating pixel art in the browser and

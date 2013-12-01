@@ -1,4 +1,4 @@
-define(['underscore', 'util/encoder'], function (_, Encoder) {
+define(['underscore', 'core/util/encoder'], function (_, Encoder) {
 
   // CollisionFrame object detects collisions on a plane of width x height
   // metapixels

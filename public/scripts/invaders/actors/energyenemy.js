@@ -1,4 +1,4 @@
-define(['actors/base'], function (Base) {
+define(['invaders/actors/baseinvader'], function (BaseInvader) {
 
   // Constants
   var ANIMATION_FRAME_RATE = 2; // frames per sprite
@@ -17,7 +17,7 @@ define(['actors/base'], function (Base) {
   //     frameClock: FrameClock object
   var EnergyEnemy = function (opts) {
     opts.sprite = opts.archive.get('energy-ship-big1');
-    Base.call(this, opts);
+    BaseInvader.call(this, opts);
 
     this.frameClock = opts.frameClock;
 
@@ -30,11 +30,11 @@ define(['actors/base'], function (Base) {
       enemy.sprite = opts.archive.get(spriteName);
     }, ANIMATION_FRAME_RATE);
   };
-  EnergyEnemy.prototype = Object.create(Base.prototype);
+  EnergyEnemy.prototype = Object.create(BaseInvader.prototype);
   EnergyEnemy.prototype.constructor = EnergyEnemy;
 
 
-  // overloaded Base.act function
+  // overloaded BaseInvader.act function
   EnergyEnemy.prototype.act = function () {};
 
   
@@ -47,7 +47,7 @@ define(['actors/base'], function (Base) {
   // overload destroy function
   EnergyEnemy.prototype.destroy = function () {
     this.frameClock.cancel(this.animationID);
-    Base.prototype.destroy.call(this);
+    BaseInvader.prototype.destroy.call(this);
   };
 
 

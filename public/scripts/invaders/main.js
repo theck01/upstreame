@@ -7,10 +7,11 @@ require.config({
   }
 });
 
-require(["jquery", "graphics/spritearchive", "graphics/viewport",
-         "actors/player", "actors/testenemy", "actors/energyenemy",
-         "interface/keypoll", "util/frameclock", "util/game", "scene/starfield",
-         "world/world"],
+require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
+         "invaders/actors/player", "invaders/actors/testenemy",
+         "invaders/actors/energyenemy", "core/interface/keypoll",
+         "core/util/frameclock", "invaders/util/game",
+         "invaders/scene/starfield", "invaders/world/world"],
   function($, SpriteArchive, Viewport, Player, TestEnemy, EnergyEnemy,
            KeyPoll, FrameClock, Game, Starfield, World){
 
