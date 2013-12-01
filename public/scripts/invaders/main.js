@@ -8,11 +8,11 @@ require.config({
 });
 
 require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
-         "invaders/actors/player", "invaders/actors/testenemy",
+         "invaders/actors/player", "invaders/actors/grunt",
          "invaders/actors/energyenemy", "core/interface/keypoll",
          "core/util/frameclock", "invaders/util/game",
          "invaders/scene/starfield", "invaders/world/world"],
-  function($, SpriteArchive, Viewport, Player, TestEnemy, EnergyEnemy,
+  function($, SpriteArchive, Viewport, Player, Grunt, EnergyEnemy,
            KeyPoll, FrameClock, Game, Starfield, World){
 
     var DIMENSIONS = { width: 400, height: 300 };
@@ -52,11 +52,10 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
         url: "/sprite/all",
         dataType: "json",
         success: function (data) {
-          var sprites = new SpriteArchive(data);
+          SpriteArchive.load(data);
 
           new Player({
             group: "Allies",
-            archive: sprites,
             center: {
               x: Math.floor(DIMENSIONS.width * 0.5),
               y: Math.floor(DIMENSIONS.height * 0.75)
@@ -67,9 +66,8 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
             keypoll: Game.keys
           });
 
-          new TestEnemy({
+          new Grunt({
             group: "Enemies",
-            archive: sprites,
             center: {
               x: Math.floor(DIMENSIONS.width * 0.67),
               y: Math.floor(DIMENSIONS.height * 0.25)
@@ -84,9 +82,8 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
             frameClock: Game.clock
           });
 
-          new TestEnemy({
+          new Grunt({
             group: "Enemies",
-            archive: sprites,
             center: {
               x: Math.floor(DIMENSIONS.width * 0.33),
               y: Math.floor(DIMENSIONS.height * 0.25)
@@ -102,7 +99,6 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
 
           new EnergyEnemy({
             group: "Enemies",
-            archive: sprites,
             center: {
               x: Math.floor(DIMENSIONS.width * 0.5),
               y: Math.floor(DIMENSIONS.height * 0.25)

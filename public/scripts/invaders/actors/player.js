@@ -1,6 +1,6 @@
-define(['underscore', 'invaders/actors/baseinvader',
-        'invaders/actors/projectile'],
-    function (_, BaseInvader, Projectile) {
+define(['underscore', 'core/graphics/spritearchive',
+        'invaders/actors/baseinvader', 'invaders/actors/projectile'],
+    function (_, SpriteArchive, BaseInvader, Projectile) {
 
       // CONSTANTS
       var SPEED = 2;
@@ -12,7 +12,6 @@ define(['underscore', 'invaders/actors/baseinvader',
       // Arguments:
       //   opts: object with the following required fields
       //     group: Collision group that the new player will belong to
-      //     archive: SpriteArchive object
       //     center: center of the player sprite
       //     layer: layer to draw the player sprite
       //     noncollidables: Array of strings describing groups with which the
@@ -20,9 +19,8 @@ define(['underscore', 'invaders/actors/baseinvader',
       //     frameClock: FrameClock object
       //     keypoll: KeyPoll object, used for controlling sprite
       var Player = function (opts) {
-        opts.sprite = opts.archive.get('human-ship');
+        opts.sprite = SpriteArchive.get('human-ship');
         BaseInvader.call(this, opts);
-        this.archive = opts.archive;
         this.frameClock = opts.frameClock;
         this.fireReady = true;
         this.keypoll = opts.keypoll;
@@ -49,7 +47,7 @@ define(['underscore', 'invaders/actors/baseinvader',
         if (verticalChange === -1) spriteName += '-accelerating';
         else if (verticalChange === 1) spriteName += '-braking';
 
-        this.sprite = this.archive.get(spriteName);
+        this.sprite = SpriteArchive.get(spriteName);
       
         if (horizontalChange && verticalChange) {
           this.center.x += DIAGONAL_SPEED * horizontalChange;
@@ -90,7 +88,7 @@ define(['underscore', 'invaders/actors/baseinvader',
 
         new Projectile({
           group: this.group,
-          sprite: this.archive.get('human-ship-laser'),
+          sprite: SpriteArchive.get('human-ship-laser'),
           center: leftCenter,
           layer: this.layer,
           noncollidables: [this.group],
@@ -98,7 +96,7 @@ define(['underscore', 'invaders/actors/baseinvader',
         });
         new Projectile({
           group: this.group,
-          sprite: this.archive.get('human-ship-laser'),
+          sprite: SpriteArchive.get('human-ship-laser'),
           center: rightCenter,
           layer: this.layer,
           noncollidables: [this.group],

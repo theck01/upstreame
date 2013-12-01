@@ -1,5 +1,6 @@
-define(['invaders/actors/baseinvader', 'invaders/actors/projectile'],
-  function (BaseInvader, Projectile) {
+define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
+        'invaders/actors/projectile'],
+  function (SpriteArchive, BaseInvader, Projectile) {
 
     // CONTANTS
     var SPEED = 2;
@@ -7,25 +8,22 @@ define(['invaders/actors/baseinvader', 'invaders/actors/projectile'],
     var FIRE_CHANCE = 0.25;
 
 
-    // TestEnemy actor, performs simplistic actions with no situational
+    // Grunt actor, performs simplistic actions with no situational
     // awareness
     //
     // Arguments:
     //   opts: object with the following required fields
     //     group: String group name of the object ['Enemy', 'Player', etc]
-    //     archive: Instance of Sprite representing visual object
-    //     center: Center of the object, essentially location in the world
     //     layer: Layer that it occupies in a LayeredCanvas heirarchy
     //     noncollidables: Array of strings describing groups with which the new
     //                     instance cannot collide
     //     frameClock: FrameClock object
     //     bounds: Object with four fields: 'topmost', 'bottommost', 'leftmost',
     //             'rightmost' representing the area in which the actor may move
-    var TestEnemy = function (opts) {
-      opts.sprite = opts.archive.get('lizard-ship');
+    var Grunt = function (opts) {
+      opts.sprite = SpriteArchive.get('lizard-ship');
       BaseInvader.call(this, opts);
 
-      this.archive = opts.archive;
       this.bounds = opts.bounds;
       this.velocity = { x: 0, y: 0 };
       this.frameClock = opts.frameClock;
@@ -45,12 +43,12 @@ define(['invaders/actors/baseinvader', 'invaders/actors/projectile'],
         }
       }, 30);
     };
-    TestEnemy.prototype = Object.create(BaseInvader.prototype);
-    TestEnemy.prototype.constructor = TestEnemy;
+    Grunt.prototype = Object.create(BaseInvader.prototype);
+    Grunt.prototype.constructor = Grunt;
 
 
     // overloaded BaseInvader.act function
-    TestEnemy.prototype.act = function () {
+    Grunt.prototype.act = function () {
       // update sprite location
       if (this.velocity.x && this.velocity.y) {
         this.center.x += DIAGONAL_SPEED * this.velocity.x;
@@ -80,29 +78,29 @@ define(['invaders/actors/baseinvader', 'invaders/actors/projectile'],
 
 
     // overloaded BaseInvader.collision function
-    TestEnemy.prototype.collision = function () {
+    Grunt.prototype.collision = function () {
       this.destroy();
     };
 
 
     // overloaded BaseInvader.destroy function
-    TestEnemy.prototype.destroy = function () {
+    Grunt.prototype.destroy = function () {
       if (this.behaviorID) this.frameClock.cancel(this.behaviorID);
       if (this.fireID) this.frameClock.cancel(this.fireID);
       BaseInvader.prototype.destroy.call(this);
     };
 
 
-    TestEnemy.prototype.fire = function () {
+    Grunt.prototype.fire = function () {
       var enemy = this;
-      enemy.sprite = enemy.archive.get('lizard-ship-prefire');
+      enemy.sprite = SpriteArchive.get('lizard-ship-prefire');
 
       enemy.fireID = enemy.frameClock.schedule(function () {
 
-        enemy.sprite = enemy.archive.get('lizard-ship-firing');
+        enemy.sprite = SpriteArchive.get('lizard-ship-firing');
         new Projectile({
           group: enemy.group,
-          sprite: enemy.archive.get('enemy-ship-laser'),
+          sprite: SpriteArchive.get('enemy-ship-laser'),
           center: enemy.center,
           layer: enemy.layer,
           noncollidables: [enemy.group],
@@ -113,17 +111,17 @@ define(['invaders/actors/baseinvader', 'invaders/actors/projectile'],
 
         enemy.fireID = enemy.frameClock.schedule(function () {
 
-          enemy.sprite = enemy.archive.get('lizard-ship-prefire');
+          enemy.sprite = SpriteArchive.get('lizard-ship-prefire');
 
           enemy.fireID = enemy.frameClock.schedule(function () {
 
-            enemy.sprite = enemy.archive.get('lizard-ship');
+            enemy.sprite = SpriteArchive.get('lizard-ship');
             enemy.fireID = undefined;
           }, 10);
         }, 5);
       }, 10);
     };
 
-    return TestEnemy;
+    return Grunt;
   }
 );
