@@ -93,6 +93,7 @@ define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
     };
 
 
+    // fire initiates the creation of projectiles and the firing animation
     Grunt.prototype.fire = function () {
       var enemy = this;
       enemy.sprite = SpriteArchive.get('lizard-ship-prefire');
