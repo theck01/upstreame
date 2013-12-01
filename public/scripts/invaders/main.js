@@ -8,18 +8,18 @@ require.config({
 });
 
 require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
-         "invaders/actors/player", "invaders/actors/grunt",
-         "invaders/actors/energyenemy", "core/interface/keypoll",
+         "invaders/actors/player", "core/interface/keypoll",
          "core/util/frameclock", "invaders/util/game",
-         "invaders/scene/starfield", "invaders/world/world"],
-  function($, SpriteArchive, Viewport, Player, Grunt, EnergyEnemy,
-           KeyPoll, FrameClock, Game, Starfield, World){
+         "invaders/scene/starfield", "invaders/waves/gruntwave",
+         "invaders/world/world"],
+  function($, SpriteArchive, Viewport, Player, KeyPoll, FrameClock, Game,
+           Starfield, GruntWave, World){
 
     var DIMENSIONS = { width: 400, height: 300 };
-
     var $canvas;
 
-    function sizeCanvas() {
+
+    function sizeCanvas () {
       if ($canvas[0].width !== $(window).width() ||
           $canvas[0].height !== $(window).height()){
         $canvas[0].width = $(window).width();
@@ -27,13 +27,44 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
       }
     }
 
-    function mainLoop() {
+
+    function mainLoop () {
       Game.clock.tick();
       Game.world.timestep();
       Game.world.renderTo(Game.viewport);
       Game.viewport.paint();
       requestAnimationFrame(mainLoop);
     }
+
+
+    function nextWave () {
+      var wave = new GruntWave([
+        {
+          center: {
+            x: Math.floor(DIMENSIONS.width * 0.67),
+            y: Math.floor(DIMENSIONS.height * 0.25)
+          },
+          bounds: {
+            leftmost: Math.floor(DIMENSIONS.width/2) + 25,
+            rightmost: DIMENSIONS.width - 25,
+            topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
+          }
+        },
+        {
+          center: {
+            x: Math.floor(DIMENSIONS.width * 0.33),
+            y: Math.floor(DIMENSIONS.height * 0.25)
+          },
+          bounds: {
+            leftmost: 25, rightmost: Math.floor(DIMENSIONS.width/2) - 25,
+            topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
+          }
+        }
+      ]);
+
+      wave.start(nextWave);
+    }
+
 
     $(function () {
       $canvas = $("#game-canvas");
@@ -66,47 +97,35 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
             keypoll: Game.keys
           });
 
-          new Grunt({
-            group: "Enemies",
-            center: {
-              x: Math.floor(DIMENSIONS.width * 0.67),
-              y: Math.floor(DIMENSIONS.height * 0.25)
+          var wave = new GruntWave([
+            {
+              center: {
+                x: Math.floor(DIMENSIONS.width * 0.67),
+                y: Math.floor(DIMENSIONS.height * 0.25)
+              },
+              bounds: {
+                leftmost: Math.floor(DIMENSIONS.width/2) + 25,
+                rightmost: DIMENSIONS.width - 25,
+                topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
+              }
             },
-            layer: 3,
-            noncollidables: ["Enemies"],
-            bounds: {
-              leftmost: Math.floor(DIMENSIONS.width/2) + 25,
-              rightmost: DIMENSIONS.width - 25,
-              topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
-            },
-            frameClock: Game.clock
-          });
+            {
+              center: {
+                x: Math.floor(DIMENSIONS.width * 0.33),
+                y: Math.floor(DIMENSIONS.height * 0.25)
+              },
+              bounds: {
+                leftmost: 25, rightmost: Math.floor(DIMENSIONS.width/2) - 25,
+                topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
+              }
+            }
+          ]);
 
-          new Grunt({
-            group: "Enemies",
-            center: {
-              x: Math.floor(DIMENSIONS.width * 0.33),
-              y: Math.floor(DIMENSIONS.height * 0.25)
-            },
-            layer: 3,
-            noncollidables: ["Enemies"],
-            bounds: {
-              leftmost: 25, rightmost: Math.floor(DIMENSIONS.width/2) - 25,
-              topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
-            },
-            frameClock: Game.clock
-          });
+          var onComplete = function () {
+            wave.start(onComplete);
+          };
 
-          new EnergyEnemy({
-            group: "Enemies",
-            center: {
-              x: Math.floor(DIMENSIONS.width * 0.5),
-              y: Math.floor(DIMENSIONS.height * 0.25)
-            },
-            layer: 1,
-            noncollidables: ["Enemies"],
-            frameClock: Game.clock
-          });
+          onComplete();
 
           requestAnimationFrame(mainLoop);
         }

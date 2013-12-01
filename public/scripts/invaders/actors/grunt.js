@@ -20,6 +20,8 @@ define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
     //     frameClock: FrameClock object
     //     bounds: Object with four fields: 'topmost', 'bottommost', 'leftmost',
     //             'rightmost' representing the area in which the actor may move
+    //   optional fields for the opts param:
+    //     onDestroy: extra cleanup that takes place when the actor is destroyed
     var Grunt = function (opts) {
       opts.sprite = SpriteArchive.get('lizard-ship');
       BaseInvader.call(this, opts);

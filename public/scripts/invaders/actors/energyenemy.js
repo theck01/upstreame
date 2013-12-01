@@ -15,6 +15,8 @@ define(['core/graphics/spritearchive', 'invaders/actors/baseinvader'],
     //     noncollidables: Array of strings describing groups with which the new
     //                     instance cannot collide
     //     frameClock: FrameClock object
+    //   optional fields for the opts param:
+    //     onDestroy: extra cleanup that takes place when the actor is destroyed
     var EnergyEnemy = function (opts) {
       opts.sprite = SpriteArchive.get('energy-ship-big1');
       BaseInvader.call(this, opts);

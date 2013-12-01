@@ -14,6 +14,8 @@ define(['invaders/actors/baseinvader'], function (BaseInvader) {
   //           instance method of the current object, describing it's path
   //           through space and returning the next position of the projectile
   //           as an object with 'x' and 'y' fields
+  //   optional fields for the opts param:
+  //     onDestroy: extra cleanup that takes place when the actor is destroyed
   var Projectile = function (opts) {
     BaseInvader.call(this, opts);
     this.path = opts.path;
