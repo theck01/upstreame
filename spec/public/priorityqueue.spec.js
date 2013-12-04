@@ -11,7 +11,7 @@ requirejs.config({
   }
 });
 
-var PriorityQueue = requirejs('util/priorityqueue');
+var PriorityQueue = requirejs('core/util/priorityqueue');
 
 describe('PriorityQueue', function () {
   var pq;

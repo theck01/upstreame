@@ -11,7 +11,7 @@ requirejs.config({
   }
 });
  
-var FrameClock = requirejs('util/frameclock');
+var FrameClock = requirejs('core/util/frameclock');
 
 describe('FrameClock', function () {
   var fc;
