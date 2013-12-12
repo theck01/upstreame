@@ -52,6 +52,7 @@ app.configure(function () {
 app.get('/', views.index);
 app.get('/invaders', views.invaders);
 app.get('/pixelart', views.pixelart);
+app.get('/submersion', views.submersion);
 
 // authentication routes
 app.post('/login', passport.authenticate('local'), sessions.login);

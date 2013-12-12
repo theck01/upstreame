@@ -18,3 +18,9 @@ exports.pixelart = function (req, res) {
     loggedIn: auth.isLoggedIn(req)
   });
 };
+
+exports.submersion = function (req, res) {
+  res.render('submersion', {
+    title: 'Submersion'
+  });
+};
