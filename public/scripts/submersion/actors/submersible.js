@@ -2,9 +2,14 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base'],
     function (_, SpriteArchive, Base) {
 
       // CONSTANTS
-      var SPEED = 5;
+      var SPEED = 4;
+      var OPPOSING_SPEED = 2;
       var DIAGONAL_SPEED = SPEED / Math.sqrt(2);
-      var ROTATION_SPEED = 4;
+      var OPPOSING_DIAGONAL_SPEED = OPPOSING_SPEED / Math.sqrt(2);
+      var ROTATION_SPEED = 3;
+      var ROTATION_STEP = 20;
+      var ROTATION_MAX = 170;
+      var ROTATION_MIN = 10;
       
       // Submarine actor, controlled directly by keyboard input
       //
@@ -18,7 +23,7 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base'],
       //     frameClock: FrameClock object
       //     keypoll: KeyPoll object, used for controlling sprite
       var Submersible = function (opts) {
-        opts.sprite = SpriteArchive.get('submersible-180');
+        opts.sprite = SpriteArchive.get('submersible-170');
         Base.call(this, opts);
         this.frameClock = opts.frameClock;
         this.keypoll = opts.keypoll;
@@ -29,9 +34,13 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base'],
         this.scheduledRotation = this.frameClock.recurring(function () {
           // turn submarine
           if (sub.direction === 1) {
-            sub.orientation = Math.min(sub.orientation + 30, 180);
+            sub.orientation = Math.min(sub.orientation + ROTATION_STEP,
+                                       ROTATION_MAX);
           }
-          else sub.orientation = Math.max(sub.orientation - 30, 0);
+          else {
+            sub.orientation = Math.max(sub.orientation - ROTATION_STEP,
+                                       ROTATION_MIN);
+          }
           sub.sprite = SpriteArchive.get('submersible-' + sub.orientation);
         }, ROTATION_SPEED);
       };
@@ -54,17 +63,24 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base'],
         if (horizontalChange === -1) this.direction = -1;
         else if (horizontalChange === 1) this.direction = 1;
 
-        this.sprite = SpriteArchive.get('submersible-' + this.orientation);
-      
+        // if not fully rotated for direction of movement, do nothing
+        var speed = SPEED;
+        var diagSpeed = DIAGONAL_SPEED;
+        if ((this.direction === 1 && this.orientation !== ROTATION_MAX) ||
+            (this.direction === -1 && this.orientation !== ROTATION_MIN)) {
+           speed = OPPOSING_SPEED;
+           diagSpeed = OPPOSING_DIAGONAL_SPEED;
+        }
+
         if (horizontalChange && verticalChange) {
-          this.center.x += DIAGONAL_SPEED * horizontalChange;
-          this.center.y += DIAGONAL_SPEED * verticalChange;
+          this.center.x += diagSpeed * horizontalChange;
+          this.center.y += diagSpeed * verticalChange;
         }
         else if (horizontalChange) {
-          this.center.x += SPEED * horizontalChange;
+          this.center.x += speed * horizontalChange;
         }
         else {
-          this.center.y += SPEED * verticalChange;
+          this.center.y += speed * verticalChange;
         }
       };
 
