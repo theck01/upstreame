@@ -156,6 +156,10 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
         // do nothing for input keypress events
         if ($(e.target).is("input")) return;
 
+        // 'C' for coordinate system toggle
+        if (e.which === 99) {
+          $("#hide-grid-button").click();
+        }
         // 'D' for draw
         if (e.which === 100) {
           $("#set-radio-button").click();
