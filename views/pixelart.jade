@@ -55,13 +55,13 @@ block content
         .control-row
           .btn-group.btn-group-justified(data-toggle="buttons")
             label.btn.btn-default.active
-              input(type="radio" name="action" value="set") 
+              input#set-radio-button(type="radio" name="action" value="set") 
               i.icon-pencil.icon-large
             label.btn.btn-default
-              input(type="radio" name="action" value="get")
+              input#get-radio-button(type="radio" name="action" value="get")
               i.icon-pencil.icon-tint
             label.btn.btn-default
-              input(type="radio" name="action" value="clear")
+              input#clear-radio-button(type="radio" name="action" value="clear")
               i.icon-pencil.icon-eraser
         .control-row
           .form-inline
@@ -87,3 +87,9 @@ block content
               i.icon-th.icon-large
             a#clear-canvas-button.btn.btn-default(href="#")
               i.icon-trash.icon-large
+        .control-row
+          h4 Keyboard Shortcuts
+          p.
+            D - draw mode, paint pixel(s) on the canvas <br/>
+            G - get mode, retrieve a color from the canvas <br/>
+            E - erase mode, clear pixel(s) on the canvas <br/>

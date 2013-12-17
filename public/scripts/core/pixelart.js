@@ -138,6 +138,26 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
       $canvas = $("#pixel-art-canvas");
       sizeCanvas();
 
+      // setup keyboard shortcuts
+      $("body").keypress(function (e) {
+
+        // do nothing for input keypress events
+        if ($(e.target).is("input")) return;
+
+        // 'E' for erase
+        if (e.which === 101) {
+          $("#clear-radio-button").click();
+        }
+        // 'D' for draw
+        else if (e.which === 100) {
+          $("#set-radio-button").click();
+        }
+        // 'G' for get
+        else if (e.which === 103) {
+          $("#get-radio-button").click();
+        }
+      });
+
       pixelArtCanvas = new PixelColorer({
         width: initialSize,
         height: initialSize
