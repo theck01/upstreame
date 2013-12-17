@@ -120,7 +120,9 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
           if(matchingPixel)
             that.currentColor = matchingPixel.color;
           else
-            that.currentColor = _.clone(that.pCanvas.getPixel(x, y));
+            that.currentColor = _.find(that.pixels, function (p) {
+              return p.x === x && p.y === y;
+            }).color;
         }
 
         that.mouseMoveAction(e);
