@@ -53,17 +53,6 @@ block content
                 li
                   a#sprite-load-link(href="#") Load Sprite
         .control-row
-          .btn-group.btn-group-justified(data-toggle="buttons")
-            label.btn.btn-default.active
-              input#set-radio-button(type="radio" name="action" value="set") 
-              i.icon-pencil.icon-large
-            label.btn.btn-default
-              input#get-radio-button(type="radio" name="action" value="get")
-              i.icon-pencil.icon-tint
-            label.btn.btn-default
-              input#clear-radio-button(type="radio" name="action" value="clear")
-              i.icon-pencil.icon-eraser
-        .control-row
           .form-inline
             input#pixel-width-input.dimension-input.form-control
             label.control-label.dimension-label Pixels Wide
@@ -82,7 +71,22 @@ block content
             input#background-color-input.form-control.color-input
           .float-spacer
         .control-row
+          .btn-group.btn-group-justified(data-toggle="buttons")
+            label.btn.btn-default.active
+              input#set-radio-button(type="radio" name="action" value="set") 
+              i.icon-pencil.icon-large
+            label.btn.btn-default
+              input#get-radio-button(type="radio" name="action" value="get")
+              i.icon-pencil.icon-tint
+            label.btn.btn-default
+              input#clear-radio-button(type="radio" name="action" value="clear")
+              i.icon-pencil.icon-eraser
+        .control-row
           .btn-group.btn-group-justified
+            a#undo-action-button.btn.btn-default(href="#")
+              i.icon-undo.icon-large
+            a#redo-action-button.btn.btn-default(href="#")
+              i.icon-repeat.icon-large
             a#hide-grid-button.btn.btn-default(href="#" data-toggle="buttons")
               i.icon-th.icon-large
             a#clear-canvas-button.btn.btn-default(href="#")
@@ -90,6 +94,9 @@ block content
         .control-row
           h4 Keyboard Shortcuts
           p.
-            D - draw mode, paint pixel(s) on the canvas <br/>
-            G - get mode, retrieve a color from the canvas <br/>
-            E - erase mode, clear pixel(s) on the canvas <br/>
+            D - activate draw mode, paint pixel(s) on the canvas <br/>
+            G - activate get mode, retrieve a color from the canvas <br/>
+            E - activate erase mode, clear pixel(s) on the canvas <br/>
+            U - undo last action <br/>
+            R - redo last action
+

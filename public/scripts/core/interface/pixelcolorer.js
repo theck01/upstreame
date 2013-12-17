@@ -1,6 +1,47 @@
 define(["jquery", "underscore", "core/graphics/pixelcanvas",
         "core/graphics/color"],
   function($, _, PixelCanvas, Color){
+
+
+    // applyChanges applies an array of changes to the pixel canvas and returns
+    // array of pixels
+    //
+    // Arguments:
+    //   changeset: Array of objects with 'action' and 'pixels' fields
+    //   pixels: Optional, Array of pixel objects on the canvas. If unspecified
+    //           the blank canvas will be used
+    // Returns final pixel state after applying changes
+    function applyChanges (changeset, pixels) {
+      pixels = _.clone(pixels) || [];
+
+      _.each(changeset, function (change) {
+
+        if (change.action === "clear all") {
+          pixels = [];
+          return;
+        }
+
+        if (change.action === "import") {
+          pixels = [];
+        }
+
+        // regardless of set or clear, filter out existing pixels altered in
+        // changeset
+        pixels = _.reject(pixels, function (existingPixel) {
+          return _.find(change.pixels, function (changedPixel) {
+            return existingPixel.x === changedPixel.x &&
+                   existingPixel.y === changedPixel.y;
+          });
+        });
+
+        if (change.action === "set" || change.action === "import") {
+          pixels = pixels.concat(change.pixels);
+        }
+      });
+
+      return pixels;
+    }
+
     
     // PixelColorer provides methods for creating pixel art in the browser and
     // exporting that art in a JSON string, using a PixelCanvas instance to draw
@@ -16,19 +57,25 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
       this.action = "set";
       this.backgroundColor = "#FFFFFF";
       this.canvasID = canvasID;
+      this.currentChange = null; // always null unless mouse is down in canvas
       this.currentColor = "#000000";
       this.dim = _.clone(dimensions);
       this.mouseDown = false;
+      this.mouseMoveAction = function () {};
       this.pCanvas = new PixelCanvas(dimensions, canvasID,
                                      this.backgroundColor);
       this.pixels = [];
-      this.mouseMoveAction = function () {};
+      this.redoStack = [];
       this.showGrid = true;
+      this.undoStack = [];
 
 
       // on mouseup or mouseleave set mouseDown to false
       this.$htmlCanvas.on("mouseup mouseleave", function () {
         that.mouseDown = false;
+        if (that.currentChange) {
+          that.commitChange();
+        }
       });
 
 
@@ -49,37 +96,31 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
         var x = Math.floor((relx - sparams.xoffset)/sparams.pixelSize);
         var y = Math.floor((rely - sparams.yoffset)/sparams.pixelSize);
 
-        var matchingPixel = _.find(that.pixels, function (p) {
-          return p.x === x && p.y === y;
-        });
-
         // if click was outside pixel region do nothing
         if(x > that.dim.width || x < 0 || y > that.dim.height || y < 0)
           return;
 
-        if(that.action === "set"){
-          if(matchingPixel){
-            if(matchingPixel.color !== that.currentColor){
-              matchingPixel.color = that.currentColor;
-              that.paint();
-            }
-          }
-          else{
-            that.pixels.push({ x: x, y: y, color: that.currentColor });
-            that.paint();
-          }
+        that.currentChange = that.currentChange || {
+          action: that.action, pixels: []
+        };
+
+        // if pixel is already included in changeset, do nothing
+        var matchingPixel = _.find(that.currentChange.pixels, function (p) {
+          return p.x === x && p.y === y;
+        });
+
+        if(that.action === "set" || that.action === "clear"){
+          if (matchingPixel) return;
+          that.currentChange.pixels.push({
+            x: x, y: y, color: that.currentColor
+          });
+          that.paint();
         }
         else if(that.action === "get"){
           if(matchingPixel)
             that.currentColor = matchingPixel.color;
           else
             that.currentColor = _.clone(that.pCanvas.getPixel(x, y));
-        }
-        else if(that.action === "clear"){
-          that.pixels = _.reject(that.pixels, function (p) {
-            return p.x === x && p.y === y;
-          });
-          that.paint();
         }
 
         that.mouseMoveAction(e);
@@ -91,8 +132,26 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
     // color
     PixelColorer.prototype.clearCanvas = function () {
       this.pixels = [];
+      this.commitChange({ action: "clear all" });
       this.pCanvas.clear();
       this.paint();
+    };
+
+
+    // commitChange commits the argument change, or the current changeset
+    // being constructed
+    //
+    // Arguments:
+    //   change: Optional, change to commit. If unspecified commit currentChange
+    PixelColorer.prototype.commitChange = function (change) {
+      if (!change) {
+        change = this.currentChange;
+        this.currentChange = null;
+      }
+
+      this.pixels = applyChanges([change], this.pixels);
+      this.redoStack = [];
+      this.undoStack.push(change);
     };
 
 
@@ -166,9 +225,10 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
 
     // importImage loads a pixel array as the current image
     PixelColorer.prototype.importImage = function (pixelAry) {
-      this.pixels = _.map(pixelAry, function (p) {
+      var pixels = _.map(pixelAry, function (p) {
         return _.pick(p, ["x", "y", "color"]);
       });
+      this.commitChange({ action: "import", pixels: pixels });
       this.paint();
     };
 
@@ -178,16 +238,23 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
     PixelColorer.prototype.paint = function () {
       var context = this.$htmlCanvas[0].getContext("2d");
       var i = 0;
+      var pixels;
       var sparams = this.pCanvas.screenParams(this.dim.width,
                                               this.dim.height);
 
-      _.each(this.pixels, function(p) {
+      if (this.currentChange) {
+        pixels = applyChanges([this.currentChange], this.pixels);
+      }
+      else pixels = this.pixels;
+
+      _.each(pixels, function(p) {
         if(p.x >= 0 && p.x < this.dim.width && p.y >= 0 &&
            p.y < this.dim.height){
           this.pCanvas.setPixel(p.x, p.y, p.color);
         }
       }, this);
 
+      this.pCanvas.clear();
       this.pCanvas.paint();
 
       if(!this.showGrid) return;
@@ -223,6 +290,19 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
     //                     event to do further processing with the click
     PixelColorer.prototype.mousemove = function (callbackFunction) {
       this.mouseMoveAction = callbackFunction;
+    };
+
+
+    // redo reapplys a change removed by an undo command if such a change
+    // exists
+    PixelColorer.prototype.redo = function () {
+      if (this.redoStack.length === 0) return;
+      var change = this.redoStack.pop();
+      var redos = this.redoStack;
+      this.pixels = applyChanges([change], this.pixels);
+      this.commitChange(change);
+      this.redoStack = redos;
+      this.paint();
     };
 
 
@@ -281,6 +361,15 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
     PixelColorer.prototype.toggleGrid = function () {
       this.showGrid = !this.showGrid;
       this.pCanvas.clear();
+      this.paint();
+    };
+
+
+    // undo removes the most recent change and places it in the redoStack
+    PixelColorer.prototype.undo = function () {
+      if (this.undoStack.length === 0) return;
+      this.redoStack.push(this.undoStack.pop());
+      this.pixels = applyChanges(this.undoStack);
       this.paint();
     };
 

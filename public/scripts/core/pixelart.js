@@ -25,9 +25,11 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
     var $pixelColorPreview;
     var $pixelHeight;
     var $pixelWidth;
+    var $redoButton;
     var $spriteNameInput;
     var $statusAlert;
     var $spriteActionButton;
+    var $undoButton;
 
     // initial canvas sizing variable
     var initialSize = 16;
@@ -135,6 +137,16 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
         pixelArtCanvas.setAction($(this).val());
       });
 
+      $undoButton = $("#undo-action-button");
+      $undoButton.click(function () {
+        pixelArtCanvas.undo();
+      });
+
+      $redoButton = $("#redo-action-button");
+      $redoButton.click(function () {
+        pixelArtCanvas.redo();
+      });
+
       $canvas = $("#pixel-art-canvas");
       sizeCanvas();
 
@@ -144,17 +156,25 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
         // do nothing for input keypress events
         if ($(e.target).is("input")) return;
 
-        // 'E' for erase
-        if (e.which === 101) {
-          $("#clear-radio-button").click();
-        }
         // 'D' for draw
-        else if (e.which === 100) {
+        if (e.which === 100) {
           $("#set-radio-button").click();
+        }
+        // 'E' for erase
+        else if (e.which === 101) {
+          $("#clear-radio-button").click();
         }
         // 'G' for get
         else if (e.which === 103) {
           $("#get-radio-button").click();
+        }
+        // 'R' for redo
+        else if (e.which === 114) {
+          $redoButton.click();
+        }
+        // 'U' for undo
+        else if (e.which === 117) {
+          $undoButton.click();
         }
       });
 
