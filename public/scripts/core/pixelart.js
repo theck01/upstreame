@@ -14,8 +14,7 @@ require.config({
 });
 
 
-require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap",
-         "typeahead"],
+require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
   function ($, _, PixelColorer) {
     // persistent UI variables
     var $backgroundColorInput;
@@ -55,6 +54,12 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap",
         }
       });
     }
+
+    // load typeahead after jQuery, to ensure functionallity
+    require(["typeahead"], function () {
+      $spriteNameInput = $spriteNameInput || $("sprite-name-input");
+      refreshSpriteNames();
+    });
 
     function displayAlert (message, error) {
       if (error) {
@@ -182,12 +187,7 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap",
       });
       $backgroundColorInput.val(pixelArtCanvas.getBackgroundColor());
 
-      $spriteNameInput = $("#sprite-name-input");
-      refreshSpriteNames();
-      $spriteNameInput.keypress(function (e) {
-        // save sprite click on enter
-        if(e.keyCode === 13) $spriteActionButton.click();
-      });
+      $spriteNameInput = $spriteNameInput || $("#sprite-name-input");
 
       $spriteActionButton = $("#sprite-action-button");
       $spriteActionButton.click(function () {
