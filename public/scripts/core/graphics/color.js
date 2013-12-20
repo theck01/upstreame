@@ -21,11 +21,11 @@ define([], function () {
     }
 
     // check for format "#RRGGBB" and "#RGB"
-    if(color.match(/^#[A-Fa-f0-9]{6}$/g)) return color;
+    if(color.match(/^#[A-Fa-f0-9]{6}$/g)) return color.toUpperCase();
     else if(color.match(/^#[A-Fa-f0-9]{3}$/g)){
       sanitizedColor = "#" + color[1] + color[1] + color[2] + color[2];
       sanitizedColor += color[3] + color[3];
-      return sanitizedColor;
+      return sanitizedColor.toUpperCase();
     }
 
     return "#FFFFFF";

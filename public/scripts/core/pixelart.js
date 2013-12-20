@@ -156,6 +156,7 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
         // do nothing for input keypress events
         if ($(e.target).is("input")) return;
 
+        console.log(e.which);
         // 'C' for coordinate system toggle
         if (e.which === 99) {
           $("#hide-grid-button").click();
@@ -167,6 +168,10 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
         // 'E' for erase
         else if (e.which === 101) {
           $("#clear-radio-button").click();
+        }
+        // 'F' for fill
+        else if (e.which === 102) {
+          $("#fill-radio-button").click();
         }
         // 'G' for get
         else if (e.which === 103) {

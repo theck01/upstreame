@@ -1,6 +1,6 @@
 define(["jquery", "underscore", "core/graphics/pixelcanvas",
-        "core/graphics/color"],
-  function($, _, PixelCanvas, Color){
+        "core/graphics/color", "core/util/encoder"],
+  function($, _, PixelCanvas, Color, Encoder){
 
 
     // applyChanges applies an array of changes to the pixel canvas and returns
@@ -34,12 +34,56 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
           });
         });
 
-        if (change.action === "set" || change.action === "import") {
+        if (change.action === "set" || change.action === "import" ||
+            change.action === "fill") {
           pixels = pixels.concat(change.pixels);
         }
       });
 
       return pixels;
+    }
+
+
+    // fillArea performs a fill operation on a region of pixels of the same
+    // color 
+    //
+    // Arguments:
+    //   pixels: array of pixels in the current image
+    //   loc: location of initial fill operation
+    //   dim: dimensions of canvas
+    //   color: color to fill
+    // Returns an array of pixels that are affected by the fill operation
+    function fillArea (pixels, loc, dim, color) {
+      var filledPixels = Object.create(null);
+      var locationStack = [loc];
+
+      var existingColorMap = _.reduce(pixels, function (map, p) {
+        map[Encoder.coordToScalar(p, dim)] = Color.sanitize(p.color);
+        return map;
+      }, Object.create(null));
+
+      var replacedColor = existingColorMap[Encoder.coordToScalar(loc, dim)];
+
+      while (locationStack.length > 0) {
+        var pos = locationStack.pop();
+        var scalarPos = Encoder.coordToScalar(pos, dim);
+
+        if (pos.x >= dim.width || pos.x < 0 || pos.y >= dim.height ||
+            pos.y < 0) {
+          continue;
+        }
+
+        if (existingColorMap[scalarPos] === replacedColor &&
+            filledPixels[scalarPos] === undefined) {
+          filledPixels[scalarPos] = { x: pos.x, y: pos.y, color: color };
+          locationStack = locationStack.concat([
+            { x: pos.x+1, y: pos.y }, { x: pos.x-1, y: pos.y },
+            { x: pos.x, y: pos.y+1 }, { x: pos.x, y: pos.y-1 }
+          ]);
+        }
+      }
+
+      return _.values(filledPixels);
     }
 
     
@@ -114,6 +158,13 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
           that.currentChange.pixels.push({
             x: x, y: y, color: that.currentColor
           });
+          that.paint();
+        }
+        else if(that.action === "fill") {
+          if (matchingPixel) return;
+          var pixels = fillArea(that.pixels, { x: x, y: y }, that.dim,
+                                that.currentColor);
+          that.currentChange.pixels = that.currentChange.pixels.concat(pixels);
           that.paint();
         }
         else if(that.action === "get"){
