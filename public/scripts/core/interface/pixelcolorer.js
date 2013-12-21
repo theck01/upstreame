@@ -8,38 +8,40 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
     //
     // Arguments:
     //   changeset: Array of objects with 'action' and 'pixels' fields
-    //   pixels: Optional, Array of pixel objects on the canvas. If unspecified
-    //           the blank canvas will be used
+    //   pixels: Array of pixel objects on the canvas.
+    //   dim: dimensions of canvas
     // Returns final pixel state after applying changes
-    function applyChanges (changeset, pixels) {
-      pixels = _.clone(pixels) || [];
+    function applyChanges (changeset, pixels, dim) {
+      var existingPixelMap = _.reduce(pixels, function (map, p) {
+        map[Encoder.coordToScalar(p, dim)] = p;
+        return map;
+      }, Object.create(null));
 
       _.each(changeset, function (change) {
 
         if (change.action === "clear all") {
-          pixels = [];
+          existingPixelMap = Object.create(null);
           return;
         }
 
         if (change.action === "import") {
-          pixels = [];
+          existingPixelMap = Object.create(null);
         }
 
-        // regardless of set or clear, filter out existing pixels altered in
-        // changeset
-        pixels = _.reject(pixels, function (existingPixel) {
-          return _.find(change.pixels, function (changedPixel) {
-            return existingPixel.x === changedPixel.x &&
-                   existingPixel.y === changedPixel.y;
-          });
+        _.each(change.pixels, function (p) {
+          var encoded = Encoder.coordToScalar(p, dim);
+
+          if (change.action === "clear" && existingPixelMap[encoded]) {
+            delete existingPixelMap[encoded];
+          }
+          else if (change.action === "set" || change.action === "import" ||
+                   change.action === "fill") {
+            existingPixelMap[encoded] = p;
+          }
         });
-
-        if (change.action === "set" || change.action === "import" ||
-            change.action === "fill") {
-          pixels = pixels.concat(change.pixels);
-        }
       });
 
+      pixels = _.values(existingPixelMap);
       return pixels;
     }
 
@@ -202,7 +204,7 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
         this.currentChange = null;
       }
 
-      this.pixels = applyChanges([change], this.pixels);
+      this.pixels = applyChanges([change], this.pixels,this.dim);
       this.redoStack = [];
       this.undoStack.push(change);
     };
@@ -296,7 +298,7 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
                                               this.dim.height);
 
       if (this.currentChange) {
-        pixels = applyChanges([this.currentChange], this.pixels);
+        pixels = applyChanges([this.currentChange], this.pixels, this.dim);
       }
       else pixels = this.pixels;
 
@@ -352,7 +354,7 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
       if (this.redoStack.length === 0) return;
       var change = this.redoStack.pop();
       var redos = this.redoStack;
-      this.pixels = applyChanges([change], this.pixels);
+      this.pixels = applyChanges([change], this.pixels, this.dim);
       this.commitChange(change);
       this.redoStack = redos;
       this.paint();
@@ -422,7 +424,7 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
     PixelColorer.prototype.undo = function () {
       if (this.undoStack.length === 0) return;
       this.redoStack.push(this.undoStack.pop());
-      this.pixels = applyChanges(this.undoStack);
+      this.pixels = applyChanges(this.undoStack, [], this.dim);
       this.paint();
     };
 
