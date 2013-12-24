@@ -13,7 +13,9 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
     // Returns final pixel state after applying changes
     function applyChanges (changeset, pixels, dim) {
       var existingPixelMap = _.reduce(pixels, function (map, p) {
-        map[Encoder.coordToScalar(p, dim)] = p;
+        if (p.x < dim.width && p.x >= 0 && p.y < dim.height && p.y >= 0) {
+          map[Encoder.coordToScalar(p, dim)] = p;
+        }
         return map;
       }, Object.create(null));
 
@@ -29,6 +31,10 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
         }
 
         _.each(change.pixels, function (p) {
+          if (p.x >= dim.width || p.x < 0 || p.y >= dim.height || p.y < 0) {
+            return;
+          }
+
           var encoded = Encoder.coordToScalar(p, dim);
 
           if (change.action === "clear" && existingPixelMap[encoded]) {
@@ -146,36 +152,40 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
         if(x > that.dim.width || x < 0 || y > that.dim.height || y < 0)
           return;
 
-        that.currentChange = that.currentChange || {
-          action: that.action, pixels: []
-        };
+        
+        // if performing an operation that does not affect the canvas
+        if (that.action === "get") {
+          var pixel = _.find(that.pixels, function (p) {
+            return p.x === x && p.y === y;
+          }) || { color: that.backgroundColor };
+          that.currentColor = pixel.color;
+        }
+        else {
 
-        // if pixel is already included in changeset, do nothing
-        var matchingPixel = _.find(that.currentChange.pixels, function (p) {
-          return p.x === x && p.y === y;
-        });
+          // initialize changeset if one does not already exist
+          that.currentChange = that.currentChange || {
+            action: that.action, pixels: []
+          };
 
-        if(that.action === "set" || that.action === "clear"){
-          if (matchingPixel) return;
-          that.currentChange.pixels.push({
-            x: x, y: y, color: that.currentColor
+          // if pixel is already included in changeset, do nothing
+          var matchingPixel = _.find(that.currentChange.pixels, function (p) {
+            return p.x === x && p.y === y;
           });
-          that.paint();
-        }
-        else if(that.action === "fill") {
-          if (matchingPixel) return;
-          var pixels = fillArea(that.pixels, { x: x, y: y }, that.dim,
-                                that.currentColor);
-          that.currentChange.pixels = that.currentChange.pixels.concat(pixels);
-          that.paint();
-        }
-        else if(that.action === "get"){
-          if(matchingPixel)
-            that.currentColor = matchingPixel.color;
-          else
-            that.currentColor = _.find(that.pixels, function (p) {
-              return p.x === x && p.y === y;
-            }).color;
+
+          if(that.action === "set" || that.action === "clear"){
+            if (matchingPixel) return;
+            that.currentChange.pixels.push({
+              x: x, y: y, color: that.currentColor
+            });
+            that.paint();
+          }
+          else if(that.action === "fill") {
+            if (matchingPixel) return;
+            var pixels = fillArea(that.pixels, { x: x, y: y }, that.dim,
+                                  that.currentColor);
+            that.currentChange.pixels = that.currentChange.pixels.concat(pixels);
+            that.paint();
+          }
         }
 
         that.mouseMoveAction(e);
