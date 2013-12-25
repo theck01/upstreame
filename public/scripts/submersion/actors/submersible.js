@@ -84,8 +84,8 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base'],
            speed.x = OPPOSING_SPEED;
            speed.diagx = OPPOSING_DIAGONAL_SPEED;
         }
-        if ((this.direction.y === 1 && this.pitch !== PITCH_MAX) ||
-            (this.direction.y === -1 && this.pitch !== PITCH_MIN)) {
+        if ((this.direction.y === 1 && this.pitch !== PITCH_MIN) ||
+            (this.direction.y === -1 && this.pitch !== PITCH_MAX)) {
            speed.y = OPPOSING_SPEED;
            speed.diagy = OPPOSING_DIAGONAL_SPEED;
         }
