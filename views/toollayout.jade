@@ -1,0 +1,21 @@
+extend layout
+
+block sources
+  script(type="application/javascript" src="requirejs/require.js" data-main="scripts/core/pixelart")
+  link(rel="stylesheet", href="css/pixelart.css")
+  link(rel="stylesheet", href="animate.css/animate.min.css")
+  link(rel="stylesheet", href="css/typeahead-patch.css")
+  link(rel="stylesheet", href="font-awesome/css/font-awesome.min.css")
+  link(rel="stylesheet", href="typeahead.js-bootstrap.css/typeahead.js-bootstrap.css")
+
+block content
+  #nav-header.navbar.navbar-inverse.navbar-fixed-top
+    .navbar-inner
+      block navbar
+         input#logout-button.btn.btn-info(type="button" value="Sign out")
+  .container-fluid
+    .row-fluid.content-container
+      .canvas-container
+        block mainarea
+      .control-container.well
+        block wellarea

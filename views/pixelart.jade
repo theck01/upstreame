@@ -1,107 +1,97 @@
-extend layout
+extend toollayout
 
-block sources
-  script(type="application/javascript" src="requirejs/require.js" data-main="scripts/core/pixelart")
-  link(rel="stylesheet", href="css/pixelart.css")
-  link(rel="stylesheet", href="animate.css/animate.min.css")
-  link(rel="stylesheet", href="css/typeahead-patch.css")
-  link(rel="stylesheet", href="font-awesome/css/font-awesome.min.css")
-  link(rel="stylesheet", href="typeahead.js-bootstrap.css/typeahead.js-bootstrap.css")
+block navbar
+  a.navbar-brand(href="#") Sprite Canvas
+  if loggedIn
+    form#login-form.navbar-form.navbar-right(hidden)
+      .form-group
+        label.sr-only Username
+        input#username-field.form-control(type="text" placeholder="username" name="username")
+      .form-group
+        label.sr-only Password
+        input#password-field.form-control(type="password" placeholder="password" name="password")
+      input#login-button.btn.btn-info(type="button" value="Sign in")
+    form#logout-form.navbar-form.navbar-right(action="/logout" method="post")
+      input#logout-button.btn.btn-info(type="button" value="Sign out")
+  else
+    form#login-form.navbar-form.navbar-right
+      .form-group
+        label.sr-only Username
+        input#username-field.form-control(type="text" placeholder="username" name="username")
+      .form-group
+        label.sr-only Password
+        input#password-field.form-control(type="password" placeholder="password" name="password")
+      input#login-button.btn.btn-info(type="button" value="Sign in")
+    form#logout-form.navbar-form.navbar-right(action="/logout" method="post" hidden)
+      input#logout-button.btn.btn-info(type="button" value="Sign out")
 
-block content
-  #nav-header.navbar.navbar-inverse.navbar-fixed-top
-    .navbar-inner
-      a.navbar-brand(href="#") Sprite Canvas
-      if loggedIn
-        form#login-form.navbar-form.navbar-right(hidden)
-          .form-group
-            label.sr-only Username
-            input#username-field.form-control(type="text" placeholder="username" name="username")
-          .form-group
-            label.sr-only Password
-            input#password-field.form-control(type="password" placeholder="password" name="password")
-          input#login-button.btn.btn-info(type="button" value="Sign in")
-        form#logout-form.navbar-form.navbar-right(action="/logout" method="post")
-          input#logout-button.btn.btn-info(type="button" value="Sign out")
-      else
-        form#login-form.navbar-form.navbar-right
-          .form-group
-            label.sr-only Username
-            input#username-field.form-control(type="text" placeholder="username" name="username")
-          .form-group
-            label.sr-only Password
-            input#password-field.form-control(type="password" placeholder="password" name="password")
-          input#login-button.btn.btn-info(type="button" value="Sign in")
-        form#logout-form.navbar-form.navbar-right(action="/logout" method="post" hidden)
-          input#logout-button.btn.btn-info(type="button" value="Sign out")
-  .container-fluid
-    .row-fluid.content-container
-      .canvas-container
-        canvas#pixel-art-canvas
-      .control-container.well
-        #status-alert.alert.alert-danger(hidden)
-        .control-row
-          .input-group
-            input#sprite-name-input.form-control
-            span.input-group-btn
-              #sprite-action-button.btn.btn-primary Load Sprite
-              #sprite-action-select.btn.btn-primary.dropdown-toggle(data-toggle="dropdown")
-                span.caret
-              ul.dropdown-menu(role="menu")
-                li
-                  a#sprite-save-link(href="#") Save Sprite
-                li
-                  a#sprite-load-link(href="#") Load Sprite
-        .control-row
-          .form-inline
-            input#pixel-width-input.dimension-input.form-control
-            label.control-label.dimension-label Pixels Wide
-            input#pixel-height-input.dimension-input.form-control
-            label.control-label.dimension-label Pixels Tall
-        .control-row
-          #pixel-color-preview.color-preview
-          .color-controls.form-inline
-            label.control-label Pixel Color
-            input#pixel-color-input.form-control.color-input
-          .float-spacer
-        .control-row
-          #background-color-preview.color-preview
-          .color-controls.form-inline
-            label.control-label Backround Color
-            input#background-color-input.form-control.color-input
-          .float-spacer
-        .control-row
-          .btn-group.btn-group-justified(data-toggle="buttons")
-            label.btn.btn-default.active
-              input#set-radio-button(type="radio" name="action" value="set") 
-              i.icon-pencil.icon-large
-            label.btn.btn-default
-              input#fill-radio-button(type="radio" name="action" value="fill") 
-              i.icon-bitbucket.icon-large
-            label.btn.btn-default
-              input#get-radio-button(type="radio" name="action" value="get")
-              i.icon-pencil.icon-tint
-            label.btn.btn-default
-              input#clear-radio-button(type="radio" name="action" value="clear")
-              i.icon-pencil.icon-eraser
-        .control-row
-          .btn-group.btn-group-justified
-            a#undo-action-button.btn.btn-default(href="#")
-              i.icon-undo.icon-large
-            a#redo-action-button.btn.btn-default(href="#")
-              i.icon-repeat.icon-large
-            a#hide-grid-button.btn.btn-default(href="#" data-toggle="buttons")
-              i.icon-th.icon-large
-            a#clear-canvas-button.btn.btn-default(href="#")
-              i.icon-trash.icon-large
-        .control-row
-          h4 Keyboard Shortcuts
-          p.
-            D - activate draw mode, paint pixel(s) on the canvas <br/>
-            F - activate fill mode, paint areas on the canvas <br/>
-            G - activate get mode, retrieve a color from the canvas <br/>
-            E - activate erase mode, clear pixel(s) on the canvas <br/>
-            U - undo last action <br/>
-            R - redo last action <br/>
-            C - toggle grid coordinate system
+block mainarea
+  canvas#pixel-art-canvas
+
+block wellarea
+  #status-alert.alert.alert-danger(hidden)
+  .control-row
+    .input-group
+      input#sprite-name-input.form-control
+      span.input-group-btn
+        #sprite-action-button.btn.btn-primary Load Sprite
+        #sprite-action-select.btn.btn-primary.dropdown-toggle(data-toggle="dropdown")
+          span.caret
+        ul.dropdown-menu(role="menu")
+          li
+            a#sprite-save-link(href="#") Save Sprite
+          li
+            a#sprite-load-link(href="#") Load Sprite
+  .control-row
+    .form-inline
+      input#pixel-width-input.dimension-input.form-control
+      label.control-label.dimension-label Pixels Wide
+      input#pixel-height-input.dimension-input.form-control
+      label.control-label.dimension-label Pixels Tall
+  .control-row
+    #pixel-color-preview.color-preview
+    .color-controls.form-inline
+      label.control-label Pixel Color
+      input#pixel-color-input.form-control.color-input
+    .float-spacer
+  .control-row
+    #background-color-preview.color-preview
+    .color-controls.form-inline
+      label.control-label Backround Color
+      input#background-color-input.form-control.color-input
+    .float-spacer
+  .control-row
+    .btn-group.btn-group-justified(data-toggle="buttons")
+      label.btn.btn-default.active
+        input#set-radio-button(type="radio" name="action" value="set") 
+        i.icon-pencil.icon-large
+      label.btn.btn-default
+        input#fill-radio-button(type="radio" name="action" value="fill") 
+        i.icon-bitbucket.icon-large
+      label.btn.btn-default
+        input#get-radio-button(type="radio" name="action" value="get")
+        i.icon-pencil.icon-tint
+      label.btn.btn-default
+        input#clear-radio-button(type="radio" name="action" value="clear")
+        i.icon-pencil.icon-eraser
+  .control-row
+    .btn-group.btn-group-justified
+      a#undo-action-button.btn.btn-default(href="#")
+        i.icon-undo.icon-large
+      a#redo-action-button.btn.btn-default(href="#")
+        i.icon-repeat.icon-large
+      a#hide-grid-button.btn.btn-default(href="#" data-toggle="buttons")
+        i.icon-th.icon-large
+      a#clear-canvas-button.btn.btn-default(href="#")
+        i.icon-trash.icon-large
+  .control-row
+    h4 Keyboard Shortcuts
+    p.
+      D - activate draw mode, paint pixel(s) on the canvas <br/>
+      F - activate fill mode, paint areas on the canvas <br/>
+      G - activate get mode, retrieve a color from the canvas <br/>
+      E - activate erase mode, clear pixel(s) on the canvas <br/>
+      U - undo last action <br/>
+      R - redo last action <br/>
+      C - toggle grid coordinate system
 
