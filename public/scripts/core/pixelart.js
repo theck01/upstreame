@@ -59,7 +59,7 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
 
     // load typeahead after jQuery, to ensure functionallity
     require(["typeahead"], function () {
-      $spriteNameInput = $spriteNameInput || $("sprite-name-input");
+      $spriteNameInput = $spriteNameInput || $("#sprite-name-input");
       refreshSpriteNames();
     });
 
