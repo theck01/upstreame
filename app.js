@@ -50,6 +50,7 @@ app.configure(function () {
 
 // view routes
 app.get('/', views.index);
+app.get('/animator', views.animator);
 app.get('/invaders', views.invaders);
 app.get('/pixelart', views.pixelart);
 app.get('/submersion', views.submersion);

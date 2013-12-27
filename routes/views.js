@@ -1,5 +1,11 @@
 var auth = require('../lib/auth.js');
 
+exports.animator = function (req, res) {
+  res.render('animator', {
+    title: 'Animations'
+  });
+};
+
 exports.index = function (req, res) {
   res.render('home', {
     title: 'upstrea.me'
@@ -14,7 +20,7 @@ exports.invaders = function (req, res) {
 
 exports.pixelart = function (req, res) {
   res.render('pixelart', {
-    title: 'Pixel Art',
+    title: 'Canvas',
     loggedIn: auth.isLoggedIn(req)
   });
 };

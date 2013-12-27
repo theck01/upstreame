@@ -1,3 +1,6 @@
+body {
+  overflow: hidden;
+}
 .content-container {
   position: absolute;
   top: 50px;
@@ -10,6 +13,7 @@
   height: 100%;
   left: 0px;
   right: 400px;
+  overflow: hidden;
 }
 .color-controls {
   float: left;
@@ -33,6 +37,7 @@
   height: 100%;
   right: 0px;
   width: 400px;
+  overflow: auto;
 }
 .control-row {
   margin: 20px 0px;
@@ -45,6 +50,14 @@
   margin-right: 20px;
   padding-left: 5px;
   width: 90px;
+}
+.last-dimension-label {
+  padding-left: 5px;
+  width: 90px;
+}
+.frames-per-sprite-label {
+  margin-right: 20px;
+  padding-left: 5px;
 }
 .float-spacer {
   clear: both;

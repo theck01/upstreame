@@ -1,7 +1,10 @@
 extend toollayout
 
+block mainscript
+  script(type="application/javascript" src="requirejs/require.js" data-main="scripts/core/pixelart")
+
 block navbar
-  a.navbar-brand(href="#") Sprite Canvas
+  a.navbar-brand(href="#") Canvas
   if loggedIn
     form#login-form.navbar-form.navbar-right(hidden)
       .form-group
@@ -47,7 +50,7 @@ block wellarea
       input#pixel-width-input.dimension-input.form-control
       label.control-label.dimension-label Pixels Wide
       input#pixel-height-input.dimension-input.form-control
-      label.control-label.dimension-label Pixels Tall
+      label.control-label.last-dimension-label Pixels Tall
   .control-row
     #pixel-color-preview.color-preview
     .color-controls.form-inline

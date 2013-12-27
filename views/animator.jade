@@ -1,0 +1,45 @@
+extend toollayout
+
+block mainscript
+  script(type="application/javascript" src="requirejs/require.js" data-main="scripts/core/animator")
+
+block navbar
+  a.navbar-brand(href="#") Animator
+
+block mainarea
+  canvas#animation-canvas
+
+block wellarea
+  .control-row
+    .form-inline
+      input#pixel-width-input.dimension-input.form-control
+      label.control-label.dimension-label Pixels Wide
+      input#pixel-height-input.dimension-input.form-control
+      label.control-label.last-dimension-label Pixels Tall
+  .control-row
+    .form-inline
+      input#frames-per-sprite-input.dimension-input.form-control
+      label.control-label.frames-per-sprite-label Frames per Sprite
+  .control-row
+    #background-color-preview.color-preview
+    .color-controls.form-inline
+      label.control-label Backround Color
+      input#background-color-input.form-control.color-input
+    .float-spacer
+  .control-row
+    .btn-group.btn-group-justified
+      a#play-button.btn.btn-default(href="#")
+        i.icon-play.icon-large
+      a#stop-button.btn.btn-default(href="#")
+        i.icon-stop.icon-large
+      a#repeat-toggle.btn.btn-default(href="#" data-toggle="buttons")
+        i.icon-refresh.icon-large
+  .control-row
+    h4 Animation List
+    ul#sprite-list
+  .control-row
+    .input-group
+      input#sprite-name-input.form-control(type="text" placeholder="sprite name")
+      span.input-group-btn
+        #sprite-add-button.btn.btn-primary 
+          i.icon-plus

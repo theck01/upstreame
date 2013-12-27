@@ -1,12 +1,14 @@
 extend layout
 
+block mainscript
+
 block sources
-  script(type="application/javascript" src="requirejs/require.js" data-main="scripts/core/pixelart")
-  link(rel="stylesheet", href="css/pixelart.css")
+  link(rel="stylesheet", href="css/toollayout.css")
   link(rel="stylesheet", href="animate.css/animate.min.css")
   link(rel="stylesheet", href="css/typeahead-patch.css")
   link(rel="stylesheet", href="font-awesome/css/font-awesome.min.css")
   link(rel="stylesheet", href="typeahead.js-bootstrap.css/typeahead.js-bootstrap.css")
+  block mainscript
 
 block content
   #nav-header.navbar.navbar-inverse.navbar-fixed-top
