@@ -35,6 +35,7 @@ require(["jquery", "underscore", "core/graphics/color",
     var $pixelHeight;
     var $pixelWidth;
     var $playButton;
+    var $refreshButton;
     var $repeatToggle;
     var $spriteNameInput;
     var $spriteAddButton;
@@ -103,6 +104,20 @@ require(["jquery", "underscore", "core/graphics/color",
       requestAnimationFrame(timeStep);
     }
 
+    function loadSprites() {
+      $.ajax({
+        url: "/sprite/all",
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+          SpriteArchive.load(data);
+          $spriteNameInput.typeahead("destroy");
+          $spriteNameInput.typeahead({ autoselect: "first",
+                                       local: _.keys(data) });
+        }
+      });
+    }
+
 
     $(function () {
 
@@ -114,6 +129,7 @@ require(["jquery", "underscore", "core/graphics/color",
       $pixelHeight = $("#pixel-height-input");
       $pixelWidth = $("#pixel-width-input");
       $playButton = $("#play-button");
+      $refreshButton = $("#refresh-button");
       $repeatToggle = $("#repeat-toggle");
       $spriteNameInput = $("#sprite-name-input");
       $spriteAddButton = $("#sprite-add-button");
@@ -125,24 +141,14 @@ require(["jquery", "underscore", "core/graphics/color",
       pixelArtCanvas.paint();
 
 
-      // load all sprites
-      
-      $.ajax({
-        url: "/sprite/all",
-        type: "GET",
-        dataType: "json",
-        success: function (data) {
-          SpriteArchive.load(data);
-
-          require(["typeahead"], function () {
-            $spriteNameInput.typeahead({ autoselect: "first",
-                                         local: _.keys(data) });
-          });
-        }
-      });
-
-
       // initialize UI
+
+
+      require(["typeahead"], function () {
+        $spriteNameInput.typeahead({ autoselect: "first",
+                                     local: [] });
+        loadSprites();
+      });
       
       $backgroundColorPreview.css("background-color", backgroundColor);
       $backgroundColorInput.keyup(function () {
@@ -186,6 +192,8 @@ require(["jquery", "underscore", "core/graphics/color",
         if (scheduledFrame) return;
         displayFrame($spriteList.children().first());
       });
+
+      $refreshButton.click(loadSprites);
 
       $spriteAddButton.click(function () {
         var $spriteListItem = createListElement($spriteNameInput.val());
