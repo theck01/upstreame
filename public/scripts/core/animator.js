@@ -73,8 +73,11 @@ require(["jquery", "underscore", "core/graphics/color",
     function displayFrame($listItem) {
       var spriteName = $listItem.children(".form-control").val();
       var sprite = SpriteArchive.get(spriteName);
-      sprite.paintOn(pixelArtCanvas, { x: Math.floor(dimensions.width/2),
-                                       y: Math.floor(dimensions.height/2) });
+      
+      if (sprite) {
+        sprite.paintOn(pixelArtCanvas, { x: Math.floor(dimensions.width/2),
+                                         y: Math.floor(dimensions.height/2) });
+      }
       pixelArtCanvas.paint();
 
       if ($listItem.next().length > 0) {
