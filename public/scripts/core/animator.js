@@ -16,8 +16,9 @@ require.config({
 
 require(["jquery", "underscore", "core/graphics/color",
          "core/graphics/pixelcanvas", "core/graphics/spritearchive",
-         "core/util/frameclock", "bootstrap"],
-  function ($, _, Color, PixelCanvas, SpriteArchive, FrameClock) {
+         "core/interface/statusalert", "core/util/frameclock", "bootstrap",
+         "core/interface/toollayoutloginform"],
+  function ($, _, Color, PixelCanvas, SpriteArchive, StatusAlert, FrameClock) {
 
     // persistent state variables
     var backgroundColor = "#FFFFFF";
@@ -117,6 +118,9 @@ require(["jquery", "underscore", "core/graphics/color",
           $spriteNameInput.typeahead("destroy");
           $spriteNameInput.typeahead({ autoselect: "first",
                                        local: _.keys(data) });
+        },
+        error: function (jqXHR) {
+          console.log("Could not load sprites: " + jqXHR.status + "error");
         }
       });
     }

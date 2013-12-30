@@ -14,8 +14,10 @@ require.config({
 });
 
 
-require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
-  function ($, _, PixelColorer) {
+require(["jquery", "underscore", "core/interface/pixelcolorer",
+         "core/interface/statusalert", "bootstrap",
+         "core/interface/toollayoutloginform"],
+  function ($, _, PixelColorer, StatusAlert) {
     // persistent UI variables
     var $backgroundColorInput;
     var $backgroundColorPreview;
@@ -27,7 +29,7 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
     var $pixelWidth;
     var $redoButton;
     var $spriteNameInput;
-    var $statusAlert;
+    var statusAlert;
     var $spriteActionButton;
     var $undoButton;
 
@@ -53,6 +55,10 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
           $spriteNameInput.typeahead("destroy");
           $spriteNameInput.typeahead({ autoselect: "first",
                                        local: _.keys(data) });
+        },
+        error: function (jqXHR) {
+          statusAlert.display("Could not load sprites: " + jqXHR.status +
+                              "error", true);
         }
       });
     }
@@ -63,67 +69,9 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
       refreshSpriteNames();
     });
 
-    function displayAlert (message, error) {
-      if (error) {
-        $statusAlert.addClass("alert-danger");
-        $statusAlert.removeClass("alert-success");
-      }
-      else {
-        $statusAlert.removeClass("alert-danger");
-        $statusAlert.addClass("alert-success");
-      }
-
-      $statusAlert.text(message);
-      $statusAlert.attr("hidden", false);
-    }
-
 
     $(function () {
-      $statusAlert = $("#status-alert");
-
-      $("#login-button").click(function () {
-        $.ajax({
-          url: "/login",
-          type: "POST",
-          data: {
-            "username": $("#username-field").val(),
-            "password": $("#password-field").val()
-          },
-          success: function () {
-            displayAlert("Welcome back!", false);
-            $("#login-form").attr("hidden", true);
-            $("#logout-form").attr("hidden", false);
-          },
-          error: function (jqXHR) {
-            if(jqXHR.status  === 401) {
-              displayAlert("Username or password incorrect. Please try again.",
-                           true);
-            }
-            else displayAlert("Server error.", true);
-          }
-        });
-
-        $("#username-field").val("");
-        $("#password-field").val("");
-      });
-
-      $("#logout-button").click(function () {
-        $.ajax({
-          url: "/logout",
-          type: "POST",
-          success: function () {
-            $statusAlert.attr("hidden", true);
-            $("#login-form").attr("hidden", false);
-            $("#logout-form").attr("hidden", true);
-          },
-          error: function (jqXHR) {
-            if(jqXHR.status === 500) {
-              displayAlert("Server error.", true);
-            }
-            else displayAlert("Client error.", true);
-          }
-        });
-      });
+      statusAlert = new StatusAlert("#status-alert");
 
       $("#hide-grid-button").click(function () {
         pixelArtCanvas.toggleGrid();
@@ -156,7 +104,6 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
         // do nothing for input keypress events
         if ($(e.target).is("input")) return;
 
-        console.log(e.which);
         // 'C' for coordinate system toggle
         if (e.which === 99) {
           $("#hide-grid-button").click();
@@ -244,14 +191,16 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
         var sprite = pixelArtCanvas.exportImage();
 
         if(_.isEmpty(sprite.pixels) &&
-           $spriteActionButton.text() === "Save Sprite"){
-          displayAlert("Please draw a sprite before saving", true);
+          $spriteActionButton.text() === "Save Sprite"){
+          statusAlert.display("Please draw a sprite before saving", true);
         }
-        else if(name === "") displayAlert("Please specify a sprite name", true);
+        else if(name === "") {
+          statusAlert.display("Please specify a sprite name", true);
+        }
         else if(name.match(/[^A-Za-z0-9-_]+/) !== null){
           var msg = "Valid sprite names can contain '-', '_', and ";
           msg += "alphanumeric characters";
-          displayAlert(msg, true);
+          statusAlert.display(msg, true);
         }
         else{
           if($spriteActionButton.text() === "Save Sprite"){
@@ -261,21 +210,18 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
               contentType: "application/json",
               data: JSON.stringify(sprite),
               error: function (jqXHR) {
-                if(jqXHR.status  === 400) displayAlert("Client error.", true);
-                else if(jqXHR.status === 401) {
-                  displayAlert("Please login before saving sprites.", true);
+                if(jqXHR.status  === 400) {
+                  statusAlert.display("Client error.", true);
                 }
-                else displayAlert("Server error.", true);
+                else if(jqXHR.status === 401) {
+                  statusAlert.display("Please login before saving sprites.",
+                                      true);
+                }
+                else statusAlert.display("Server error.", true);
               },
               success: function () {
                 $spriteNameInput.typeahead("setQuery", "");
-
-                if($statusAlert.hasClass("alert-success")){
-                  $statusAlert.removeClass("animated bounce");
-                  $statusAlert.addClass("animated bounce");
-                }
-                displayAlert("Saved!", false);
-
+                statusAlert.display("Saved!", false);
                 refreshSpriteNames();
               }
             });
@@ -287,15 +233,15 @@ require(["jquery", "underscore", "core/interface/pixelcolorer", "bootstrap"],
               dataType: "json",
               error: function (jqXHR) {
                 if(jqXHR.status  === 404){
-                  displayAlert(name + " not found.", true);
+                  statusAlert.display(name + " not found.", true);
                 }
                 else{
-                  displayAlert("Server error.", true);
+                  statusAlert.display("Server error.", true);
                 }
               },
               success: function (data) {
                 pixelArtCanvas.importImage(data.pixels);
-                $statusAlert.attr("hidden", true);
+                statusAlert.hide();
                 $spriteNameInput.typeahead("setQuery", "");
               }
             });

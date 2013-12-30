@@ -2,7 +2,8 @@ var auth = require('../lib/auth.js');
 
 exports.animator = function (req, res) {
   res.render('animator', {
-    title: 'Animations'
+    title: 'Animations',
+    loggedIn: auth.isLoggedIn(req)
   });
 };
 

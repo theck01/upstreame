@@ -3,13 +3,14 @@ extend toollayout
 block mainscript
   script(type="application/javascript" src="requirejs/require.js" data-main="scripts/core/animator")
 
-block navbar
+block navbar-title
   a.navbar-brand(href="#") Animator
 
 block mainarea
   canvas#animation-canvas
 
 block wellarea
+  #status-alert.alert.alert-danger(hidden)
   .control-row
     .form-inline
       input#pixel-width-input.dimension-input.form-control
