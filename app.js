@@ -1,3 +1,4 @@
+var animations = require('./routes/animations');
 var auth = require('./lib/auth');
 var express = require('express');
 var LocalStrategy = require('passport-local').Strategy;
@@ -54,6 +55,10 @@ app.get('/animator', views.animator);
 app.get('/invaders', views.invaders);
 app.get('/pixelart', views.pixelart);
 app.get('/submersion', views.submersion);
+
+// animation routes
+app.get('/animation/:name', animations.load);
+app.post('/animation/:name', auth.ensureLoggedIn, animations.save);
 
 // authentication routes
 app.post('/login', passport.authenticate('local'), sessions.login);
