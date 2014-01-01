@@ -381,6 +381,11 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
       this.dim = { width: width, height: height };
       this.pCanvas = new PixelCanvas(this.dim, this.canvasID,
                                      this.backgroundColor);
+
+      if (this.undoStack.length !== 0) {
+        this.pixels = applyChanges(this.undoStack, [], this.dim);
+      }
+
       this.paint();
     };
 
