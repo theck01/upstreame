@@ -3,7 +3,6 @@ require.config({
   paths: {
     bootstrap: "/bootstrap/dist/js/bootstrap.min",
     jquery: "/jquery/jquery.min",
-		typeahead: "/typeahead.js/dist/typeahead.min",
     underscore: "/underscore-amd/underscore-min"
   },
   shim: {
@@ -29,6 +28,11 @@ require(["jquery", "underscore", "core/graphics/color",
     var scheduledFrame = null;
 
     // persistent UI variables
+    var $animationNameInput;
+    var $animationActionButton;
+    var $animationActionSelect;
+    var $animationSaveLink;
+    var $animationLoadLink;
     var $backgroundColorInput;
     var $backgroundColorPreview;
     var $canvas;
@@ -41,6 +45,7 @@ require(["jquery", "underscore", "core/graphics/color",
     var $spriteNameInput;
     var $spriteAddButton;
     var $spriteList;
+    var statusAlert;
     var $stopButton;
 
 
@@ -79,6 +84,9 @@ require(["jquery", "underscore", "core/graphics/color",
         sprite.paintOn(pixelArtCanvas, { x: Math.floor(dimensions.width/2),
                                          y: Math.floor(dimensions.height/2) });
       }
+      else {
+        statusAlert.display(spriteName + " does not exist", true);
+      }
       pixelArtCanvas.paint();
 
       if ($listItem.next().length > 0) {
@@ -115,20 +123,31 @@ require(["jquery", "underscore", "core/graphics/color",
         dataType: "json",
         success: function (data) {
           SpriteArchive.load(data);
-          $spriteNameInput.typeahead("destroy");
-          $spriteNameInput.typeahead({ autoselect: "first",
-                                       local: _.keys(data) });
         },
         error: function (jqXHR) {
-          console.log("Could not load sprites: " + jqXHR.status + "error");
+          statusAlert.display("Could not load sprites: " + jqXHR.status +
+                              "error", true);
         }
       });
+    }
+
+
+    function updateCanvas() {
+      pixelArtCanvas.clear();
+      pixelArtCanvas = new PixelCanvas(dimensions, "#animation-canvas",
+                                       backgroundColor);
+      pixelArtCanvas.paint();
     }
 
 
     $(function () {
 
       // initialize all variables
+      $animationNameInput = $("#animation-name-input");
+      $animationActionButton = $("#animation-action-button");
+      $animationActionSelect = $("#animation-action-select");
+      $animationSaveLink = $("#animation-save-link");
+      $animationLoadLink = $("#animation-load-link");
       $backgroundColorInput = $("#background-color-input");
       $backgroundColorPreview = $("#background-color-preview");
       $canvas = $("#animation-canvas");
@@ -141,30 +160,22 @@ require(["jquery", "underscore", "core/graphics/color",
       $spriteNameInput = $("#sprite-name-input");
       $spriteAddButton = $("#sprite-add-button");
       $spriteList = $("#sprite-list");
+      statusAlert = new StatusAlert("#status-alert");
       $stopButton = $("#stop-button");
 
       pixelArtCanvas = new PixelCanvas(dimensions, "#animation-canvas",
                                        backgroundColor);
       pixelArtCanvas.paint();
 
+      loadSprites();
+
 
       // initialize UI
-
-
-      require(["typeahead"], function () {
-        $spriteNameInput.typeahead({ autoselect: "first",
-                                     local: [] });
-        loadSprites();
-      });
-      
       $backgroundColorPreview.css("background-color", backgroundColor);
       $backgroundColorInput.keyup(function () {
         backgroundColor = Color.sanitize($backgroundColorInput.val());
         $backgroundColorPreview.css("background-color", backgroundColor);
-        pixelArtCanvas.clear();
-        pixelArtCanvas = new PixelCanvas(dimensions, "#animation-canvas",
-                                         backgroundColor);
-        pixelArtCanvas.paint();
+        updateCanvas();
       });
       $backgroundColorInput.val(backgroundColor);
 
@@ -173,25 +184,19 @@ require(["jquery", "underscore", "core/graphics/color",
       $framesPerSpriteInput.keyup(function () {
         frameRate = parseInt($framesPerSpriteInput.val()) || 1;
       });
-      $framesPerSpriteInput.val(frameRate);
+      $framesPerSpriteInput.val(frameRate.toString());
 
       $pixelHeight.keyup(function () {
         dimensions = { width: parseInt($pixelWidth.val(), 10) || 1,
                        height: parseInt($pixelHeight.val(), 10) || 1 };
-        pixelArtCanvas.clear();
-        pixelArtCanvas = new PixelCanvas(dimensions, "#animation-canvas",
-                                         backgroundColor);
-        pixelArtCanvas.paint();
+        updateCanvas();
       });
       $pixelHeight.val(dimensions.height.toString());
 
       $pixelWidth.keyup(function () {
         dimensions = { width: parseInt($pixelWidth.val(), 10) || 1,
                        height: parseInt($pixelHeight.val(), 10) || 1 };
-        pixelArtCanvas.clear();
-        pixelArtCanvas = new PixelCanvas(dimensions, "#animation-canvas",
-                                         backgroundColor);
-        pixelArtCanvas.paint();
+        updateCanvas();
       });
       $pixelWidth.val(dimensions.width.toString());
 
@@ -210,6 +215,102 @@ require(["jquery", "underscore", "core/graphics/color",
       $stopButton.click(function () {
         if (scheduledFrame) frameClock.cancel(scheduledFrame);
         scheduledFrame = null;
+      });
+
+      $animationActionButton.click(function () {
+        var name = $animationNameInput.val();
+
+        if($spriteList.children().length === 0 &&
+          $animationActionButton.text() === "Save Animation"){
+          statusAlert.display("Please add sprites to animation before saving",
+                              true);
+        }
+        else if(name === "") {
+          statusAlert.display("Please specify a sprite name", true);
+        }
+        else if(name.match(/[^A-Za-z0-9-_]+/) !== null){
+          var msg = "Valid sprite names can contain '-', '_', and ";
+          msg += "alphanumeric characters";
+          statusAlert.display(msg, true);
+        }
+        else{
+          if($animationActionButton.text() === "Save Animation"){
+            var spriteNames = _.map($spriteList.children(), function (li) {
+              return $(li).children(".form-control").val();
+            });
+
+            var animation = {
+              backgroundColor: backgroundColor,
+              dimensions: dimensions,
+              framesPerSprite: frameRate,
+              spriteList: spriteNames
+            };
+
+            $.ajax({
+              url: "/animation/" + name,
+              type: "POST",
+              contentType: "application/json",
+              data: JSON.stringify(animation),
+              error: function (jqXHR) {
+                if(jqXHR.status  === 400) {
+                  statusAlert.display("Client error.", true);
+                }
+                else if(jqXHR.status === 401) {
+                  statusAlert.display("Please login before saving sprites.",
+                                      true);
+                }
+                else statusAlert.display("Server error.", true);
+              },
+              success: function () {
+                $animationNameInput.val("");
+                statusAlert.display("Saved!", false);
+              }
+            });
+          }
+          else{
+            $.ajax({
+              url: "/animation/" + name,
+              type: "GET",
+              dataType: "json",
+              error: function (jqXHR) {
+                if(jqXHR.status  === 404){
+                  statusAlert.display(name + " not found.", true);
+                }
+                else{
+                  statusAlert.display("Server error.", true);
+                }
+              },
+              success: function (data) {
+                backgroundColor = data.backgroundColor;
+                $backgroundColorInput.val(backgroundColor);
+                $backgroundColorPreview.css("background-color",
+                                            backgroundColor);
+                
+                dimensions = data.dimensions;
+                $pixelWidth.val(dimensions.width.toString());
+                $pixelHeight.val(dimensions.height.toString());
+
+                frameRate = data.framesPerSprite;
+                $framesPerSpriteInput.val(frameRate.toString());
+                
+                $spriteList.empty();
+                _.each(data.spriteList, function (name) {
+                  $spriteList.append(createListElement(name));
+                });
+
+                updateCanvas();
+              }
+            });
+          }
+        }
+      });
+
+      $animationSaveLink.click(function() {
+        $animationActionButton.text("Save Animation");
+      });
+
+      $animationLoadLink.click(function() {
+        $animationActionButton.text("Load Animation");
       });
 
       $(window).resize(function() {

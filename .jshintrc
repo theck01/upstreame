@@ -93,6 +93,7 @@
       "it": false,
       "module": false,
       "process": false,
-      "require": false
+      "require": false,
+      "requestAnimationFrame": false
     }
 }
