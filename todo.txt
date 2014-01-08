@@ -1,0 +1,55 @@
+CODE
+================================================================================
+- Optimize drawing routine further to improve performance for ~ 800x500 canvas
+  size
+  * Look into blitting techniques from old console era
+- Accomadate for variable frame rate:
+  * Create globally accessible object, GameStats
+  * Extend Base actor to take movement parameters for full 60fps
+  * Add new Base#move that uses movement parameters and moves dependent upon
+    framerate
+  * Update all existing actors to use Base#move method when moving
+- Add ParallaxViewport class, which automatically pans across backgrounds as
+  screen moves
+- Add Current class, representing ocean currents in game and pushing submersible
+- Add zoom in/out method to pixelart page
+- Add World class, which can be constructed as a grid of many different tiles
+- Add WorldTile class, where subclasses represent objects such as
+  SubmersibleTile denoting initial position of the submersible, or CoralTile
+  denoting the position of coral based terain.
+- Add leveleditor tool to quickly prototype levels
+
+
+ART
+================================================================================
+- Background scenery
+  * Multiple layers to take advantage of parallaxing viewport
+  * Only one set needed, dynamic shading will add variation as game progresses
+- Background Actors with Movement Animations
+  * Sea creatures living near the surface:
+    + Small pod of whales
+- Foreground Actors with Movement Animations
+  * Sea creatures living near the surface:
+    + School of fish (multiple types or color schemes)
+    + Sharks (two or three)
+    + Jellyfish (two or three types)
+    + Single fish (medium sized)
+    + Sea turtle (two sizes)
+    + Dolphins (two sizes)
+    + Crab
+- Forground Scenery:
+  * Near surface:
+    + Kelp clusters
+    + Coral clusters
+    + Rocks
+    + Starfish
+    + Shellfish
+    + Octopus (resting)
+    + Terrain
+- Oceanic Forces
+  * Current
+    + Sketch concepts (maybe prototype with real world flip book?)
+
+
+MUSIC
+================================================================================
