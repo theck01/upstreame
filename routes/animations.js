@@ -26,9 +26,6 @@ exports.load = function (req, res) {
 exports.save = function (req, res) {
   var filename = __dirname + '/../public/assets/animations/' + req.params.name;
   filename += '.json';
-
-  console.log(req.body);
-  console.log(animationTemplate);
   
   if (!req.params.name ||
       verifier.validate(req.body, animationTemplate) === null){
