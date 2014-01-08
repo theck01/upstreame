@@ -3,7 +3,6 @@ require.config({
   paths: {
     bootstrap: "/bootstrap/dist/js/bootstrap.min",
     jquery: "/jquery/jquery.min",
-		typeahead: "/typeahead.js/dist/typeahead.min",
     underscore: "/underscore-amd/underscore-min"
   },
   shim: {
@@ -44,30 +43,6 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
         $canvas[0].height = $canvas.parent().height();
       }
     }
-
-
-    function refreshSpriteNames() {
-      $.ajax({
-        url: "/sprite/all",
-        type: "GET",
-        dataType: "json",
-        success: function (data) {
-          $spriteNameInput.typeahead("destroy");
-          $spriteNameInput.typeahead({ autoselect: "first",
-                                       local: _.keys(data) });
-        },
-        error: function (jqXHR) {
-          statusAlert.display("Could not load sprites: " + jqXHR.status +
-                              "error", true);
-        }
-      });
-    }
-
-    // load typeahead after jQuery, to ensure functionallity
-    require(["typeahead"], function () {
-      $spriteNameInput = $spriteNameInput || $("#sprite-name-input");
-      refreshSpriteNames();
-    });
 
 
     $(function () {
@@ -183,7 +158,7 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
       });
       $backgroundColorInput.val(pixelArtCanvas.getBackgroundColor());
 
-      $spriteNameInput = $spriteNameInput || $("#sprite-name-input");
+      $spriteNameInput = $("#sprite-name-input");
 
       $spriteActionButton = $("#sprite-action-button");
       $spriteActionButton.click(function () {
@@ -220,9 +195,8 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
                 else statusAlert.display("Server error.", true);
               },
               success: function () {
-                $spriteNameInput.typeahead("setQuery", "");
+                $spriteNameInput.val("");
                 statusAlert.display("Saved!", false);
-                refreshSpriteNames();
               }
             });
           }
@@ -242,7 +216,7 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
               success: function (data) {
                 pixelArtCanvas.importImage(data.pixels);
                 statusAlert.hide();
-                $spriteNameInput.typeahead("setQuery", "");
+                $spriteNameInput.val("");
               }
             });
           }

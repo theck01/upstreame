@@ -7,13 +7,8 @@
     "bootstrap": "~3.0.0",
     "requirejs": "~2.1.8",
     "underscore-amd": "~1.5.2",
-    "typeahead.js": "~0.9.3",
-    "typeahead.js-bootstrap.css": "*",
     "animate.css": "~2.1.0",
     "font-awesome": "~3.2.1",
-    "jquery": "~2.0.3"
-  },
-  "resolutions": {
     "jquery": "~2.0.3"
   }
 }
