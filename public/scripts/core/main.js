@@ -32,7 +32,7 @@ require(["jquery", "core/graphics/pixelcanvas", "core/graphics/sprite"],
         url: "/sprite/splash-screen",
         dataType: "json",
         success: function (data) {
-          splashScreenSprite = new Sprite(data.pixels, data.center);
+          splashScreenSprite = new Sprite(data.pixels);
           splashScreenSprite.paintOn(gameCanvas, { x: 64, y: 64 });
           gameCanvas.paint();
         }

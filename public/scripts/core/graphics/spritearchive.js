@@ -13,7 +13,7 @@ define(['underscore', 'core/graphics/sprite'], function (_, Sprite) {
   //               containing raw sprite data and the center of the raw sprites
   SpriteArchive.load = function (rawSprites) {
     this.sprites = _.reduce(rawSprites, function (memo, v, k) {
-      memo[k] = new Sprite(v.pixels, v.center);
+      memo[k] = new Sprite(v.pixels);
       return memo;
     }, Object.create(null));
   };

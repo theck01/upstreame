@@ -1,4 +1,4 @@
-define(['underscore'], function (_) {
+define(['underscore', 'core/util/encoder'], function (_, Encoder) {
   
   // Sprite object encapsulates a collection of pixel objects and provides
   // methods for drawing these pixels to a *Canvas with a given offset
@@ -6,14 +6,40 @@ define(['underscore'], function (_) {
   // Constructor Arguments:
   //   pixels: An array of objects containing fields 'x', 'y', and 'color'
   //   center: An object with 'x' and 'y', the center of all pixels
-  var Sprite = function (pixels, center) {
-    this.pxls = pixels;
-    
-    // recenter sprite around the origin
-    _.each(this.pxls, function (p) {
-      p.x -= center.x;
-      p.y -= center.y;
+  var Sprite = function (pixels) {
+    var bounds = {
+      xmin: Infinity,
+      xmax: -Infinity,
+      ymin: Infinity,
+      ymax: -Infinity
+    };
+    var sums = { x: 0, y: 0 };
+
+    // find bounds on sprite and center of sprite
+    _.each(pixels, function (p) {
+      if (p.x < bounds.xmin) bounds.xmin = p.x;
+      if (p.y < bounds.ymin) bounds.ymin = p.y;
+      if (p.x > bounds.xmax) bounds.xmax = p.x;
+      if (p.y > bounds.ymax) bounds.ymax = p.y;
+      sums.x += p.x;
+      sums.y += p.y;
     });
+
+    var center = { x: Math.round(sums.x/pixels.length),
+                   y: Math.round(sums.y/pixels.length) };
+    var dim = { width: bounds.xmax - bounds.xmin + 1,
+                height: bounds.ymax - bounds.ymin + 1 };
+
+    // remove pixel duplication and recenter sprite to 0,0
+    var pixelMap = Object.create(null);
+    _.each(pixels, function (p) {
+      var scalar = Encoder.coordToScalar({ x: p.x - bounds.xmin,
+                                           y: p.y - bounds.ymin }, dim);
+      pixelMap[scalar] = { x: p.x - center.x, y: p.y - center.y,
+                           color: p.color };
+    });
+
+    this.pxls = _.values(pixelMap);
   };
 
 
