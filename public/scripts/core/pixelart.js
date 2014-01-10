@@ -163,9 +163,10 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
       $spriteActionButton = $("#sprite-action-button");
       $spriteActionButton.click(function () {
         var name = $spriteNameInput.val();
-        var sprite = pixelArtCanvas.exportImage();
+        var imageJSON = pixelArtCanvas.exportImage();
+        var image = JSON.parse(imageJSON);
 
-        if(_.isEmpty(sprite.pixels) &&
+        if(_.isEmpty(image.pixels) &&
           $spriteActionButton.text() === "Save Sprite"){
           statusAlert.display("Please draw a sprite before saving", true);
         }
@@ -183,7 +184,7 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
               url: "/sprite/" + name,
               type: "POST",
               contentType: "application/json",
-              data: JSON.stringify(sprite),
+              data: imageJSON,
               error: function (jqXHR) {
                 if(jqXHR.status  === 400) {
                   statusAlert.display("Client error.", true);
@@ -204,7 +205,7 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
             $.ajax({
               url: "/sprite/" + name,
               type: "GET",
-              dataType: "json",
+              dataType: "text",
               error: function (jqXHR) {
                 if(jqXHR.status  === 404){
                   statusAlert.display(name + " not found.", true);
@@ -214,7 +215,21 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
                 }
               },
               success: function (data) {
-                pixelArtCanvas.importImage(data.pixels);
+                pixelArtCanvas.importImage(data);
+
+                var image = JSON.parse(data);
+
+                $pixelHeight.val(image.dimensions.height.toString());
+                $pixelWidth.val(image.dimensions.width.toString());
+
+                $pixelColorPreview.css("background-color",
+                                       pixelArtCanvas.getColor());
+                $pixelColorInput.val(image.currentColor);
+
+                $backgroundColorPreview.css("background-color",
+                                           pixelArtCanvas.getBackgroundColor());
+                $backgroundColorInput.val(image.backgroundColor);
+
                 statusAlert.hide();
                 $spriteNameInput.val("");
               }

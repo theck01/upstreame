@@ -12,8 +12,13 @@ var agent = supertest.agent(app);
 
 describe("sprite routes", function () {
   var filename = __dirname + "/../../public/assets/sprites/__test__.json";
-  var sprite = { pixels: [{ x: 1, y: 2, color: "#000000" }],
-                 center: { x: 1, y: 2 } };
+  var sprite = {
+    pixels: [{ x: 1, y: 2, color: "#000000" }],
+    center: { x: 1, y: 2 },
+    backgroundColor: "#FFFFFF",
+    currentColor: "#FFFFFF",
+    dimensions: { width: 3, height: 3 }
+  };
 
   before(function (done) {
     loginHelper.fakeCredentials(done);

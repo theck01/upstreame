@@ -220,18 +220,17 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
     };
 
 
-    // exportPixels generates a JSON string of all meta-pixels set on the
+    // exportImage generates a JSON string of all meta-pixels set on the
     // canvas, with additional meta-data about minimum canvas size required to
     // display the image
     //
-    // Returns:
-    //   A JSON string representing an object with the fields:
-    //   pixels: An array of objects with x, y, and color fields
-    //   imageWidth: The minimum width of a PixelCanvas required to show the
-    //               complete image
-    //   imageHeight: The minimum height of a PixelCanvas required to show the
-    //                complete image
+    // Returns a JSON string representing an object the following fields:
+    //   backgroundColor: background color used during editing
     //   center: An object with x and y fields for the center of the image
+    //   currentColor: color to be applied with a tool during editing
+    //   dimensions: dimensions of the canvas used during editing, object with
+    //               width and height fields
+    //   pixels: An array of objects with x, y, and color fields
     PixelColorer.prototype.exportImage = function () {
       var image = {};
       var xvalues = _.map(this.pixels, function (p) {
@@ -256,15 +255,17 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
       var imageWidth = xRange[1] - xRange[0] + 1;
       var imageHeight = yRange[1] - yRange[0] + 1;
 
-
+      image.backgroundColor = this.backgroundColor;
+      image.center = { x: Math.floor(imageWidth/2) + xRange[0],
+                       y: Math.floor(imageHeight/2) + yRange[0] };
+      image.currentColor = this.currentColor;
+      image.dimensions = this.dim;
       image.pixels = _.filter(this.pixels, function (p) {
         return p.x >=0 && p.x < this.dim.width && p.y >= 0 &&
                p.y < this.dim.height;
       }, this);
-      image.center = { x: Math.floor(imageWidth/2) + xRange[0],
-                       y: Math.floor(imageHeight/2) + yRange[0] };
 
-      return image;
+      return JSON.stringify(image);
     };
 
 
@@ -288,12 +289,23 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
     };
 
 
-    // importImage loads a pixel array as the current image
-    PixelColorer.prototype.importImage = function (pixelAry) {
-      var pixels = _.map(pixelAry, function (p) {
+    // importImage loads an image JSON string saved using exportImage 
+    //
+    PixelColorer.prototype.importImage = function (imageJSON) {
+      var image = JSON.parse(imageJSON);
+
+      // if new format fields exist, use them. if not do nothing
+      if (image.backgroundColor) this.setBackgroundColor(image.backgroundColor);
+      if (image.currentColor) this.setColor(image.currentColor);
+      if (image.dimensions) {
+        this.resize(image.dimensions.width, image.dimensions.height);
+      }
+
+      var pixels = _.map(image.pixels, function (p) {
         return _.pick(p, ["x", "y", "color"]);
       });
       this.commitChange({ action: "import", pixels: pixels });
+
       this.paint();
     };
 

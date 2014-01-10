@@ -5,7 +5,10 @@ var _ = require('underscore');
 
 var spriteTemplate = {
   pixels: [ {x: 'number', y: 'number', color: 'string'} ],
-  center: { x: 'number', y: 'number' }
+  center: { x: 'number', y: 'number' },
+  backgroundColor: 'string',
+  currentColor: 'string',
+  dimensions: { width: 'number', height: 'number' }
 };
 
 exports.all = function (req, res) {
