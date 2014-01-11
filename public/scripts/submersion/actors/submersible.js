@@ -6,14 +6,14 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base'],
       var OPPOSING_SPEED = 2;
       var DIAGONAL_SPEED = SPEED / Math.sqrt(2);
       var OPPOSING_DIAGONAL_SPEED = OPPOSING_SPEED / Math.sqrt(2);
-      var ROTATION_SPEED = 3;
+      var ROTATION_SPEED = 4;
       var YAW_STEP = 20;
       var YAW_MAX = 170;
       var YAW_MIN = 10;
       var PITCH_STEP = 20;
       var PITCH_MIN = -20;
       var PITCH_MAX = 20;
-      var DIAGONAL_PITCH_STEP = 10;
+      var LATERAL_PITCH_STEP = 10;
       var DIAGONAL_PITCH_MIN = -10;
       var DIAGONAL_PITCH_MAX = 10;
       
@@ -48,14 +48,27 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base'],
 
           if (sub.direction.y === 0) sub.pitch = 0;
           else {
-            // check for special case of full diagonal movement
-            if ((sub.yaw === YAW_MIN && sub.direction.xvel === -1) ||
-                (sub.yaw === YAW_MAX && sub.direction.xvel === 1)) {
-              sub.pitch += DIAGONAL_PITCH_STEP * sub.direction.y * -1;
-              sub.pitch = Math.min(sub.pitch, DIAGONAL_PITCH_MAX);
-              sub.pitch = Math.max(sub.pitch, DIAGONAL_PITCH_MIN);
+            // check for special case of full lateral movement
+            if (sub.yaw === YAW_MIN || sub.yaw === YAW_MAX) {
+              sub.pitch += LATERAL_PITCH_STEP * sub.direction.y * -1;
+
+              // cap at diagonal maxima if moving diagonally
+              if (sub.direction.xvel === 1 || sub.direction.xvel === -1) {
+                sub.pitch = Math.min(sub.pitch, DIAGONAL_PITCH_MAX);
+                sub.pitch = Math.max(sub.pitch, DIAGONAL_PITCH_MIN);
+              }
+              // else cap at normal pitch levels
+              else {
+                sub.pitch = Math.min(sub.pitch, PITCH_MAX);
+                sub.pitch = Math.max(sub.pitch, PITCH_MIN);
+              }
             }
+            // check for special case of 
             else {
+              // account for any pitch of (10) from past movement
+              if (sub.pitch > 0) sub.pitch = PITCH_MAX;
+              if (sub.pitch < 0) sub.pitch = PITCH_MIN;
+
               sub.pitch += PITCH_STEP * sub.direction.y * -1;
               sub.pitch = Math.min(sub.pitch, PITCH_MAX);
               sub.pitch = Math.max(sub.pitch, PITCH_MIN);
