@@ -9,13 +9,15 @@ require.config({
 
 require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
          "core/interface/keypoll", "core/util/frameclock",
-         "submersion/actors/submersible"],
-  function($, SpriteArchive, Viewport, KeyPoll, FrameClock, Submersible) {
+         "submersion/actors/submersible", "submersion/actors/fishschool"],
+  function($, SpriteArchive, Viewport, KeyPoll, FrameClock, Submersible,
+           FishSchool) {
 
-    var DIMENSIONS = { width: 600, height: 350 };
+    var DIMENSIONS = { width: 800, height: 475 };
     var $canvas;
     var Game = Object.create(null);
     var sub;
+    var surgeonSchool;
 
 
     function sizeCanvas () {
@@ -31,6 +33,7 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
       Game.clock.tick();
       sub.act();
       Game.viewport.render(sub);
+      Game.viewport.render(surgeonSchool);
       Game.viewport.paint();
       requestAnimationFrame(mainLoop);
     }
@@ -40,7 +43,7 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
       $canvas = $("#game-canvas");
       Game.keys = new KeyPoll();
       Game.viewport = new Viewport(DIMENSIONS, { x: 0, y: 0 }, "#game-canvas",
-                                   "#000077");
+                                   "#247");
       Game.clock = new FrameClock();
 
       $.ajax({
@@ -61,6 +64,19 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
             noncollidables: ["Player"],
             frameClock: Game.clock,
             keypoll: Game.keys
+          });
+
+          surgeonSchool = new FishSchool({
+            group: "Surgeon",
+            sprite: SpriteArchive.get("surgeon-fish"),
+            center: {
+              x: Math.floor(DIMENSIONS.width * 0.75),
+              y: Math.floor(DIMENSIONS.height * 0.5)
+            },
+            layer: 3,
+            noncollidables: ["Surgeon"],
+            count: 20,
+            density: 2
           });
 
           requestAnimationFrame(mainLoop);
