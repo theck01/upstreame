@@ -8,10 +8,11 @@ define(['underscore', 'core/graphics/layeredcanvas'],
     //   dimension: object with 'width' and 'height' fields
     //   origin: object with 'x' and 'y' fields
     //   canvasID: the canvas that the viewport is attached to
-    var Viewport = function (dimensions, origin, canvasID) {
+    //   backgroundColor:
+    var Viewport = function (dimensions, origin, canvasID, backgroundColor) {
       this.dim = _.clone(dimensions);
       this.origin = _.clone(origin);
-      this.canvas = new LayeredCanvas(dimensions, canvasID, '#000000');
+      this.canvas = new LayeredCanvas(dimensions, canvasID, backgroundColor);
     };
 
 
