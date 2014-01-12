@@ -32,6 +32,7 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
     function mainLoop () {
       Game.clock.tick();
       sub.act();
+      surgeonSchool.act();
       Game.viewport.render(sub);
       Game.viewport.render(surgeonSchool);
       Game.viewport.paint();
@@ -76,7 +77,8 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
             layer: 3,
             noncollidables: ["Surgeon"],
             count: 20,
-            density: 2
+            density: 1.5,
+            frameClock: Game.clock
           });
 
           requestAnimationFrame(mainLoop);

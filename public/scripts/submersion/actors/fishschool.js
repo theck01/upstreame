@@ -1,6 +1,9 @@
 define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
   function (_, Base, Sprite) {
 
+    // CONSTANTS
+    var FISH_DRIFT_FREQUENCY = 40;
+
     // HELPER FUNCTIONS
 
     // circularPath function used to traverse the set of pixels encircling a
@@ -36,9 +39,10 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
     }
 
     
-    function collectSpritePixels(sprite, centers) {
+    function collectSpritePixels(sprite, centers, epicenter) {
       return _.reduce(centers, function(memo, c) {
-        return memo.concat(sprite.pixels(c));
+        return memo.concat(sprite.pixels({ x: Math.round(c.x + epicenter.x),
+                                           y: Math.round(c.y + epicenter.y) }));
       }, []);
     }
 
@@ -73,32 +77,74 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
     //     count: Number of fish in the school
     //     density: Number of fish in the area occupied by a single fish
     //              (because a school has depth as well)
+    //     frameClock: instance of FrameClock class
     var FishSchool = function (opts) {
-      this.fishCenters = [];
+      this.fishOffsets = [];
 
       var spriteBounds = opts.sprite.bounds();
       var spriteArea = (spriteBounds.xmax - spriteBounds.xmin + 1) *
                        (spriteBounds.ymax - spriteBounds.ymin + 1);
       this.fishDensity = opts.density/spriteArea;
 
-      var maxArea = opts.count * this.fishDensity;
-      this.maxRadius = Math.ceil(Math.sqrt(maxArea/Math.PI));
+      var maxArea = (opts.count/opts.density) * spriteArea;
+      this.maxRadius = Math.sqrt(maxArea/Math.PI);
 
-      circularPath(opts.center);
-      while (this.fishCenters.length < opts.count) {
+      circularPath({ x: 0, y: 0 });
+      while (this.fishOffsets.length < opts.count) {
         var pos = circularPath();
-        if (Math.random() < this.fishDensity) this.fishCenters.push(pos);
+        if (Math.random() < this.fishDensity) this.fishOffsets.push(pos);
       }
-      this.fishCenters = shuffle(this.fishCenters);
+      this.fishOffsets = shuffle(this.fishOffsets);
+
+      this.fishVelocities = [];
+      for (var i=0; i<this.fishOffsets.length; i++) {
+        this.fishVelocities.push({ x: 0, y: 0 });
+      }
 
       this.templateSprite = opts.sprite;
       opts.sprite = new Sprite(collectSpritePixels(this.templateSprite,
-                                                   this.fishCenters));
+                                                   this.fishOffsets,
+                                                   opts.center));
 
       Base.call(this, opts);
+
+      var school = this;
+      this.frameClock = opts.frameClock;
+      this.fishDrift = this.frameClock.recurring(function () {
+        for (var i=0; i<school.fishVelocities.length; i++) {
+          school.fishVelocities[i].x = (Math.floor(Math.random()*3) - 1)/2;
+          school.fishVelocities[i].y = (Math.floor(Math.random()*3) - 1)/2;
+        }
+      }, FISH_DRIFT_FREQUENCY);
     };
     FishSchool.prototype = Object.create(Base.prototype);
     FishSchool.prototype.constructor = FishSchool;
+
+
+    // overloaded Base.act function
+    FishSchool.prototype.act = function () {
+      var newRadius = 0;
+
+      for (var i=0; i<this.fishOffsets.length; i++) {
+        var o = this.fishOffsets[i];
+        var v = this.fishVelocities[i];
+
+        newRadius = Math.sqrt(Math.pow(o.x + v.x, 2) + Math.pow(o.y + v.y, 2));
+
+        if (newRadius > this.maxRadius) {
+          if (o.x !== 0) v.x = -0.5 * (o.x/Math.abs(o.x));
+          if (o.y !== 0) v.y = -0.5 * (o.y/Math.abs(o.y));
+        }
+
+        o.x += v.x;
+        o.y += v.y;
+      }
+
+      this.sprite = new Sprite(collectSpritePixels(this.templateSprite,
+                                                   this.fishOffsets,
+                                                   this.center));
+    };
+
 
     return FishSchool;
   }
