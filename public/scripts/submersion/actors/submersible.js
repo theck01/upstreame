@@ -95,7 +95,6 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base'],
         if (this.keypoll.poll(83)) verticalChange += 1;
         if (this.keypoll.poll(65)) horizontalChange -= 1;
         if (this.keypoll.poll(68)) horizontalChange += 1;
-        if (this.keypoll.poll(32)) this.fire();
 
         // set direction according to most recent key press
         if (horizontalChange !== 0) this.direction.x = horizontalChange;
