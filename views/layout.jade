@@ -3,6 +3,7 @@ html
   head
     title #{title}
     link(rel='stylesheet', href='bootstrap/dist/css/bootstrap.min.css')
+    script(type="application/javascript" src="requirejs/require.js" data-main="#{main}")
     block sources
   body
     block content

@@ -1,33 +1,68 @@
 var auth = require('../lib/auth.js');
 
 exports.animator = function (req, res) {
-  res.render('animator', {
-    title: 'Animations',
-    loggedIn: auth.isLoggedIn(req)
-  });
+  var opts = {
+    title: 'Animator',
+    loggedIn: auth.isLoggedIn(req),
+    main: 'scripts/core/animator.js'
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    opts.main = 'scripts/dist/animator.min.js';
+  }
+
+  res.render('animator', opts);
 };
 
 exports.index = function (req, res) {
-  res.render('home', {
-    title: 'upstrea.me'
-  });
+  var opts = {
+    title: 'upstrea.me',
+    main: 'scripts/core/main.js'
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    opts.main = 'scripts/dist/homescreen.min.js';
+  }
+
+  res.render('home', opts);
 };
 
 exports.invaders = function (req, res) {
-  res.render('invaders', {
-    title: 'Invaders'
-  });
+  var opts = {
+    title: 'Invaders',
+    main: 'scripts/invaders/main.js'
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    opts.main = 'scripts/dist/invaders.min.js';
+  }
+
+  res.render('invaders', opts);
 };
 
 exports.pixelart = function (req, res) {
-  res.render('pixelart', {
-    title: 'Canvas',
-    loggedIn: auth.isLoggedIn(req)
-  });
+  var opts = {
+    title: 'Pixel Art',
+    loggedIn: auth.isLoggedIn(req),
+    main: 'scripts/core/pixelart.js'
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    opts.main = 'scripts/dist/pixelart.min.js';
+  }
+
+  res.render('pixelart', opts);
 };
 
 exports.submersion = function (req, res) {
-  res.render('submersion', {
-    title: 'Submersion'
-  });
+  var opts = {
+    title: 'Submersion',
+    main: 'scripts/submersion/main.js'
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    opts.main = 'scripts/dist/submersion.min.js';
+  }
+
+  res.render('submersion', opts);
 };
