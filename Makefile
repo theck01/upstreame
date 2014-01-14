@@ -49,10 +49,10 @@ $(MINIFIED_DIR)/%.min.js: $(BUILD_DIR)/%.js $(JS_FILES)
 
 # server start tasks
 
-dev: less minify
+dev: less
 	@node app.js
 
-dev-debug: less minify
+dev-debug: less
 	@node debug app.js
 
 production: less minify
