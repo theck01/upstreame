@@ -17,7 +17,7 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
     var $canvas;
     var Game = Object.create(null);
     var sub;
-    var surgeonSchoolRight;
+    var tigerSchoolRight;
     var surgeonSchoolLeft;
 
 
@@ -33,10 +33,10 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
     function mainLoop () {
       Game.clock.tick();
       sub.act();
-      surgeonSchoolRight.act();
+      tigerSchoolRight.act();
       surgeonSchoolLeft.act();
       Game.viewport.render(sub);
-      Game.viewport.render(surgeonSchoolRight);
+      Game.viewport.render(tigerSchoolRight);
       Game.viewport.render(surgeonSchoolLeft);
       Game.viewport.paint();
       requestAnimationFrame(mainLoop);
@@ -70,17 +70,17 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
             keypoll: Game.keys
           });
 
-          surgeonSchoolRight = new FishSchool({
-            group: "Surgeon",
-            sprite: SpriteArchive.get("surgeon-fish-right"),
+          tigerSchoolRight = new FishSchool({
+            group: "Tiger",
+            sprite: SpriteArchive.get("tiger-fish-right"),
             center: {
               x: Math.floor(DIMENSIONS.width * 0.75),
               y: Math.floor(DIMENSIONS.height * 0.66)
             },
             layer: 3,
-            noncollidables: ["Surgeon"],
-            count: 20,
-            density: 1.5,
+            noncollidables: ["Tiger"],
+            count: 30,
+            density: 1,
             frameClock: Game.clock,
             velocity: { x: 0, y: 0 }
           });

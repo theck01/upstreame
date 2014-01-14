@@ -30,7 +30,6 @@ ART
     + Small pod of whales
 - Foreground Actors with Movement Animations
   * Sea creatures living near the surface:
-    + School of fish (multiple types or color schemes)
     + Sharks (two or three)
     + Jellyfish (two or three types)
     + Single fish (medium sized)
