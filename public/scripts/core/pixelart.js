@@ -219,16 +219,18 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
 
                 var image = JSON.parse(data);
 
-                $pixelHeight.val(image.dimensions.height.toString());
-                $pixelWidth.val(image.dimensions.width.toString());
+                if (image.dimensions) {
+                  $pixelHeight.val(image.dimensions.height.toString());
+                  $pixelWidth.val(image.dimensions.width.toString());
+                }
 
                 $pixelColorPreview.css("background-color",
                                        pixelArtCanvas.getColor());
-                $pixelColorInput.val(image.currentColor);
+                $pixelColorInput.val(pixelArtCanvas.getColor());
 
                 $backgroundColorPreview.css("background-color",
                                            pixelArtCanvas.getBackgroundColor());
-                $backgroundColorInput.val(image.backgroundColor);
+                $backgroundColorInput.val(pixelArtCanvas.getBackgroundColor());
 
                 statusAlert.hide();
                 $spriteNameInput.val("");
