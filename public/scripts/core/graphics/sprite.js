@@ -43,7 +43,8 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
   };
 
 
-  // bounds returns the bounding box for the Sprite instance
+  // bounds returns the bounding box for the Sprite instance AS DRAWN IN THE
+  // PIXEL ART TOOL, NOT FOR A GIVEN POSITION
   //
   // Returns and object with 'xmin', 'xmax', 'ymin' and 'ymax' fields
   Sprite.prototype.bounds = function () {
