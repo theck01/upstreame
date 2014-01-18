@@ -35,23 +35,28 @@ function reduceArea (pixelGrid, position, factor) {
         continue;
       }
       
-      if (!pixelGrid[i][j]) continue;
-      var color = pixelGrid[i][j].color;
-      if (color === undefined) continue;
+      var color = 'transparent';
+      if (pixelGrid[i][j]) color = pixelGrid[i][j].color;
       colorCounts[color] = (colorCounts[color] || 0) + 1;
     }
   }
 
 
   var colorPairs = _.pairs(colorCounts);
-  if (colorPairs.length === 0) return undefined;
   colorPairs = _.sortBy(colorPairs, function (p) {
     return -p[1];
   });
 
-  var positionColor = pixelGrid[position.x][position.y].color;
-  if (colorCounts[positionColor] === colorPairs[0][1]) return positionColor;
-  else return colorPairs[0][0];
+  var positionColor = 'transparent';
+  if (pixelGrid[position.x][position.y]) {
+    positionColor = pixelGrid[position.x][position.y].color;
+  }
+
+  var retcolor;
+  if (colorCounts[positionColor] === colorPairs[0][1]) retcolor = positionColor;
+  else retcolor = colorPairs[0][0];
+
+  return retcolor === 'transparent' ? undefined : retcolor;
 }
 
 
@@ -85,10 +90,6 @@ function downsize (input, output, factor) {
   var grid = make2DArray(dimensions);
 
   _.each(spriteObj.pixels, function (p) {
-    console.log(JSON.stringify(p));
-    console.log(JSON.stringify(bounds));
-    console.log(grid.length);
-    console.log(grid[p.x - bounds.xmin].length);
     grid[p.x - bounds.xmin][p.y - bounds.ymin] = p;
   });
 
@@ -131,6 +132,9 @@ process.argv[4] = parseInt(process.argv[4]);
 if (process.argv[4] <= 1 || Math.floor(process.argv[4]) !== process.argv[4]) {
   usage(1);
 }
+
+console.log('Downsizing sprite %s by a factor of %d and writing result to %s',
+            process.argv[2], process.argv[4], process.argv[3]);
 downsize(process.argv[2], process.argv[3], process.argv[4]);
 
 
