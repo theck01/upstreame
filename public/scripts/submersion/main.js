@@ -13,7 +13,7 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
   function($, SpriteArchive, Viewport, KeyPoll, FrameClock, Submersible,
            FishSchool) {
 
-    var DIMENSIONS = { width: 800, height: 475 };
+    var DIMENSIONS = { width: 400, height: 237 };
     var $canvas;
     var Game = Object.create(null);
     var sub;

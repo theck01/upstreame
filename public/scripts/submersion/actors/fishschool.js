@@ -2,8 +2,8 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
   function (_, Base, Sprite) {
 
     // CONSTANTS
-    var FISH_DRIFT_FREQUENCY = 60;
-    var FISH_DRIFT_VELOCITY = 0.35; // Pixels per animation frame
+    var FISH_DRIFT_FREQUENCY = 30;
+    var FISH_DRIFT_VELOCITY = 0.1; // Pixels per animation frame
     var FISH_MOVEMENT_PERIODS = 5;  // Number of periods each cycle of drift is
                                     // broken into, so all fish dont change at
                                     // once

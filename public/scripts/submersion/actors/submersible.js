@@ -2,8 +2,8 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base'],
     function (_, SpriteArchive, Base) {
 
       // CONSTANTS
-      var SPEED = 4;
-      var OPPOSING_SPEED = 2;
+      var SPEED = 2;
+      var OPPOSING_SPEED = 1;
       var DIAGONAL_SPEED = SPEED / Math.sqrt(2);
       var OPPOSING_DIAGONAL_SPEED = OPPOSING_SPEED / Math.sqrt(2);
       var ROTATION_SPEED = 4;

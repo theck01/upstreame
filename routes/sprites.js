@@ -22,7 +22,10 @@ exports.all = function (req, res) {
       sprites = _.reduce(files, function (memo, f) {
         var file = __dirname + '/../public/assets/sprites/' + f;
         var name = path.basename(f, '.json');
-        memo[name] = JSON.parse(fs.readFileSync(file, { encoding: 'utf8' }));
+
+        if (fs.lstatSync(file).isFile()) {
+          memo[name] = JSON.parse(fs.readFileSync(file, { encoding: 'utf8' }));
+        }
         return memo;
       }, Object.create(null));
 
