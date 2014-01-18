@@ -90,55 +90,53 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
                        (spriteBounds.ymax - spriteBounds.ymin + 1);
 
       this.fishDensity = opts.density/spriteArea;
-      this.fishOffsets = [];
+      this.fish = [];
 
       circularPath({ x: 0, y: 0 });
-      while (this.fishOffsets.length < opts.count) {
+      while (this.fish.length < opts.count) {
         var pos = circularPath();
-        if (Math.random() < this.fishDensity) this.fishOffsets.push(pos);
+        if (Math.random() < this.fishDensity) {
+          this.fish.push({ o: _.clone(pos), v: { x: 0, y: 0 }});
+        }
       }
-      this.fishOffsets = shuffle(this.fishOffsets);
+      this.fish = shuffle(this.fish);
+      var offsets = _.map(this.fish, function (f) { return f.o; });
 
       this.templateSprite = opts.sprite;
       opts.sprite = new Sprite(collectSpritePixels(this.templateSprite,
-                                                   this.fishOffsets,
-                                                   opts.center));
+                                                   offsets, opts.center));
       Base.call(this, opts);
 
       var maxArea = (opts.count/opts.density) * spriteArea;
       this.maxRadius = Math.sqrt(maxArea/Math.PI);
 
       this.velocity = _.clone(opts.velocity);
-
       this.frameClock = opts.frameClock;
-      this.fishVelocities = [];
-      for (var i=0; i<this.fishOffsets.length; i++) {
-        this.fishVelocities.push({ x: 0, y: 0 });
-      }
 
       // setup periodically changing fish drift within school
       var school = this;
       var period = 0;
-      var fishPerPeriod = school.fishOffsets.length/FISH_MOVEMENT_PERIODS;
+      var fishPerPeriod = school.fish.length/FISH_MOVEMENT_PERIODS;
       fishPerPeriod = Math.ceil(fishPerPeriod);
-      this.fishDrift = this.frameClock.recurring(function () {
+      this.drift = this.frameClock.recurring(function () {
 
         var start = fishPerPeriod * period;
         var end = start + fishPerPeriod;
-        if (end > school.fishVelocities.length) {
-          end = school.fishVelocities.length;
+        if (end > school.fish.length) {
+          end = school.fish.length;
         }
 
         period = (period + 1) % FISH_MOVEMENT_PERIODS;
 
         for (var i=start; i<end; i++) {
-          school.fishVelocities[i].x = (Math.floor(Math.random()*3) - 1) *
-                                       FISH_DRIFT_VELOCITY;
-          school.fishVelocities[i].y = (Math.floor(Math.random()*3) - 1) *
-                                       FISH_DRIFT_VELOCITY;
+          school.fish[i].v.x = (Math.floor(Math.random()*3) - 1) *
+                                FISH_DRIFT_VELOCITY;
+          school.fish[i].v.y = (Math.floor(Math.random()*3) - 1) *
+                                FISH_DRIFT_VELOCITY;
         }
       }, FISH_DRIFT_FREQUENCY/FISH_MOVEMENT_PERIODS);
     };
+
     FishSchool.prototype = Object.create(Base.prototype);
     FishSchool.prototype.constructor = FishSchool;
 
@@ -147,24 +145,24 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
     FishSchool.prototype.act = function () {
       var newRadius = 0;
 
-      for (var i=0; i<this.fishOffsets.length; i++) {
-        var o = this.fishOffsets[i];
-        var v = this.fishVelocities[i];
-
-        newRadius = Math.sqrt(Math.pow(o.x + v.x, 2) + Math.pow(o.y + v.y, 2));
+      _.each(this.fish, function (f) {
+        newRadius = Math.sqrt(Math.pow(f.o.x + f.v.x, 2) +
+                    Math.pow(f.o.y + f.v.y, 2));
 
         if (newRadius > this.maxRadius) {
-          if (o.x !== 0) v.x = -1 * FISH_DRIFT_VELOCITY * (o.x/Math.abs(o.x));
-          if (o.y !== 0) v.y = -1 * FISH_DRIFT_VELOCITY * (o.y/Math.abs(o.y));
+          if (f.o.x !== 0) f.v.x = -1 * FISH_DRIFT_VELOCITY *
+                                   (f.o.x/Math.abs(f.o.x));
+          if (f.o.y !== 0) f.v.y = -1 * FISH_DRIFT_VELOCITY *
+                                   (f.o.y/Math.abs(f.o.y));
         }
 
-        o.x += v.x;
-        o.y += v.y;
-      }
+        f.o.x += f.v.x;
+        f.o.y += f.v.y;
+      }, this);
 
+      var offsets = _.map(this.fish, function (f) { return f.o; });
       this.sprite = new Sprite(collectSpritePixels(this.templateSprite,
-                                                   this.fishOffsets,
-                                                   this.center));
+                                                   offsets, this.center));
 
       this.center.x += this.velocity.x;
       this.center.y += this.velocity.y;
