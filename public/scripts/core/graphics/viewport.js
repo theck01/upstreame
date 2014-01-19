@@ -1,5 +1,5 @@
-define(['underscore', 'core/graphics/layeredcanvas'],
-  function (_, LayeredCanvas) {
+define(['underscore', 'core/graphics/layeredcanvas', 'core/util/eventhub'],
+  function (_, LayeredCanvas, EventHub) {
 
     // Viewport is a moveable window into the game world, drawing only sprites
     // within the viewports bounds to the encapsulated canvas
@@ -14,20 +14,6 @@ define(['underscore', 'core/graphics/layeredcanvas'],
       this.origin = _.clone(origin);
       this.canvas = new LayeredCanvas(dimensions, canvasID, backgroundColor);
     };
-
-
-    // offsetPixels returns the array of pixels shifted by subtracting the
-    // offset
-    //
-    // Arguments:
-    //   pixels: array of objects with 'x', 'y', and 'color' fields
-    //   offset: object with 'x' and 'y' fields
-    function offsetPixels (pixels, offset) {
-      _.reduce(pixels, function (memo, p) {
-        memo.push({ x: p.x - offset.x, y: p.y - offset.y, color: p.color });
-        return memo;
-      }, []);
-    }
 
 
     // contains checks to see whether an actor is contained within a viewport
@@ -54,9 +40,19 @@ define(['underscore', 'core/graphics/layeredcanvas'],
     // onto the canvas
     // 
     // Arguments:
-    //   actor: any actor instance
+    //   actor: Optional, any actor instance. If supplied renders that actor
+    //          to the viewport. If not supplied renders entire viewport
     Viewport.prototype.render = function (actor) {
-      actor.paintOn(this.canvas, this.origin);
+      if (!actor) {
+        EventHub.trigger('viewport.render', { viewport: this });
+        return;
+      }
+
+      var pixels = actor.pixels();
+      _.each(pixels, function (p) {
+        this.canvas.setPixel(p.x - this.origin.x, p.y - this.origin.y,
+                             p.color, actor.layer());
+      }, this);
     };
 
 
@@ -66,7 +62,10 @@ define(['underscore', 'core/graphics/layeredcanvas'],
     // Arguments:
     //   background: any object that has a paintOn method
     Viewport.prototype.renderBackground = function (background) {
-      background.paintOn(this.canvas, this.origin);
+      var pixels = background.pixels();
+      _.each(pixels, function (p) {
+        this.canvas.setPixel(p.x, p.y, p.color, background.layer());
+      }, this);
     };
 
     return Viewport;

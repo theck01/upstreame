@@ -9,13 +9,14 @@ require.config({
 
 require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
          "invaders/actors/player", "core/interface/keypoll",
-         "core/util/frameclock", "invaders/util/game",
-         "invaders/scene/starfield", "invaders/waves/energywave",
-         "invaders/waves/gruntwave", "invaders/world/world"],
-  function($, SpriteArchive, Viewport, Player, KeyPoll, FrameClock, Game,
+         "core/util/frameclock", "invaders/scene/starfield",
+         "invaders/waves/energywave", "invaders/waves/gruntwave",
+         "invaders/world/world"],
+  function($, SpriteArchive, Viewport, Player, KeyPoll, FrameClock,
            Starfield, EnergyWave, GruntWave, World){
 
     var DIMENSIONS = { width: 400, height: 300 };
+    var Game = Object.create(null);
     var $canvas;
 
 
@@ -31,7 +32,7 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
     function mainLoop () {
       Game.clock.tick();
       Game.world.timestep();
-      Game.world.renderTo(Game.viewport);
+      Game.viewport.render();
       Game.viewport.paint();
       requestAnimationFrame(mainLoop);
     }
@@ -63,7 +64,7 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
               topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
             }
           }
-        ]);
+        ], Game.clock, nextWave);
       }
       else {
         wave = new EnergyWave([
@@ -78,16 +79,14 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
               topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
             }
           },
-        ]);
+        ], Game.clock, nextWave);
       }
-
-      wave.start(nextWave);
     }
 
 
     $(function () {
       $canvas = $("#game-canvas");
-      Game.keys = new KeyPoll();
+      Game.keys = new KeyPoll("body");
       Game.viewport = new Viewport(DIMENSIONS, { x: 0, y: 0 }, "#game-canvas",
                                    "#000000");
       Game.clock = new FrameClock();

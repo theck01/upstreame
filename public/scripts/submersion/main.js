@@ -8,10 +8,10 @@ require.config({
 });
 
 require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
-         "core/interface/keypoll", "core/util/frameclock",
+         "core/interface/keypoll", "core/util/frameclock", "core/util/eventhub",
          "submersion/actors/submersible", "submersion/actors/fishschool"],
-  function($, SpriteArchive, Viewport, KeyPoll, FrameClock, Submersible,
-           FishSchool) {
+  function($, SpriteArchive, Viewport, KeyPoll, FrameClock, EventHub, 
+           Submersible, FishSchool) {
 
     var DIMENSIONS = { width: 400, height: 237 };
     var $canvas;
@@ -32,12 +32,8 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
 
     function mainLoop () {
       Game.clock.tick();
-      sub.act();
-      tigerSchoolRight.act();
-      surgeonSchoolLeft.act();
-      Game.viewport.render(sub);
-      Game.viewport.render(tigerSchoolRight);
-      Game.viewport.render(surgeonSchoolLeft);
+      EventHub.trigger("world.step");
+      Game.viewport.render();
       Game.viewport.paint();
       requestAnimationFrame(mainLoop);
     }

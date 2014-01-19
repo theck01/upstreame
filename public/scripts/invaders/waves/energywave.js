@@ -1,6 +1,6 @@
-define(['underscore', 'core/graphics/spritearchive',
-        'invaders/actors/energyenemy', 'invaders/util/game'],
-  function (_, SpriteArchive, EnergyEnemy, Game) {
+define(['underscore', 'core/graphics/spritearchive', 'core/util/eventhub',
+        'invaders/actors/energyenemy'],
+  function (_, SpriteArchive, EventHub, EnergyEnemy) {
 
     // EnergyWave manages a wave of Energy enemies
     //
@@ -10,33 +10,34 @@ define(['underscore', 'core/graphics/spritearchive',
     //                'y' fields, and 'bounds' value is an object with
     //                'topmost', 'leftmost', 'rightmost', and 'bottommost'
     //                fields.
-    var EnergyWave = function (positionings) {
-      this.positionings = positionings;
-    };
-
-
-    // start begins the wave and calls onComplete when wave objective (all
-    // enemies destroyed) has been completed
-    //
-    // Arguments:
-    //   onComplete: function that takes no arguments, called when wave ends
-    EnergyWave.prototype.start = function (onComplete) {
-      var energyEnemyCount = this.positionings.length;
-
+    //   frameClock: instance of a FrameClock
+    //   onComplete: function to call when wave has been completed
+    var EnergyWave = function (positionings, frameClock, onComplete) {
       var wave = this;
-      _.each(wave.positionings, function (p) {
-        new EnergyEnemy({
+      wave.enemies = [];
+      _.each(positionings, function (p) {
+        wave.enemies.push(new EnergyEnemy({
           group: 'Enemies',
           center: p.center,
           layer: 3,
           noncollidables: ['Enemies'],
           bounds: p.bounds,
-          frameClock: Game.clock,
-          onDestroy: function () {
-            if (--energyEnemyCount === 0) onComplete();
-          }
-        });
+          frameClock: frameClock
+        }));
       });
+
+      var onDestroy = function (params) {
+        wave.enemies = _.reject(wave.enemies, function (e) {
+          return params.actor.id() === e.id();
+        });
+
+        if (wave.enemies.length === 0) {
+          EventHub.unsubscribe('actor.destroy', onDestroy);
+          onComplete();
+        }
+      };
+
+      EventHub.subscribe('actor.destroy', onDestroy);
     };
 
 

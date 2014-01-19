@@ -1,5 +1,5 @@
-define(['underscore', 'core/world/collisionframe'],
-  function (_, CollisionFrame) {
+define(['underscore', 'core/util/eventhub', 'core/world/collisionframe'],
+  function (_, EventHub, CollisionFrame) {
 
     // World object encapsulates information needed to simulate game world:
     // dimensions, appearance, actors within, etc.
@@ -11,6 +11,14 @@ define(['underscore', 'core/world/collisionframe'],
       this.actors = Object.create(null);
       this.dim = _.clone(dimensions);
       this.background = background;
+
+      var world = this;
+      EventHub.subscribe('actor.new', function (params) {
+        world.add(params.actor);
+      });
+      EventHub.subscribe('actor.destroy', function (params) {
+        world.remove(params.actor);
+      });
     };
 
 
@@ -32,37 +40,24 @@ define(['underscore', 'core/world/collisionframe'],
     };
 
 
-    // renderTo paints any background image and all actors in the world to the
-    // viewport
-    World.prototype.renderTo = function (viewport) {
-      if (this.background) viewport.renderBackground(this.background);
-
-      _.each(this.actors, function (a) {
-        viewport.render(a);
-      });
-    };
-
-
     // timestep advances the world simulation by one time unit, giving all
     // actors a chance to act and collisions to be resolved
     World.prototype.timestep = function () {
-      var cFrame = new CollisionFrame(this.dim);
 
-      _.each(this.actors, function (a) {
-        a.act();
-        cFrame.set(a);
-      });
-      
-      cFrame.resolve();
+      EventHub.trigger('world.step');
 
-      // remove actors from 
+      // destroy actors outside of world bounds
       _.each(this.actors, function (a) {
         var p = a.position();
         if (p.x < 0 || p.x >= this.dim.width || p.y < 0 ||
             p.y >= this.dim.height) {
-          this.remove(a);
+          a.destroy();
         }
       }, this);
+
+      // find and resolve all collisions
+      var cFrame = new CollisionFrame(this.dim);
+      cFrame.resolve();
     };
 
     return World;

@@ -1,6 +1,6 @@
-define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
+define(['core/graphics/spritearchive', 'core/actors/base',
         'invaders/actors/projectile'],
-  function (SpriteArchive, BaseInvader, Projectile) {
+  function (SpriteArchive, Base, Projectile) {
 
     // CONTANTS
     var SPEED = 2;
@@ -20,11 +20,9 @@ define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
     //     frameClock: FrameClock object
     //     bounds: Object with four fields: 'topmost', 'bottommost', 'leftmost',
     //             'rightmost' representing the area in which the actor may move
-    //   optional fields for the opts param:
-    //     onDestroy: extra cleanup that takes place when the actor is destroyed
     var Grunt = function (opts) {
       opts.sprite = SpriteArchive.get('lizard-ship');
-      BaseInvader.call(this, opts);
+      Base.call(this, opts);
 
       this.bounds = opts.bounds;
       this.velocity = { x: 0, y: 0 };
@@ -45,11 +43,11 @@ define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
         }
       }, 30);
     };
-    Grunt.prototype = Object.create(BaseInvader.prototype);
+    Grunt.prototype = Object.create(Base.prototype);
     Grunt.prototype.constructor = Grunt;
 
 
-    // overloaded BaseInvader.act function
+    // overloaded Base.act function
     Grunt.prototype.act = function () {
       // update sprite location
       if (this.velocity.x && this.velocity.y) {
@@ -79,17 +77,17 @@ define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
     };
 
 
-    // overloaded BaseInvader.collision function
+    // overloaded Base.collision function
     Grunt.prototype.collision = function () {
       this.destroy();
     };
 
 
-    // overloaded BaseInvader.destroy function
+    // overloaded Base.destroy function
     Grunt.prototype.destroy = function () {
       if (this.behaviorID) this.frameClock.cancel(this.behaviorID);
       if (this.fireID) this.frameClock.cancel(this.fireID);
-      BaseInvader.prototype.destroy.call(this);
+      Base.prototype.destroy.call(this);
     };
 
 
@@ -105,7 +103,7 @@ define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
           group: enemy.group,
           sprite: SpriteArchive.get('enemy-ship-laser'),
           center: enemy.center,
-          layer: enemy.layer,
+          layer: enemy.layer(),
           noncollidables: [enemy.group],
           path: function () {
             return { x: this.center.x, y: this.center.y + SPEED*2 };

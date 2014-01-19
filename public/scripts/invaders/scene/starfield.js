@@ -1,4 +1,4 @@
-define(['underscore'], function (_) {
+define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
 
   var DRIFT_FREQUENCY = 2;
   var STAR_DENSITY = 0.0004577;
@@ -15,7 +15,7 @@ define(['underscore'], function (_) {
   //   layer: layer on which to draw star fields in a *Canvas
   //   frameClock: FrameClock instance to register recurring drift event
   var Starfield = function (dimensions, driftVelocity, layer, frameClock) {
-    this.layer = layer;
+    this.lyr = layer;
 
     this.stars = [];
     for (var i=0; i<dimensions.width; i++) {
@@ -78,18 +78,29 @@ define(['underscore'], function (_) {
         }
       }
     }, DRIFT_FREQUENCY);
+
+    var starfield = this;
+    EventHub.subscribe('viewport.render', function (params) {
+      params.viewport.renderBackground(starfield);
+    });
   };
 
-    
-  // paints the Starfield instance to a *Canvas
-  //
-  // Arguments:
-  //   canvas: instance of *Canvas to paint on
-  Starfield.prototype.paintOn = function (canvas) {
-    _.each(this.stars, function (s) {
-      canvas.setPixel(Math.floor(s.x), Math.floor(s.y), STAR_COLOR, this.layer);
-    }, this);
+
+  // layer returns the layer on which to paint the star field
+  Starfield.prototype.layer = function () {
+    return this.lyr;
   };
+
+
+  // pixels returns the pixels for the stars in the starfield
+  //
+  // Returns an array of objects with 'x' 'y' and 'color'
+  Starfield.prototype.pixels = function () {
+    return _.map(this.stars, function (s) {
+      return { x: Math.floor(s.x), y: Math.floor(s.y), color: STAR_COLOR };
+    });
+  };
+
 
   return Starfield;
 });

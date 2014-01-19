@@ -1,4 +1,4 @@
-define(['invaders/actors/baseinvader'], function (BaseInvader) {
+define(['core/actors/base'], function (Base) {
 
   // Projectile objects are simple actors that follow a trajectory
   //
@@ -14,13 +14,11 @@ define(['invaders/actors/baseinvader'], function (BaseInvader) {
   //           instance method of the current object, describing it's path
   //           through space and returning the next position of the projectile
   //           as an object with 'x' and 'y' fields
-  //   optional fields for the opts param:
-  //     onDestroy: extra cleanup that takes place when the actor is destroyed
   var Projectile = function (opts) {
-    BaseInvader.call(this, opts);
+    Base.call(this, opts);
     this.path = opts.path;
   };
-  Projectile.prototype = Object.create(BaseInvader.prototype);
+  Projectile.prototype = Object.create(Base.prototype);
   Projectile.prototype.constructor = Projectile;
 
 

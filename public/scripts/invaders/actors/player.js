@@ -1,6 +1,6 @@
-define(['underscore', 'core/graphics/spritearchive',
-        'invaders/actors/baseinvader', 'invaders/actors/projectile'],
-    function (_, SpriteArchive, BaseInvader, Projectile) {
+define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
+        'invaders/actors/projectile'],
+    function (_, SpriteArchive, Base, Projectile) {
 
       // CONSTANTS
       var SPEED = 2;
@@ -23,16 +23,16 @@ define(['underscore', 'core/graphics/spritearchive',
       //                destroyed
       var Player = function (opts) {
         opts.sprite = SpriteArchive.get('human-ship');
-        BaseInvader.call(this, opts);
+        Base.call(this, opts);
         this.frameClock = opts.frameClock;
         this.fireReady = true;
         this.keypoll = opts.keypoll;
       };
-      Player.prototype = Object.create(BaseInvader.prototype);
+      Player.prototype = Object.create(Base.prototype);
       Player.prototype.constructor = Player;
 
 
-      // overloaded BaseInvader.act function
+      // overloaded Base.act function
       Player.prototype.act = function () {
         var spriteName = 'human-ship';
         var verticalChange = 0;
@@ -93,7 +93,7 @@ define(['underscore', 'core/graphics/spritearchive',
           group: this.group,
           sprite: SpriteArchive.get('human-ship-laser'),
           center: leftCenter,
-          layer: this.layer,
+          layer: this.layer(),
           noncollidables: [this.group],
           path: simplePath
         });
@@ -101,7 +101,7 @@ define(['underscore', 'core/graphics/spritearchive',
           group: this.group,
           sprite: SpriteArchive.get('human-ship-laser'),
           center: rightCenter,
-          layer: this.layer,
+          layer: this.layer(),
           noncollidables: [this.group],
           path: simplePath
         });

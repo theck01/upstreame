@@ -1,8 +1,4 @@
 define(['underscore'], function (_) {
-
-  var detatch = setImmediate || function (cb) {
-    setTimeout(cb, 0);
-  };
   
   // EventHub singleton provides interface for triggering and subscribing to
   // events
@@ -29,9 +25,7 @@ define(['underscore'], function (_) {
   //   params: Optional, object to be passed to registered callbacks
   EventHub.trigger = function (eventName, params) {
     _.each(this.eventMap[eventName] || [], function (cb) {
-      detatch(function () {
-        cb(params);
-      });
+      cb(params);
     });
   };
 

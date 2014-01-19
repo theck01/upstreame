@@ -1,4 +1,17 @@
-define(['underscore'], function (_) {
+define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
+
+  // Actor Events Emitted:
+  // 'actor.new': event listeners receive an object with 'actor' field
+  //              containing new actor. triggered on instantiation
+  // 'actor.destroy': event listeners receive an object with 'actor' field
+  //                  containing to be destroyed actor. triggered on destruction
+  // 'actor.move': event listeners receive an object with 'actor', 'from' and
+  //               'to' fields. triggered when actor is relocated
+  // Actor Events Respond to:
+  // 'viewport.render'
+  // 'collisionframe.resolve'
+  // 'world.step'
+  
 
   // SHARED VARIABLES
   var serial = 0;
@@ -18,15 +31,37 @@ define(['underscore'], function (_) {
   //     noncollidables: Array of strings describing groups with which the new
   //                     instance cannot collide
   var Base = function (opts) {
+    // intialize variables
     this.serial = ('000000' + serial++).slice(-7);
     this.group = opts.group;
     this.sprite = opts.sprite;
     this.center = _.clone(opts.center);
-    this.layer = opts.layer;
+    this.lyr = opts.layer;
     this.noncollidables = _.reduce(opts.noncollidables, function (memo, c) {
       memo[c] = true;
       return memo;
     }, Object.create(null));
+
+    // setup events 
+    var actor = this;
+    EventHub.trigger('actor.new', { actor: this });
+
+    this.subscriptions = {
+      onViewportRender: function (params) {
+        params.viewport.render(actor);
+      },
+      onCollisionFrameResolve: function (params) {
+        params.collisionframe.set(actor);
+      },
+      onWorldStep: function () {
+        actor.act();
+      }
+    };
+
+    EventHub.subscribe('viewport.render', this.subscriptions.onViewportRender);
+    EventHub.subscribe('collisionframe.resolve',
+                       this.subscriptions.onCollisionFrameResolve);
+    EventHub.subscribe('world.step', this.subscriptions.onWorldStep);
   };
 
 
@@ -48,7 +83,12 @@ define(['underscore'], function (_) {
   // destroy actor, removing it from the game world
   // Overload in subtype
   Base.prototype.destroy = function () {
-    throw new Error('Base#destroy called, subclass must override');
+    EventHub.unsubscribe('viewport.render',
+                         this.subscriptions.onViewportRender);
+    EventHub.unsubscribe('collisionframe.resolve',
+                         this.subscriptions.onCollisionFrameResolve);
+    EventHub.unsubscribe('world.step', this.subscriptions.onWorldStep);
+    EventHub.trigger('actor.destroy', { actor: this });
   };
 
 
@@ -61,20 +101,12 @@ define(['underscore'], function (_) {
   };
 
 
-  // paintOn the actor's sprite onto a canvas
+  // layer gets layer that actor occupies in the drawing heirarchy
   //
-  // Arguments:
-  //   canvas: An instance of *Canvas to paint this actors sprite on
-  //   offset: Optional, an object with 'x' and 'y' fields that can be used to
-  //           shift the actor's sprite location
-  Base.prototype.paintOn = function (canvas, offset) {
-    var center;
-    if (offset) {
-      center = { x: this.center.x - offset.x, y: this.center.y - offset.y };
-    }
-    else center = this.center;
-
-    this.sprite.paintOn(canvas, intCenter(center), this.layer);
+  // Return:
+  //   Integer layer number
+  Base.prototype.layer = function () {
+    return this.lyr;
   };
 
 

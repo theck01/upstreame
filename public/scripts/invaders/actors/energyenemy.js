@@ -1,6 +1,6 @@
-define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
+define(['core/graphics/spritearchive', 'core/actors/base',
         'invaders/actors/projectile'],
-  function (SpriteArchive, BaseInvader, Projectile) {
+  function (SpriteArchive, Base, Projectile) {
 
     // Constants
     var ANIMATION_FRAME_RATE = 2; // frames per sprite
@@ -19,11 +19,11 @@ define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
     //     noncollidables: Array of strings describing groups with which the new
     //                     instance cannot collide
     //     frameClock: FrameClock object
-    //   optional fields for the opts param:
-    //     onDestroy: extra cleanup that takes place when the actor is destroyed
+    //     bounds: Object with four fields: 'topmost', 'bottommost', 'leftmost',
+    //             'rightmost' representing the area in which the actor may move
     var EnergyEnemy = function (opts) {
       opts.sprite = SpriteArchive.get('energy-ship-big1');
-      BaseInvader.call(this, opts);
+      Base.call(this, opts);
 
       this.bounds = opts.bounds;
       this.frameClock = opts.frameClock;
@@ -51,11 +51,11 @@ define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
         }
       }, 30);
     };
-    EnergyEnemy.prototype = Object.create(BaseInvader.prototype);
+    EnergyEnemy.prototype = Object.create(Base.prototype);
     EnergyEnemy.prototype.constructor = EnergyEnemy;
 
 
-    // overloaded BaseInvader.act function
+    // overloaded Base.act function
     EnergyEnemy.prototype.act = function () {
       // update sprite location
       if (this.velocity.x && this.velocity.y) {
@@ -95,7 +95,7 @@ define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
     EnergyEnemy.prototype.destroy = function () {
       this.frameClock.cancel(this.animationID);
       this.frameClock.cancel(this.behaviorID);
-      BaseInvader.prototype.destroy.call(this);
+      Base.prototype.destroy.call(this);
     };
 
 
@@ -105,7 +105,7 @@ define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
         group: this.group,
         sprite: SpriteArchive.get('enemy-ship-laser'),
         center: { x: this.center.x, y: this.center.y + 10 },
-        layer: this.layer,
+        layer: this.layer(),
         noncollidables: [this.group],
         path: function () {
           return { x: this.center.x, y: this.center.y + SPEED*3 };
@@ -116,7 +116,7 @@ define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
         group: this.group,
         sprite: SpriteArchive.get('enemy-ship-laser'),
         center: { x: this.center.x + 5, y: this.center.y + 10 },
-        layer: this.layer,
+        layer: this.layer(),
         noncollidables: [this.group],
         path: function () {
           return { x: this.center.x + SPEED, y: this.center.y + SPEED*2 };
@@ -127,7 +127,7 @@ define(['core/graphics/spritearchive', 'invaders/actors/baseinvader',
         group: this.group,
         sprite: SpriteArchive.get('enemy-ship-laser'),
         center: { x: this.center.x - 5, y: this.center.y + 10 },
-        layer: this.layer,
+        layer: this.layer(),
         noncollidables: [this.group],
         path: function () {
           return { x: this.center.x - SPEED, y: this.center.y + SPEED*2 };
