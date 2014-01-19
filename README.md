@@ -25,6 +25,10 @@ Code can be found in /public/scripts/submersion/
 A tool for creating pixel art in a JSON format that the core engine expects.
 Work in progress, features being added as needed.
 
+### animator: http://upstrea.me/animator
+
+A tool for constructing and viewing sprite animations.
+
 ## Game Engine
 
 The core game engine. Currently supports pixel rendering to an HTML 5 canvas,
