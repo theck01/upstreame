@@ -117,16 +117,17 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base'],
            speed.diagy = OPPOSING_DIAGONAL_SPEED;
         }
 
+        var offset;
         if (horizontalChange && verticalChange) {
-          this.center.x += speed.diagx * horizontalChange;
-          this.center.y += speed.diagy * verticalChange;
+          offset = { x: speed.diagx * horizontalChange,
+                     y: speed.diagy * verticalChange };
         }
         else if (horizontalChange) {
-          this.center.x += speed.x * horizontalChange;
+          offset = { x: speed.x * horizontalChange, y: 0 };
         }
-        else {
-          this.center.y += speed.y * verticalChange;
-        }
+        else offset = { x: 0, y: speed.y * verticalChange };
+
+        this.move(offset);
       };
 
       return Submersible;

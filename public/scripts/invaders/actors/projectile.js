@@ -24,7 +24,7 @@ define(['core/actors/base'], function (Base) {
 
   // overloaded act specific to projectiles
   Projectile.prototype.act = function () {
-    this.center = this.path();
+    this.move(this.path(), 'absolute');
   };
 
 

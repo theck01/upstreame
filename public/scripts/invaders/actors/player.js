@@ -51,17 +51,20 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
         else if (verticalChange === 1) spriteName += '-braking';
 
         this.sprite = SpriteArchive.get(spriteName);
-      
+        
+        var offset;
         if (horizontalChange && verticalChange) {
-          this.center.x += DIAGONAL_SPEED * horizontalChange;
-          this.center.y += DIAGONAL_SPEED * verticalChange;
+          offset = { x: DIAGONAL_SPEED * horizontalChange,
+                     y: DIAGONAL_SPEED * verticalChange };
         }
         else if (horizontalChange) {
-          this.center.x += SPEED * horizontalChange;
+          offset = { x: SPEED * horizontalChange, y: 0 };
         }
         else {
-          this.center.y += SPEED * verticalChange;
+          offset = { x: 0, y: SPEED * verticalChange };
         }
+
+        this.move(offset);
       };
 
 

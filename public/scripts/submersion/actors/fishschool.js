@@ -166,8 +166,7 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
       this.sprite = new Sprite(collectSpritePixels(this.templateSprite,
                                                    offsets, this.center));
 
-      this.center.x += this.velocity.x;
-      this.center.y += this.velocity.y;
+      this.move(this.velocity);
     };
 
 

@@ -1,6 +1,6 @@
-define(['core/graphics/spritearchive', 'core/actors/base',
+define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
         'invaders/actors/projectile'],
-  function (SpriteArchive, Base, Projectile) {
+  function (_, SpriteArchive, Base, Projectile) {
 
     // CONTANTS
     var SPEED = 2;
@@ -49,31 +49,35 @@ define(['core/graphics/spritearchive', 'core/actors/base',
 
     // overloaded Base.act function
     Grunt.prototype.act = function () {
+      var abs = _.pick(this.center, 'x', 'y');
+
       // update sprite location
       if (this.velocity.x && this.velocity.y) {
-        this.center.x += DIAGONAL_SPEED * this.velocity.x;
-        this.center.y += DIAGONAL_SPEED * this.velocity.y;
+        abs.x += DIAGONAL_SPEED * this.velocity.x;
+        abs.y += DIAGONAL_SPEED * this.velocity.y;
       }
       else if (this.velocity.x) {
-        this.center.x += SPEED * this.velocity.x;
+        abs.x += SPEED * this.velocity.x;
       }
       else {
-        this.center.y += SPEED * this.velocity.y;
+        abs.y += SPEED * this.velocity.y;
       }
 
       // update sprite location to stay within bounds
-      if (this.center.x < this.bounds.leftmost) {
-        this.center.x = this.bounds.leftmost;
+      if (abs.x < this.bounds.leftmost) {
+        abs.x = this.bounds.leftmost;
       }
-      if (this.center.x > this.bounds.rightmost) {
-        this.center.x = this.bounds.rightmost;
+      if (abs.x > this.bounds.rightmost) {
+        abs.x = this.bounds.rightmost;
       }
-      if (this.center.y < this.bounds.topmost) {
-        this.center.y = this.bounds.topmost;
+      if (abs.y < this.bounds.topmost) {
+        abs.y = this.bounds.topmost;
       }
-      if (this.center.y > this.bounds.bottommost) {
-        this.center.y = this.bounds.bottommost;
+      if (abs.y > this.bounds.bottommost) {
+        abs.y = this.bounds.bottommost;
       }
+
+      this.move(abs, 'absolute');
     };
 
 

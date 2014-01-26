@@ -6,7 +6,8 @@ define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
   // 'actor.destroy': event listeners receive an object with 'actor' field
   //                  containing to be destroyed actor. triggered on destruction
   // 'actor.move': event listeners receive an object with 'actor', 'from' and
-  //               'to' fields. triggered when actor is relocated
+  //               'to' fields, each containing an object that has 'x' and 'y'
+  //               fields. triggered when actor is relocated
   // Actor Events Respond to:
   // 'viewport.render'
   // 'collisionframe.resolve'
@@ -107,6 +108,36 @@ define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
   //   Integer layer number
   Base.prototype.layer = function () {
     return this.lyr;
+  };
+
+
+  // move relocates the actor, either by shifting the actor by an offset or
+  // relocating to an absolute location
+  //
+  // Arguments:
+  //   coord: offset or absolute position used in relocation
+  //   method: Optional, can be any of the following strings:
+  //     'shift': Default, shift actor by coord offset
+  //     'absolute': move actor to absolute position coord
+  Base.prototype.move = function (coord, method) {
+    method = method || 'shift';
+    var origin = intCenter(this.center);
+    var ending;
+
+    if (method === 'absolute') {
+      this.center.x = coord.x;
+      this.center.y = coord.y;
+      ending = intCenter(coord);
+    }
+    else {
+      this.center.x += coord.x;
+      this.center.y += coord.y;
+      ending = intCenter(this.center);
+    }
+
+    if (!_.isEqual(origin, ending)) {
+      EventHub.trigger('actor.move', { actor: this, from: origin, to: ending });
+    }
   };
 
 
