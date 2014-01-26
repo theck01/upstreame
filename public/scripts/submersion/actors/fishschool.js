@@ -160,7 +160,9 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
         f.o.y += f.v.y;
       }, this);
 
-      var offsets = _.map(this.fish, function (f) { return f.o; });
+      var offsets = _.map(this.fish, function (f) {
+        return { x: Math.floor(f.o.x), y: Math.floor(f.o.y) };
+      });
       this.sprite = new Sprite(collectSpritePixels(this.templateSprite,
                                                    offsets, this.center));
 
