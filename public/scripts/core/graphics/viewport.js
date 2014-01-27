@@ -4,15 +4,16 @@ define(['underscore', 'core/graphics/layeredcanvas', 'core/util/eventhub'],
     // Viewport is a moveable window into the game world, drawing only sprites
     // within the viewports bounds to the encapsulated canvas
     //
-    // Arguments:
-    //   dimension: object with 'width' and 'height' fields
+    // Argument object with fields:
+    //   dimensions: object with 'width' and 'height' fields
     //   origin: object with 'x' and 'y' fields
     //   canvasID: the canvas that the viewport is attached to
-    //   backgroundColor:
-    var Viewport = function (dimensions, origin, canvasID, backgroundColor) {
-      this.dim = _.clone(dimensions);
-      this.origin = _.clone(origin);
-      this.canvas = new LayeredCanvas(dimensions, canvasID, backgroundColor);
+    //   backgroundColor: CSS color string
+    var Viewport = function (opts) {
+      this.dim = _.clone(opts.dimensions);
+      this.origin = _.clone(opts.origin);
+      this.canvas = new LayeredCanvas(opts.dimensions, opts.canvasID,
+                                      opts.backgroundColor);
     };
 
 

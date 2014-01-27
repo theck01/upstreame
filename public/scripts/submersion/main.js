@@ -42,8 +42,12 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
     $(function () {
       $canvas = $("#game-canvas");
       Game.keys = new KeyPoll();
-      Game.viewport = new Viewport(DIMENSIONS, { x: 0, y: 0 }, "#game-canvas",
-                                   "#247");
+      Game.viewport = new Viewport({
+        dimensions: DIMENSIONS,
+        origin: { x: 0, y: 0 },
+        canvasID: "#game-canvas",
+        backgroundColor: "#224477"
+      });
       Game.clock = new FrameClock();
 
       $.ajax({
