@@ -7,10 +7,11 @@ require.config({
   }
 });
 
-require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
-         "core/interface/keypoll", "core/util/frameclock", "core/util/eventhub",
+require(["jquery", "core/graphics/spritearchive",
+         "core/graphics/followingviewport", "core/interface/keypoll",
+         "core/util/frameclock", "core/util/eventhub",
          "submersion/actors/submersible", "submersion/actors/fishschool"],
-  function($, SpriteArchive, Viewport, KeyPoll, FrameClock, EventHub, 
+  function($, SpriteArchive, FollowingViewport, KeyPoll, FrameClock, EventHub,
            Submersible, FishSchool) {
 
     var DIMENSIONS = { width: 400, height: 237 };
@@ -41,11 +42,13 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
     $(function () {
       $canvas = $("#game-canvas");
       Game.keys = new KeyPoll();
-      Game.viewport = new Viewport({
+      Game.viewport = new FollowingViewport({
         dimensions: DIMENSIONS,
         origin: { x: 0, y: 0 },
         canvasID: "#game-canvas",
-        backgroundColor: "#224477"
+        backgroundColor: "#224477",
+        actor: null,
+        followRadius: 50
       });
       Game.clock = new FrameClock();
 
@@ -60,7 +63,7 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
           sub = new Submersible({
             group: "Player",
             center: {
-              x: Math.floor(DIMENSIONS.width * 0.25),
+              x: Math.floor(DIMENSIONS.width * 0.5),
               y: Math.floor(DIMENSIONS.height * 0.5)
             },
             layer: 2,
@@ -68,6 +71,7 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
             frameClock: Game.clock,
             keypoll: Game.keys
           });
+          Game.viewport.follow(sub);
 
           tigerSchoolRight = new FishSchool({
             group: "Tiger",
