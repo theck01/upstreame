@@ -30,15 +30,8 @@ define(['underscore', 'core/graphics/layeredcanvas', 'core/util/eventhub'],
     };
 
 
-    // paint forwards to encapsulated canvas, drawing contents of viewport on
-    // the screen
-    Viewport.prototype.paint = function () {
-      this.canvas.paint();
-    };
-
-
-    // render paints any part of the actor's sprite visible within the viewport
-    // onto the canvas
+    // render paints the full scene onto the pixel canvas or any part of the
+    // actor's sprite visible within the viewport onto the canvas
     // 
     // Arguments:
     //   actor: Optional, any actor instance. If supplied renders that actor
@@ -46,6 +39,7 @@ define(['underscore', 'core/graphics/layeredcanvas', 'core/util/eventhub'],
     Viewport.prototype.render = function (actor) {
       if (!actor) {
         EventHub.trigger('viewport.render', { viewport: this });
+        this.canvas.paint();
         return;
       }
 

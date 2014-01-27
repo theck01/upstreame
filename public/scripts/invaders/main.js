@@ -33,7 +33,6 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
       Game.clock.tick();
       Game.world.timestep();
       Game.viewport.render();
-      Game.viewport.paint();
       requestAnimationFrame(mainLoop);
     }
 

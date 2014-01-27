@@ -34,7 +34,6 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
       Game.clock.tick();
       EventHub.trigger("world.step");
       Game.viewport.render();
-      Game.viewport.paint();
       requestAnimationFrame(mainLoop);
     }
 
