@@ -85,12 +85,20 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
     //     velocity: Velocity of the school, with 'x' and 'y' fields
     var FishSchool = function (opts) {
 
+      this.drift = null;
+      this.fish = [];
+      this.fishDensity = null;
+      this.frameClock = opts.frameClock;
+      this.maxRadius = null;
+      this.templateSprite = opts.sprite;
+      this.velocity = _.clone(opts.velocity);
+
       var spriteBounds = opts.sprite.bounds();
       var spriteArea = (spriteBounds.xmax - spriteBounds.xmin + 1) *
                        (spriteBounds.ymax - spriteBounds.ymin + 1);
-
+      var maxArea = (opts.count/opts.density) * spriteArea;
       this.fishDensity = opts.density/spriteArea;
-      this.fish = [];
+      this.maxRadius = Math.sqrt(maxArea/Math.PI);
 
       circularPath({ x: 0, y: 0 });
       while (this.fish.length < opts.count) {
@@ -102,16 +110,10 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
       this.fish = shuffle(this.fish);
       var offsets = _.map(this.fish, function (f) { return f.o; });
 
-      this.templateSprite = opts.sprite;
       opts.sprite = new Sprite(collectSpritePixels(this.templateSprite,
                                                    offsets, opts.center));
       Base.call(this, opts);
 
-      var maxArea = (opts.count/opts.density) * spriteArea;
-      this.maxRadius = Math.sqrt(maxArea/Math.PI);
-
-      this.velocity = _.clone(opts.velocity);
-      this.frameClock = opts.frameClock;
 
       // setup periodically changing fish drift within school
       var school = this;
@@ -143,6 +145,7 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
 
     // overloaded Base.act function
     FishSchool.prototype.act = function () {
+
       var newRadius = 0;
 
       _.each(this.fish, function (f) {
