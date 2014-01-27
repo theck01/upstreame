@@ -48,9 +48,9 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
               y: Math.floor(DIMENSIONS.height * 0.25)
             },
             bounds: {
-              leftmost: Math.floor(DIMENSIONS.width/2) + 25,
-              rightmost: DIMENSIONS.width - 25,
-              topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
+              xmin: Math.floor(DIMENSIONS.width/2) + 25,
+              xmax: DIMENSIONS.width - 25,
+              ymin: 25, ymax: Math.floor(DIMENSIONS.height/2)
             }
           },
           {
@@ -59,8 +59,8 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
               y: Math.floor(DIMENSIONS.height * 0.25)
             },
             bounds: {
-              leftmost: 25, rightmost: Math.floor(DIMENSIONS.width/2) - 25,
-              topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
+              xmin: 25, xmax: Math.floor(DIMENSIONS.width/2) - 25,
+              ymin: 25, ymax: Math.floor(DIMENSIONS.height/2)
             }
           }
         ], Game.clock, nextWave);
@@ -73,9 +73,8 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
               y: Math.floor(DIMENSIONS.height * 0.25)
             },
             bounds: {
-              leftmost: 25,
-              rightmost: DIMENSIONS.width - 25,
-              topmost: 25, bottommost: Math.floor(DIMENSIONS.height/2)
+              xmin: 25, xmax: DIMENSIONS.width - 25,
+              ymin: 25, ymax: Math.floor(DIMENSIONS.height/2)
             }
           },
         ], Game.clock, nextWave);

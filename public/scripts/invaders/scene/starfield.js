@@ -44,36 +44,36 @@ define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
       // determine portion of the screen that needs new stars
       var replaceBounds = Object.create(null);
       if (driftVelocity.x > 0) {
-        replaceBounds.leftmost = 0;
-        replaceBounds.rightmost = Math.ceil(driftVelocity.x) - 1;
-        replaceBounds.startx = replaceBounds.rightmost + 1;
+        replaceBounds.xmin = 0;
+        replaceBounds.xmax = Math.ceil(driftVelocity.x) - 1;
+        replaceBounds.startx = replaceBounds.xmax + 1;
         replaceBounds.endx = dimensions.width - 1;
       }
       else {
-        replaceBounds.leftmost = dimensions.width + Math.ceil(driftVelocity.x);
-        replaceBounds.rightmost = dimensions.width - 1;
+        replaceBounds.xmin = dimensions.width + Math.ceil(driftVelocity.x);
+        replaceBounds.xmax = dimensions.width - 1;
         replaceBounds.startx = 0;
-        replaceBounds.endx = replaceBounds.leftmost - 1;
+        replaceBounds.endx = replaceBounds.xmin - 1;
       }
 
       if (driftVelocity.y > 0) {
-        replaceBounds.topmost = 0;
-        replaceBounds.bottommost = driftVelocity.y - 1;
+        replaceBounds.ymin = 0;
+        replaceBounds.ymax = driftVelocity.y - 1;
       }
       else {
-        replaceBounds.topmost = dimensions.height + driftVelocity.y;
-        replaceBounds.bottommost = dimensions.height - 1;
+        replaceBounds.ymin = dimensions.height + driftVelocity.y;
+        replaceBounds.ymax = dimensions.height - 1;
       }
 
       // add any new stars to the screen
-      for (var i=replaceBounds.leftmost; i<=replaceBounds.rightmost; i++) {
+      for (var i=replaceBounds.xmin; i<=replaceBounds.xmax; i++) {
         for (var j=0; j<dimensions.height; j++) {
           if (Math.random() < STAR_DENSITY) field.stars.push({ x: i, y: j });
         }
       }
 
       for (var i=replaceBounds.startx; i<=replaceBounds.endx; i++) {
-        for (var j=replaceBounds.topmost; j<=replaceBounds.bottommost; j++) {
+        for (var j=replaceBounds.ymin; j<=replaceBounds.ymax; j++) {
           if (Math.random() < STAR_DENSITY) field.stars.push({ x: i, y: j });
         }
       }

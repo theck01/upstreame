@@ -18,9 +18,6 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
       //                     new instance cannot collide
       //     frameClock: FrameClock object
       //     keypoll: KeyPoll object, used for controlling sprite
-      //   optional fields for the opts param:
-      //     onDestroy: extra cleanup that takes place when the actor is
-      //                destroyed
       var Player = function (opts) {
         opts.sprite = SpriteArchive.get('human-ship');
         Base.call(this, opts);

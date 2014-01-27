@@ -19,8 +19,8 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
     //     noncollidables: Array of strings describing groups with which the new
     //                     instance cannot collide
     //     frameClock: FrameClock object
-    //     bounds: Object with four fields: 'topmost', 'bottommost', 'leftmost',
-    //             'rightmost' representing the area in which the actor may move
+    //     bounds: Object with four fields: 'ymin', 'ymax', 'xmin',
+    //             'xmax' representing the area in which the actor may move
     var EnergyEnemy = function (opts) {
       opts.sprite = SpriteArchive.get('energy-ship-big1');
       Base.call(this, opts);
@@ -72,17 +72,17 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
       }
 
       // update sprite location to stay within bounds
-      if (abs.x < this.bounds.leftmost) {
-        abs.x = this.bounds.leftmost;
+      if (abs.x < this.bounds.xmin) {
+        abs.x = this.bounds.xmin;
       }
-      if (abs.x > this.bounds.rightmost) {
-        abs.x = this.bounds.rightmost;
+      if (abs.x > this.bounds.xmax) {
+        abs.x = this.bounds.xmax;
       }
-      if (abs.y < this.bounds.topmost) {
-        abs.y = this.bounds.topmost;
+      if (abs.y < this.bounds.ymin) {
+        abs.y = this.bounds.ymin;
       }
-      if (abs.y > this.bounds.bottommost) {
-        abs.y = this.bounds.bottommost;
+      if (abs.y > this.bounds.ymax) {
+        abs.y = this.bounds.ymax;
       }
 
       this.move(abs, 'absolute');
