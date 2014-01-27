@@ -17,6 +17,16 @@ define(['underscore', 'core/graphics/layeredcanvas', 'core/util/eventhub'],
     };
 
 
+    // bounds returns the bounds of the viewport's visible field
+    //
+    // Returns an object with 'xmin', 'xmax', 'ymin', 'ymax' fields
+    Viewport.prototype.bounds = function () {
+      return { xmin: this.origin.x, ymin: this.origin.y,
+               xmax: this.origin.x + this.dim.width,
+               ymax: this.origin.y + this.dim.height };
+    };
+
+
     // contains checks to see whether an actor is contained within a viewport
     // 
     // Arguments:
@@ -28,6 +38,8 @@ define(['underscore', 'core/graphics/layeredcanvas', 'core/util/eventhub'],
         return (x >= 0 && x < this.dim.width && y >=0 && y < this.dim.height);
       }, this);
     };
+
+
 
 
     // render paints the full scene onto the pixel canvas or any part of the
