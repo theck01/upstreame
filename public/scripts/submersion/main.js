@@ -10,9 +10,10 @@ require.config({
 require(["jquery", "core/graphics/spritearchive",
          "core/graphics/followingviewport", "core/interface/keypoll",
          "core/util/frameclock", "core/util/eventhub",
-         "submersion/actors/submersible", "submersion/actors/fishschool"],
+         "submersion/actors/submersible", "submersion/actors/fishschool",
+         "submersion/actors/creatures/turtle"],
   function($, SpriteArchive, FollowingViewport, KeyPoll, FrameClock, EventHub,
-           Submersible, FishSchool) {
+           Submersible, FishSchool, Turtle) {
 
     var DIMENSIONS = { width: 400, height: 237 };
     var $canvas;
@@ -20,6 +21,7 @@ require(["jquery", "core/graphics/spritearchive",
     var sub;
     var tigerSchoolRight;
     var surgeonSchoolLeft;
+    var turtle;
 
 
     function sizeCanvas () {
@@ -85,7 +87,7 @@ require(["jquery", "core/graphics/spritearchive",
             count: 30,
             density: 1,
             frameClock: Game.clock,
-            velocity: { x: 0, y: 0 }
+            velocity: { x: 1.5, y: 0.1 }
           });
 
           surgeonSchoolLeft = new FishSchool({
@@ -100,7 +102,19 @@ require(["jquery", "core/graphics/spritearchive",
             count: 20,
             density: 1.5,
             frameClock: Game.clock,
-            velocity: { x: 0, y: 0 }
+            velocity: { x: -1.5, y: -1 }
+          });
+
+          turtle = new Turtle({
+            group: "Turtle",
+            center: {
+              x: Math.floor(DIMENSIONS.width * 0.33),
+              y: Math.floor(DIMENSIONS.height * 0.33)
+            },
+            layer: 1,
+            noncollidables: ["Turtle"],
+            frameClock: Game.clock,
+            velocity: { x: 1, y: 0 }
           });
 
           requestAnimationFrame(mainLoop);
