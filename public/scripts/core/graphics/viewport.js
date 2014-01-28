@@ -27,12 +27,12 @@ define(['underscore', 'core/graphics/layeredcanvas', 'core/util/eventhub'],
     };
 
 
-    // contains checks to see whether an actor is contained within a viewport
+    // contains checks to see whether an element is contained within a viewport
     // 
     // Arguments:
-    //   actor: any actor instance
-    Viewport.prototype.contains = function (actor) {
-      return _.find(actor.pixels(), function (p) {
+    //   element: any element instance
+    Viewport.prototype.contains = function (element) {
+      return _.find(element.pixels(), function (p) {
         var x = p.x - this.origin.x;
         var y = p.y - this.origin.y;
         return (x >= 0 && x < this.dim.width && y >=0 && y < this.dim.height);
@@ -43,28 +43,28 @@ define(['underscore', 'core/graphics/layeredcanvas', 'core/util/eventhub'],
 
 
     // render paints the full scene onto the pixel canvas or any part of the
-    // actor's sprite visible within the viewport onto the canvas
+    // scene visible within the viewport onto the canvas
     // 
     // Arguments:
-    //   actor: Optional, any actor instance. If supplied renders that actor
-    //          to the viewport. If not supplied renders entire viewport
-    Viewport.prototype.render = function (actor) {
-      if (!actor) {
+    //   element: Optional, any instance that supplies a pixels and layer 
+    //            method. If supplied renders that element to the viewport.
+    //            If not supplied renders entire viewport
+    Viewport.prototype.render = function (element) {
+      if (!element) {
         EventHub.trigger('viewport.render', { viewport: this });
         this.canvas.paint();
         return;
       }
 
-      var pixels = actor.pixels();
+      var pixels = element.pixels();
       _.each(pixels, function (p) {
         this.canvas.setPixel(p.x - this.origin.x, p.y - this.origin.y,
-                             p.color, actor.layer());
+                             p.color, element.layer());
       }, this);
     };
 
 
-    // renderBackground paints any part of the actor's sprite visible within the
-    // viewport onto the canvas without any offset
+    // renderBackground paints an element onto the viewport without any offset
     // 
     // Arguments:
     //   background: any object that has a paintOn method

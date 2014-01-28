@@ -25,7 +25,7 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
       opts.sprite = SpriteArchive.get('energy-ship-big1');
       Base.call(this, opts);
 
-      this.bounds = opts.bounds;
+      this.boundingArea = opts.bounds;
       this.frameClock = opts.frameClock;
       this.velocity = { x: 0, y: 0 };
 
@@ -71,18 +71,18 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
         abs.y += SPEED * this.velocity.y;
       }
 
-      // update sprite location to stay within bounds
-      if (abs.x < this.bounds.xmin) {
-        abs.x = this.bounds.xmin;
+      // update sprite location to stay within boundingArea
+      if (abs.x < this.boundingArea.xmin) {
+        abs.x = this.boundingArea.xmin;
       }
-      if (abs.x > this.bounds.xmax) {
-        abs.x = this.bounds.xmax;
+      if (abs.x > this.boundingArea.xmax) {
+        abs.x = this.boundingArea.xmax;
       }
-      if (abs.y < this.bounds.ymin) {
-        abs.y = this.bounds.ymin;
+      if (abs.y < this.boundingArea.ymin) {
+        abs.y = this.boundingArea.ymin;
       }
-      if (abs.y > this.bounds.ymax) {
-        abs.y = this.bounds.ymax;
+      if (abs.y > this.boundingArea.ymax) {
+        abs.y = this.boundingArea.ymax;
       }
 
       this.move(abs, 'absolute');

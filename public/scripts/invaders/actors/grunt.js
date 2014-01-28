@@ -24,7 +24,7 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
       opts.sprite = SpriteArchive.get('lizard-ship');
       Base.call(this, opts);
 
-      this.bounds = opts.bounds;
+      this.boundingArea = opts.bounds;
       this.velocity = { x: 0, y: 0 };
       this.frameClock = opts.frameClock;
       this.fireID = undefined;
@@ -64,17 +64,17 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
       }
 
       // update sprite location to stay within bounds
-      if (abs.x < this.bounds.xmin) {
-        abs.x = this.bounds.xmin;
+      if (abs.x < this.boundingArea.xmin) {
+        abs.x = this.boundingArea.xmin;
       }
-      if (abs.x > this.bounds.xmax) {
-        abs.x = this.bounds.xmax;
+      if (abs.x > this.boundingArea.xmax) {
+        abs.x = this.boundingArea.xmax;
       }
-      if (abs.y < this.bounds.ymin) {
-        abs.y = this.bounds.ymin;
+      if (abs.y < this.boundingArea.ymin) {
+        abs.y = this.boundingArea.ymin;
       }
-      if (abs.y > this.bounds.ymax) {
-        abs.y = this.bounds.ymax;
+      if (abs.y > this.boundingArea.ymax) {
+        abs.y = this.boundingArea.ymax;
       }
 
       this.move(abs, 'absolute');
