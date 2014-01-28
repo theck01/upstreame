@@ -11,9 +11,9 @@ require(["jquery", "core/graphics/spritearchive",
          "core/graphics/followingviewport", "core/interface/keypoll",
          "core/util/frameclock", "core/util/eventhub",
          "submersion/actors/submersible", "submersion/actors/fishschool",
-         "submersion/actors/creatures/turtle"],
+         "submersion/actors/creatures/turtle", "submersion/util/layer"],
   function($, SpriteArchive, FollowingViewport, KeyPoll, FrameClock, EventHub,
-           Submersible, FishSchool, Turtle) {
+           Submersible, FishSchool, Turtle, Layer) {
 
     var DIMENSIONS = { width: 400, height: 237 };
     var $canvas;
@@ -68,7 +68,6 @@ require(["jquery", "core/graphics/spritearchive",
               x: Math.floor(DIMENSIONS.width * 0.5),
               y: Math.floor(DIMENSIONS.height * 0.5)
             },
-            layer: 2,
             noncollidables: ["Player"],
             frameClock: Game.clock,
             keypoll: Game.keys
@@ -82,7 +81,7 @@ require(["jquery", "core/graphics/spritearchive",
               x: Math.floor(DIMENSIONS.width * 0.75),
               y: Math.floor(DIMENSIONS.height * 0.66)
             },
-            layer: 3,
+            layer: Layer.frontFocus,
             noncollidables: ["Tiger"],
             count: 30,
             density: 1,
@@ -97,7 +96,7 @@ require(["jquery", "core/graphics/spritearchive",
               x: Math.floor(DIMENSIONS.width * 0.75),
               y: Math.floor(DIMENSIONS.height * 0.33)
             },
-            layer: 3,
+            layer: Layer.frontFocus,
             noncollidables: ["Surgeon"],
             count: 20,
             density: 1.5,
@@ -111,7 +110,7 @@ require(["jquery", "core/graphics/spritearchive",
               x: Math.floor(DIMENSIONS.width * 0.33),
               y: Math.floor(DIMENSIONS.height * 0.33)
             },
-            layer: 1,
+            layer: Layer.rearFocus,
             noncollidables: ["Turtle"],
             frameClock: Game.clock,
             velocity: { x: 1, y: 0 }
