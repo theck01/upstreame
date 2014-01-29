@@ -23,8 +23,8 @@ define(['underscore'], function (_) {
 
   // center returns the center of the frame in the game world
   Frame.prototype.center = function () {
-    return { x: Math.floor(this.origin.x + this.dimension.width/2),
-             y: Math.floor(this.origin.y + this.dimension.height/2) };
+    return { x: Math.floor(this.origin.x + this.dim.width/2),
+             y: Math.floor(this.origin.y + this.dim.height/2) };
   };
 
 
