@@ -8,12 +8,13 @@ require.config({
 });
 
 require(["jquery", "core/graphics/spritearchive",
-         "core/graphics/followingviewport", "core/interface/keypoll",
+         "core/graphics/viewport", "core/interface/keypoll",
          "core/util/frameclock", "core/util/eventhub",
          "submersion/actors/submersible", "submersion/actors/fishschool",
-         "submersion/actors/creatures/turtle", "submersion/util/layer"],
+         "submersion/actors/creatures/turtle", "submersion/util/layer",
+         "submersion/util/follower"],
   function($, SpriteArchive, FollowingViewport, KeyPoll, FrameClock, EventHub,
-           Submersible, FishSchool, Turtle, Layer) {
+           Submersible, FishSchool, Turtle, Layer, Follower) {
 
     var DIMENSIONS = { width: 400, height: 237 };
     var $canvas;
@@ -49,8 +50,6 @@ require(["jquery", "core/graphics/spritearchive",
         origin: { x: 0, y: 0 },
         canvasID: "#game-canvas",
         backgroundColor: "#224477",
-        actor: null,
-        followRadius: 50
       });
       Game.clock = new FrameClock();
 
@@ -72,7 +71,6 @@ require(["jquery", "core/graphics/spritearchive",
             frameClock: Game.clock,
             keypoll: Game.keys
           });
-          Game.viewport.follow(sub);
 
           tigerSchoolRight = new FishSchool({
             group: "Tiger",
@@ -115,6 +113,8 @@ require(["jquery", "core/graphics/spritearchive",
             frameClock: Game.clock,
             velocity: { x: 1, y: 0 }
           });
+
+          new Follower(sub, [{ frame: Game.viewport, followRadius: 25 }]);
 
           requestAnimationFrame(mainLoop);
         }
