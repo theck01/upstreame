@@ -8,12 +8,12 @@ require.config({
 });
 
 require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
-         "invaders/actors/player", "core/interface/keypoll",
-         "core/util/frameclock", "invaders/scene/starfield",
-         "invaders/waves/energywave", "invaders/waves/gruntwave",
-         "invaders/world/world"],
-  function($, SpriteArchive, Viewport, Player, KeyPoll, FrameClock,
-           Starfield, EnergyWave, GruntWave, World){
+         "core/interface/keypoll", "core/util/frameclock",
+         "core/world/actionbox", "invaders/actors/player",
+         "invaders/scene/starfield", "invaders/waves/energywave",
+         "invaders/waves/gruntwave", "invaders/world/world"],
+  function($, SpriteArchive, Viewport, KeyPoll, FrameClock, ActionBox,
+           Player, Starfield, EnergyWave, GruntWave, World){
 
     var DIMENSIONS = { width: 400, height: 300 };
     var Game = Object.create(null);
@@ -32,6 +32,7 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
     function mainLoop () {
       Game.clock.tick();
       Game.world.timestep();
+      Game.actionbox.collisions();
       Game.viewport.render();
       requestAnimationFrame(mainLoop);
     }
@@ -84,6 +85,7 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
 
     $(function () {
       $canvas = $("#game-canvas");
+
       Game.keys = new KeyPoll("body");
       Game.viewport = new Viewport({
         dimensions: DIMENSIONS,
@@ -91,11 +93,14 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
         canvasID: "#game-canvas",
         backgroundColor: "#000000"
       });
+      Game.actionbox = new ActionBox({
+        dimensions: DIMENSIONS,
+        origin: { x: 0, y: 0 }
+      });
       Game.clock = new FrameClock();
+      Game.world = new World(DIMENSIONS);
 
-      var starfield = new Starfield(DIMENSIONS, { x: 0.5, y: 1 }, 0,
-                                    Game.clock);
-      Game.world = new World(DIMENSIONS, starfield);
+      new Starfield(DIMENSIONS, { x: 0.5, y: 1 }, 0, Game.clock);
 
       $.ajax({
         async: false,

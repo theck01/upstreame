@@ -23,6 +23,7 @@ define(['underscore', 'core/util/bounds', 'core/util/eventhub'],
       this.center = _.clone(opts.center);
       this.lyr = opts.layer;
       this.visible = false;
+      this.dynamic = false;
       this.noncollidables = _.reduce(opts.noncollidables, function (memo, c) {
         memo[c] = true;
         return memo;
@@ -35,8 +36,10 @@ define(['underscore', 'core/util/bounds', 'core/util/eventhub'],
                                            params.viewport.bounds());
         if (element.isVisible()) params.viewport.render(element);
       });
-      this.register('collisionframe.resolve', function (params) {
-        if (element.isVisible()) params.collisionframe.set(element);
+      this.register('actionbox.collisions', function (params) {
+        element.dynamic = Bounds.intersect(element.bounds(),
+                                           params.actionbox.bounds());
+        if (element.isDynamic()) params.actionbox.set(element);
       });
     };
 
@@ -74,6 +77,13 @@ define(['underscore', 'core/util/bounds', 'core/util/eventhub'],
     //   7 digit numeric string
     Element.prototype.id = function () {
       return this.serial;
+    };
+
+
+    // isDynamic returns true if the element is within the actionbox bounds
+    // an should be involved in collision detection
+    Element.prototype.isDynamic = function () {
+      return this.dynamic;
     };
 
 
