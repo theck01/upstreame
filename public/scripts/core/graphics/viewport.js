@@ -1,5 +1,6 @@
-define(['underscore', 'core/graphics/layeredcanvas', 'core/util/eventhub'],
-  function (_, LayeredCanvas, EventHub) {
+define(['underscore', 'core/graphics/layeredcanvas', 'core/util/eventhub',
+        'core/util/frame'],
+  function (_, LayeredCanvas, EventHub, Frame) {
 
     // Viewport is a moveable window into the game world, drawing only sprites
     // within the viewports bounds to the encapsulated canvas
@@ -10,36 +11,12 @@ define(['underscore', 'core/graphics/layeredcanvas', 'core/util/eventhub'],
     //   canvasID: the canvas that the viewport is attached to
     //   backgroundColor: CSS color string
     var Viewport = function (opts) {
-      this.dim = _.clone(opts.dimensions);
-      this.origin = _.clone(opts.origin);
+      Frame.call(this, opts.dimensions, opts.origin);
       this.canvas = new LayeredCanvas(opts.dimensions, opts.canvasID,
                                       opts.backgroundColor);
     };
-
-
-    // bounds returns the bounds of the viewport's visible field
-    //
-    // Returns an object with 'xmin', 'xmax', 'ymin', 'ymax' fields
-    Viewport.prototype.bounds = function () {
-      return { xmin: this.origin.x, ymin: this.origin.y,
-               xmax: this.origin.x + this.dim.width,
-               ymax: this.origin.y + this.dim.height };
-    };
-
-
-    // contains checks to see whether an element is contained within a viewport
-    // 
-    // Arguments:
-    //   element: any element instance
-    Viewport.prototype.contains = function (element) {
-      return _.find(element.pixels(), function (p) {
-        var x = p.x - this.origin.x;
-        var y = p.y - this.origin.y;
-        return (x >= 0 && x < this.dim.width && y >=0 && y < this.dim.height);
-      }, this);
-    };
-
-
+    Viewport.prototype = Object.create(Frame.prototype);
+    Viewport.prototype.constructor = Viewport;
 
 
     // render paints the full scene onto the pixel canvas or any part of the
