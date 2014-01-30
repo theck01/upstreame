@@ -1,6 +1,6 @@
 {
-  "name": "script-invaders",
-  "description": "A classic arcade shooter in the likes of Space Invaders",
+  "name": "upstreame",
+  "description": "A web app serving a number of 2D pixel games",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
