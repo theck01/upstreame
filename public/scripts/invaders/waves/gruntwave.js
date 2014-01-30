@@ -1,6 +1,6 @@
-define(['underscore', 'core/graphics/spritearchive', 'core/util/eventhub',
+define(['underscore', 'core/graphics/spritearchive', 'core/util/subscriber',
         'invaders/actors/grunt'],
-  function (_, SpriteArchive, EventHub, Grunt) {
+  function (_, SpriteArchive, Subscriber, Grunt) {
 
     // EnergyWave manages a wave of Energy enemies
     //
@@ -13,6 +13,10 @@ define(['underscore', 'core/graphics/spritearchive', 'core/util/eventhub',
     //   frameClock: instance of a FrameClock
     //   onComplete: function to call when wave has been completed
     var GruntWave = function (positionings, frameClock, onComplete) {
+      // setup instance as a subscriber
+      Subscriber.call(this);
+
+      // initialize instance
       var wave = this;
       wave.enemies = [];
       _.each(positionings, function (p) {
@@ -26,19 +30,20 @@ define(['underscore', 'core/graphics/spritearchive', 'core/util/eventhub',
         }));
       });
 
-      var onDestroy = function (params) {
+      this.register('actor.destroy', function (params) {
         wave.enemies = _.reject(wave.enemies, function (e) {
           return params.actor.id() === e.id();
         });
 
         if (wave.enemies.length === 0) {
-          EventHub.unsubscribe('actor.destroy', onDestroy);
+          wave.destroy();
           onComplete();
         }
-      };
+      });
 
-      EventHub.subscribe('actor.destroy', onDestroy);
     };
+    GruntWave.prototype = Object.create(Subscriber.prototype);
+    GruntWave.prototype.constructor = GruntWave;
 
 
     return GruntWave;

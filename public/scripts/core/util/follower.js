@@ -1,4 +1,4 @@
-define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
+define(['underscore', 'core/util/subscriber'], function (_, Subscriber) {
 
   // distance returns the distance between two points
   //
@@ -29,6 +29,10 @@ define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
   //   actor: actor to follow
   //   frameDistances: List of objects with 'frame' and 'followRadius' fields
   var Follower = function (actor, frameDistances) {
+    // initialize as a Subscriber
+    Subscriber.call(this);
+
+    // initialize instance
     this.actor = actor;
     this.frameDistances = [];
 
@@ -37,32 +41,30 @@ define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
     }, this);
 
     var f = this;
-    this.subscriptions = {
-      worldStep: function () {
-        if (!f.actor) return;
+    this.register('world.step', function () {
+      if (!f.actor) return;
 
-        _.each(f.frameDistances, function (fd) {
-          var actorPos = f.actor.position();
-          var center = fd.frame.center();
-          var distDiff = distance(center, actorPos) - fd.followRadius;
-          var unitDiff = unitize({ x: actorPos.x - center.x,
-                                   y: actorPos.y - center.y });
-          var offset = { x: Math.floor(distDiff * unitDiff.x),
-                         y: Math.floor(distDiff * unitDiff.y) };
+      _.each(f.frameDistances, function (fd) {
+        var actorPos = f.actor.position();
+        var center = fd.frame.center();
+        var distDiff = distance(center, actorPos) - fd.followRadius;
+        var unitDiff = unitize({ x: actorPos.x - center.x,
+                                 y: actorPos.y - center.y });
+        var offset = { x: Math.floor(distDiff * unitDiff.x),
+                       y: Math.floor(distDiff * unitDiff.y) };
 
-          if (distDiff > 0) {
-            fd.frame.move(offset);
-          }
-        });
-      },
-      actorDestroy: function (params) {
-        if (params.actor.id() === f.actor.id()) f.destroy();
-      }
-    };
+        if (distDiff > 0) {
+          fd.frame.move(offset);
+        }
+      });
+    });
 
-    EventHub.subscribe('world.step', this.subscriptions.worldStep);
-    EventHub.subscribe('actor.destroy', this.subscriptions.actorDestroy);
+    this.register('actor.destroy', function (params) {
+      if (params.actor.id() === f.actor.id()) f.destroy();
+    });
   };
+  Follower.prototype = Object.create(Subscriber.prototype);
+  Follower.prototype.constructor = Follower;
 
 
   // addFrame adds another frame to follow the actor
@@ -72,14 +74,6 @@ define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
   //   followDistance: maximum float distance between frame center and actor
   Follower.prototype.addFrame = function (frame, followRadius) {
     this.frameDistances.push({ frame: frame, followRadius: followRadius });
-  };
-
-
-  // destroy stops all movement of frames to follow actors, disabling Follower
-  // instance
-  Follower.prototype.destroy = function () {
-    EventHub.unsubscribe('world.step', this.subscriptions.worldStep);
-    EventHub.unsubscribe('actor.destroy', this.subscriptions.actorDestroy);
   };
 
 

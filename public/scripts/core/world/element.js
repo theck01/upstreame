@@ -1,5 +1,5 @@
-define(['underscore', 'core/util/bounds', 'core/util/eventhub'],
-  function (_, Bounds, EventHub) {
+define(['underscore', 'core/util/bounds', 'core/util/subscriber'],
+  function (_, Bounds, Subscriber) {
 
     function intCenter (center) {
       return { x: Math.round(center.x), y: Math.round(center.y) };
@@ -16,6 +16,9 @@ define(['underscore', 'core/util/bounds', 'core/util/eventhub'],
     //     noncollidables: Array of strings describing groups with which the new
     //                     instance cannot collide
     var Element = function (opts) {
+      // initialize as a Subscriber
+      Subscriber.call(this);
+
       // intialize variables
       this.serial = _.uniqueId('element');
       this.group = opts.group;
@@ -28,7 +31,6 @@ define(['underscore', 'core/util/bounds', 'core/util/eventhub'],
         memo[c] = true;
         return memo;
       }, Object.create(null));
-      this.subscriptions = [];
 
       var element = this;
       this.register('viewport.render', function (params) {
@@ -42,6 +44,8 @@ define(['underscore', 'core/util/bounds', 'core/util/eventhub'],
         if (element.isDynamic()) params.actionbox.set(element);
       });
     };
+    Element.prototype = Object.create(Subscriber.prototype);
+    Element.prototype.constructor = Element;
 
 
     // bounds method returns the bounds of the element
@@ -59,15 +63,6 @@ define(['underscore', 'core/util/bounds', 'core/util/eventhub'],
     // Overload in subtype
     Element.prototype.collision = function () {
       throw new Error('Element#collision called, subclass must override');
-    };
-
-
-    // destroy element, removing its event listeners
-    // Overload in subtype BUT BE SURE TO CALL THE SUPERCLASS VERSION
-    Element.prototype.destroy = function () {
-      _.each(this.subscriptions, function (s) {
-        EventHub.unsubscribe(s.eventName, s.handler);
-      });
     };
 
 
@@ -125,13 +120,6 @@ define(['underscore', 'core/util/bounds', 'core/util/eventhub'],
       if (!this.noncollidables[element.group]) this.collision(element);
     };
 
-
-    // register subscribes an instance of Element to an EventHub event and until
-    // the Element is destroyed, at which point the handler is removed
-    Element.prototype.register = function (eventName, handler) {
-      this.subscriptions.push({ eventName: eventName, handler: handler });
-      EventHub.subscribe(eventName, handler);
-    };
 
     return Element;
   }

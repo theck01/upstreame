@@ -1,4 +1,4 @@
-define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
+define(['underscore', 'core/util/subscriber'], function (_, Subscriber) {
 
   var DRIFT_FREQUENCY = 2;
   var STAR_DENSITY = 0.0004577;
@@ -15,6 +15,10 @@ define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
   //   layer: layer on which to draw star fields in a *Canvas
   //   frameClock: FrameClock instance to register recurring drift event
   var Starfield = function (dimensions, driftVelocity, layer, frameClock) {
+    // setup as a Subscriber
+    Subscriber.call(this);
+
+    // initialize starfield
     this.lyr = layer;
 
     this.stars = [];
@@ -80,10 +84,12 @@ define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
     }, DRIFT_FREQUENCY);
 
     var starfield = this;
-    EventHub.subscribe('viewport.render', function (params) {
+    this.register('viewport.render', function (params) {
       params.viewport.renderBackground(starfield);
     });
   };
+  Starfield.prototype = Object.create(Subscriber.prototype);
+  Starfield.prototype.constructor = Starfield;
 
 
   // layer returns the layer on which to paint the star field

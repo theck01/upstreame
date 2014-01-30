@@ -1,6 +1,6 @@
-define(['underscore', 'core/graphics/spritearchive', 'core/util/eventhub',
+define(['underscore', 'core/graphics/spritearchive', 'core/util/subscriber',
         'invaders/actors/energyenemy'],
-  function (_, SpriteArchive, EventHub, EnergyEnemy) {
+  function (_, SpriteArchive, Subscriber, EnergyEnemy) {
 
     // EnergyWave manages a wave of Energy enemies
     //
@@ -13,6 +13,10 @@ define(['underscore', 'core/graphics/spritearchive', 'core/util/eventhub',
     //   frameClock: instance of a FrameClock
     //   onComplete: function to call when wave has been completed
     var EnergyWave = function (positionings, frameClock, onComplete) {
+      // enable as a subscriber
+      Subscriber.call(this);
+
+      // initialize instance
       var wave = this;
       wave.enemies = [];
       _.each(positionings, function (p) {
@@ -26,19 +30,19 @@ define(['underscore', 'core/graphics/spritearchive', 'core/util/eventhub',
         }));
       });
 
-      var onDestroy = function (params) {
+      this.register('actor.destroy', function (params) {
         wave.enemies = _.reject(wave.enemies, function (e) {
           return params.actor.id() === e.id();
         });
 
         if (wave.enemies.length === 0) {
-          EventHub.unsubscribe('actor.destroy', onDestroy);
+          wave.destroy();
           onComplete();
         }
-      };
-
-      EventHub.subscribe('actor.destroy', onDestroy);
+      });
     };
+    EnergyWave.prototype = Object.create(Subscriber.prototype);
+    EnergyWave.prototype.constructor = EnergyWave;
 
 
     return EnergyWave;
