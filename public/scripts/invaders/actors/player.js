@@ -30,7 +30,7 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
 
 
       // overloaded Base.act function
-      Player.prototype.act = function () {
+      Player.prototype._act = function () {
         var spriteName = 'human-ship';
         var verticalChange = 0;
         var horizontalChange = 0;
@@ -65,7 +65,7 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
       };
 
 
-      Player.prototype.collision = function () {
+      Player.prototype._collision = function () {
         this.destroy();
       };
 

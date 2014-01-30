@@ -56,7 +56,7 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
 
 
     // overloaded Base.act function
-    EnergyEnemy.prototype.act = function () {
+    EnergyEnemy.prototype._act = function () {
       var abs = _.pick(this.center, 'x', 'y');
 
       // update sprite location
@@ -90,7 +90,7 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
 
     
     // overloaded collision function
-    EnergyEnemy.prototype.collision = function () {
+    EnergyEnemy.prototype._collision = function () {
       this.destroy();
     };
 

@@ -23,13 +23,13 @@ define(['core/actors/base'], function (Base) {
 
 
   // overloaded act specific to projectiles
-  Projectile.prototype.act = function () {
+  Projectile.prototype._act = function () {
     this.move(this.path(), 'absolute');
   };
 
 
   // overloaded collision specific to projectiles
-  Projectile.prototype.collision = function () {
+  Projectile.prototype._collision = function () {
     this.destroy();
   };
 

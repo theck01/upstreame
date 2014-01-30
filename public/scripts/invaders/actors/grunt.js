@@ -48,7 +48,7 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
 
 
     // overloaded Base.act function
-    Grunt.prototype.act = function () {
+    Grunt.prototype._act = function () {
       var abs = _.pick(this.center, 'x', 'y');
 
       // update sprite location
@@ -82,7 +82,7 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
 
 
     // overloaded Base.collision function
-    Grunt.prototype.collision = function () {
+    Grunt.prototype._collision = function () {
       this.destroy();
     };
 

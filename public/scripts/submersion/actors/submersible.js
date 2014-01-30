@@ -88,7 +88,7 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
 
 
       // overloaded Base.act function
-      Submersible.prototype.act = function () {
+      Submersible.prototype._act = function () {
         var verticalChange = 0;
         var horizontalChange = 0;
 

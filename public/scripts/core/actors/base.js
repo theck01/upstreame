@@ -21,7 +21,7 @@ define(['underscore', 'core/util/eventhub', 'core/world/element'],
 
       var actor = this;
       this.register('world.step', function () {
-        if (actor.isVisible()) actor.act();
+        if (actor.isVisible()) actor._act();
       });
 
       EventHub.trigger('actor.new', { actor: this });
@@ -34,7 +34,7 @@ define(['underscore', 'core/util/eventhub', 'core/world/element'],
     // act method should be overloaded by subclasses of Base, method is called
     // once per game loop, and should update the actor to handle the current
     // game state
-    Base.prototype.act = function () {
+    Base.prototype._act = function () {
       throw new Error('Base#act called, subclass must override');
     };
 

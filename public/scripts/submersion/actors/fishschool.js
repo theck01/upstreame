@@ -144,7 +144,7 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
 
 
     // overloaded Base.act function
-    FishSchool.prototype.act = function () {
+    FishSchool.prototype._act = function () {
 
       var newRadius = 0;
 

@@ -44,7 +44,7 @@ define(['underscore', 'core/actors/base', 'core/graphics/spritearchive'],
 
 
     // act moves SeaCreature
-    SeaCreature.prototype.act = function () {
+    SeaCreature.prototype._act = function () {
       this.move(this.velocity);
     };
 

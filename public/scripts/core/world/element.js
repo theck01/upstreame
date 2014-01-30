@@ -61,7 +61,7 @@ define(['underscore', 'core/util/bounds', 'core/util/subscriber'],
     
     // collision resolves the effects of a collision on this element.
     // Overload in subtype
-    Element.prototype.collision = function () {
+    Element.prototype._collision = function () {
       throw new Error('Element#collision called, subclass must override');
     };
 
@@ -117,7 +117,7 @@ define(['underscore', 'core/util/bounds', 'core/util/subscriber'],
     // if so delegates collision handling to collision method, passing the
     // the method the collided object as an optional parameter
     Element.prototype.possibleCollision = function (element) {
-      if (!this.noncollidables[element.group]) this.collision(element);
+      if (!this.noncollidables[element.group]) this._collision(element);
     };
 
 
