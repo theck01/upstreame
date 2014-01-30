@@ -9,12 +9,11 @@ require.config({
 
 require(["jquery", "core/graphics/spritearchive",
          "core/graphics/viewport", "core/interface/keypoll",
-         "core/util/frameclock", "core/util/eventhub",
+         "core/util/frameclock", "core/util/eventhub", "core/util/follower",
          "submersion/actors/submersible", "submersion/actors/fishschool",
-         "submersion/actors/creatures/turtle", "submersion/util/layer",
-         "submersion/util/follower"],
+         "submersion/actors/creatures/turtle", "submersion/util/layer"],
   function($, SpriteArchive, FollowingViewport, KeyPoll, FrameClock, EventHub,
-           Submersible, FishSchool, Turtle, Layer, Follower) {
+           Follower, Submersible, FishSchool, Turtle, Layer) {
 
     var DIMENSIONS = { width: 400, height: 237 };
     var $canvas;
