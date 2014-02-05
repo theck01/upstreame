@@ -21,7 +21,7 @@ define(['underscore', 'core/util/eventhub', 'core/world/element'],
 
       var actor = this;
       this.register('world.step', function () {
-        if (actor.isVisible()) actor._act();
+        if (actor.isDynamic()) actor._act();
       });
 
       EventHub.trigger('actor.new', { actor: this });

@@ -1,5 +1,6 @@
-define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
-  function (_, Base, Sprite) {
+define(['underscore', 'core/actors/base', 'core/graphics/sprite',
+        'submersion/util/group'],
+  function (_, Base, Sprite, Group) {
 
     // CONSTANTS
     var FISH_DRIFT_FREQUENCY = 30;
@@ -72,12 +73,9 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
     //
     // Arguments:
     //   opts: object with the following required fields
-    //     group: String group name of the object ['Enemy', 'Player', etc]
     //     sprite: Instance of Sprite representing to build into a school
     //     center: Center of the object, essentially location in the world
     //     layer: Layer that it occupies in a LayeredCanvas heirarchy
-    //     noncollidables: Array of strings describing groups with which the new
-    //                     instance cannot collide
     //     count: Number of fish in the school
     //     density: Number of fish in the area occupied by a single fish
     //              (because a school has depth as well)
@@ -110,6 +108,8 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
       this.fish = shuffle(this.fish);
       var offsets = _.map(this.fish, function (f) { return f.o; });
 
+      opts.group = 'FishSchool';
+      opts.noncollidables = Group.collect('friendlies');
       opts.sprite = new Sprite(collectSpritePixels(this.templateSprite,
                                                    offsets, opts.center));
       Base.call(this, opts);
@@ -138,7 +138,6 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite'],
         }
       }, FISH_DRIFT_FREQUENCY/FISH_MOVEMENT_PERIODS);
     };
-
     FishSchool.prototype = Object.create(Base.prototype);
     FishSchool.prototype.constructor = FishSchool;
 

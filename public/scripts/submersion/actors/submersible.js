@@ -1,6 +1,6 @@
 define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
-        'submersion/util/layer'],
-    function (_, SpriteArchive, Base, Layer) {
+        'submersion/util/group', 'submersion/util/layer'],
+    function (_, SpriteArchive, Base, Group, Layer) {
 
       // CONSTANTS
       var SPEED = 2;
@@ -22,16 +22,16 @@ define(['underscore', 'core/graphics/spritearchive', 'core/actors/base',
       //
       // Arguments:
       //   opts: object with the following required fields
-      //     group: Collision group that the new player will belong to
       //     center: center of the player sprite
-      //     noncollidables: Array of strings describing groups with which the
-      //                     new instance cannot collide
       //     frameClock: FrameClock object
       //     keypoll: KeyPoll object, used for controlling sprite
       var Submersible = function (opts) {
+        opts.group = 'Submersible';
+        opts.noncollidables = Group.collect('friendlies');
         opts.sprite = SpriteArchive.get('submersible-pitch-0-yaw-170');
         opts.layer = Layer.mainFocus;
         Base.call(this, opts);
+
         this.frameClock = opts.frameClock;
         this.keypoll = opts.keypoll;
         this.pitch = 0;
