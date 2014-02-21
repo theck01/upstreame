@@ -52,5 +52,24 @@ define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
   };
 
 
+  // unregister event handler(s) from and event
+  //
+  // Arguments:
+  //   eventName: event to remove handler for
+  //   handler: Optional, function to remove. If undefined all handlers are
+  //            removed
+  Subscriber.prototype.unregister = function (eventName, handler) {
+    this.subscriptions = _.reduce(this.subscriptions, function (memo, s) {
+      if (s.eventName === eventName &&
+          (handler === s.handler || handler === undefined)) {
+        EventHub.unsubscribe(s.eventName, s.handler);
+      }
+      else memo.push(s);
+
+      return memo;
+    }, []);
+  };
+
+
   return Subscriber;
 });
