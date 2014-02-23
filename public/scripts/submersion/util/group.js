@@ -7,7 +7,7 @@ define(['underscore'], function (_) {
 
 
   // Submersion groups
-  Group.groups.friendlies = ['Submersible', 'FishSchool', 'Turtle'];
+  Group.groups.friendlies = ['Submersible', 'FishSchool', 'Turtle', 'Plankton'];
 
 
   // collect aggregates the members of one or more groups into an array of
