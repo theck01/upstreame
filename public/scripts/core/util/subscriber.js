@@ -62,12 +62,12 @@ define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
     this.subscriptions = _.reduce(this.subscriptions, function (memo, s) {
       if (s.eventName === eventName &&
           (handler === s.handler || handler === undefined)) {
-        EventHub.unsubscribe(s.eventName, s.handler);
+        if (this.eventsEnabled) EventHub.unsubscribe(s.eventName, s.handler);
       }
       else memo.push(s);
 
       return memo;
-    }, []);
+    }, [], this);
   };
 
 
