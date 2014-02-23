@@ -2,23 +2,41 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite',
         'submersion/util/group', 'submersion/util/layer'],
   function (_, Base, Sprite, Group, Layer) {
 
-    // randomPixels returns an array of between 1-4 pixels
-    function randomPixels (count) {
-      var seedPixels = [
-        { x: 0, y: 0, color: PLANKTON_COLOR },
-        { x: 1, y: 0, color: PLANKTON_COLOR },
-        { x: 0, y: 1, color: PLANKTON_COLOR },
-        { x: 1, y: 1, color: PLANKTON_COLOR }
-      ];
-      var returnPixels = [];
+    var PLANKTON_COLOR = '#DDD';
 
-      while (count > 0) {
-        var i = Math.floor(Math.random() * count--);
-        returnPixels.push(seedPixels.splice(i, 1)[0]);
-      }
-
-      return returnPixels;
-    }
+    // initialize all possible Plankton Sprites
+    var SPRITES = [];
+    SPRITES[0] = [ new Sprite([{ x: 0, y: 0, color: PLANKTON_COLOR }]) ];
+    SPRITES[1] = [
+      new Sprite([ { x: 0, y: 0, color: PLANKTON_COLOR },
+                   { x: 0, y: 1, color: PLANKTON_COLOR } ]),
+      new Sprite([ { x: 0, y: 0, color: PLANKTON_COLOR },
+                   { x: 1, y: 0, color: PLANKTON_COLOR } ]),
+      new Sprite([ { x: 0, y: 0, color: PLANKTON_COLOR },
+                   { x: 1, y: 1, color: PLANKTON_COLOR } ]),
+      new Sprite([ { x: 1, y: 0, color: PLANKTON_COLOR },
+                   { x: 0, y: 1, color: PLANKTON_COLOR } ])
+    ];
+    SPRITES[2] = [
+      new Sprite([ { x: 0, y: 0, color: PLANKTON_COLOR },
+                   { x: 0, y: 1, color: PLANKTON_COLOR },
+                   { x: 1, y: 1, color: PLANKTON_COLOR } ]),
+      new Sprite([ { x: 0, y: 0, color: PLANKTON_COLOR },
+                   { x: 1, y: 0, color: PLANKTON_COLOR },
+                   { x: 1, y: 1, color: PLANKTON_COLOR } ]),
+      new Sprite([ { x: 0, y: 0, color: PLANKTON_COLOR },
+                   { x: 1, y: 0, color: PLANKTON_COLOR },
+                   { x: 0, y: 1, color: PLANKTON_COLOR } ]),
+      new Sprite([ { x: 0, y: 1, color: PLANKTON_COLOR },
+                   { x: 1, y: 0, color: PLANKTON_COLOR },
+                   { x: 1, y: 1, color: PLANKTON_COLOR } ])
+    ];
+    SPRITES[3] = [
+      new Sprite([ { x: 0, y: 0, color: PLANKTON_COLOR },
+                   { x: 1, y: 0, color: PLANKTON_COLOR },
+                   { x: 0, y: 1, color: PLANKTON_COLOR },
+                   { x: 1, y: 1, color: PLANKTON_COLOR } ])
+    ];
       
     
     // Scenery actors, used to visualize current and make world more realistic
@@ -33,7 +51,8 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite',
       }
 
       var size = opts.layer - Plankton.BASE_PLANKTON_LAYER;
-      opts.sprite = new Sprite(randomPixels(size));
+      var randIndex = Math.floor(Math.random() * SPRITES[size].length);
+      opts.sprite = SPRITES[size][randIndex];
       opts.group = 'Plankton';
       opts.noncollidables = Group.collect('friendlies');
 
@@ -46,9 +65,8 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite',
 
     Plankton.BASE_PLANKTON_LAYER = Layer.nearBackground;
     Plankton.TOP_PLANKTON_LAYER = Layer.frontFocus;
-    Plankton.DRIFT_FREQUENCY = 5;
+    Plankton.DRIFT_FREQUENCY = 10;
     var HORIZONTAL_DRIFT_FREQUENCY = Plankton.DRIFT_FREQUENCY * 5;
-    var PLANKTON_COLOR = '#DDD';
 
     
     // overloaded Base#_act function
