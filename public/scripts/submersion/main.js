@@ -11,14 +11,17 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
          "core/interface/keypoll", "core/util/frameclock", "core/util/eventhub",
          "core/util/follower", "core/world/actionbox",
          "submersion/actors/submersible", "submersion/actors/fishschool",
-         "submersion/actors/creatures/turtle", "submersion/util/layer"],
+         "submersion/actors/creatures/turtle", "submersion/util/layer",
+         "submersion/util/planktonbox"],
   function($, SpriteArchive, Viewport, KeyPoll, FrameClock, EventHub,
-           Follower, ActionBox, Submersible, FishSchool, Turtle, Layer) {
+           Follower, ActionBox, Submersible, FishSchool, Turtle, Layer,
+           PlanktonBox) {
 
     var VIEWPORT_DIMENSIONS = { width: 400, height: 237 };
     var ACTIONBOX_DIMENSIONS = { width: 500, height: 337 };
     var $canvas;
     var Game = Object.create(null);
+    var planktonBox;
     var sub;
     var tigerSchoolRight;
     var surgeonSchoolLeft;
@@ -57,6 +60,11 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
         backgroundColor: "#224477",
       });
       Game.clock = new FrameClock();
+
+      planktonBox = new PlanktonBox({
+        dimensions: VIEWPORT_DIMENSIONS,
+        origin: { x: 0, y: 0 }
+      });
 
       $.ajax({
         async: false,
@@ -112,7 +120,8 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
           });
 
           new Follower(sub, [{ frame: Game.viewport, followRadius: 25 },
-                             { frame: Game.actionbox, followRadius: 0 }]);
+                             { frame: Game.actionbox, followRadius: 0 },
+                             { frame: planktonBox, followRadius: 25 }]);
 
           requestAnimationFrame(mainLoop);
         }
