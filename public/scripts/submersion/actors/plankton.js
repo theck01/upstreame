@@ -2,7 +2,7 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite',
         'submersion/util/group', 'submersion/util/layer'],
   function (_, Base, Sprite, Group, Layer) {
 
-    var PLANKTON_COLOR = '#DDD';
+    var PLANKTON_COLOR = '#5B5';
 
     // initialize all possible Plankton Sprites
     var SPRITES = [];
