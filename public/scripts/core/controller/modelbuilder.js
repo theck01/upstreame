@@ -118,10 +118,10 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
 
       this.$htmlCanvas = $(canvasID);
       this.action = "set";
-      this.defaultElement = _.clone(defaultElement);
+      this.defaultElement = _.omit(defaultElement, 'x', 'y');
       this.canvasID = canvasID;
       this.currentChange = null; // always null unless mouse is down in canvas
-      this.currentElement = _.clone(initialElement);
+      this.currentElement = _.omit(initialElement, 'x', 'y');
       this.dim = _.clone(dimensions);
       this.mouseDown = false;
       this.mouseMoveAction = function () {};
@@ -169,7 +169,7 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
           var element = _.find(that.elements, function (e) {
             return e.x === x && e.y === y;
           }) || that.defaultElement;
-          that.currentElement = _.clone(element);
+          that.setCurrentElement(element);
         }
         else {
 
