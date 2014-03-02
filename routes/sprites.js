@@ -4,10 +4,9 @@ var verifier = require('verifier');
 var _ = require('underscore');
 
 var spriteTemplate = {
-  pixels: [ {x: 'number', y: 'number', color: 'string'} ],
-  center: { x: 'number', y: 'number' },
-  backgroundColor: 'string',
-  currentColor: 'string',
+  elements: [ {x: 'number', y: 'number', color: 'string'} ],
+  defaultElement: { color: 'string' },
+  currentElement: { color: 'string' },
   dimensions: { width: 'number', height: 'number' }
 };
 
