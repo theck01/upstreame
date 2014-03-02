@@ -410,26 +410,26 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
     };
 
 
-    // setBackgroundColor sets the background color of the pixel canvas,
-    // where the default is #FFFFFF
+    // setDefaultElement sets the element to be used for locations unset
+    // within the model.
     //
     // Arguments:
     //   element: an object with at least 'color' field
     ModelBuilder.prototype.setDefaultElement = function (element) {
-      this.defaultElement = _.clone(element);
+      this.defaultElement = _.omit(element, 'x', 'y');
       this.pCanvas = new PixelCanvas(this.dim, this.canvasID,
                                      element.color);
       this.paint();
     };
 
 
-    // setColor sets the current color that will be drawn on pixels that are
-    // clicked on
+    // setCurrentElement sets the element to be used for upcoming changes
+    // made to the model.
     //
     // Arguments:
     //   element: an object with at least 'color' field
     ModelBuilder.prototype.setCurrentElement = function (element) {
-      this.currentElement = _.clone(element);
+      this.currentElement = _.omit(element, 'x', 'y');
     };
 
 
