@@ -66,6 +66,7 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite',
     Plankton.BASE_PLANKTON_LAYER = Layer.nearBackground;
     Plankton.TOP_PLANKTON_LAYER = Layer.frontFocus;
     Plankton.DRIFT_FREQUENCY = 10;
+    var SINK_CHANCE = 0.25;
     var HORIZONTAL_DRIFT_FREQUENCY = Plankton.DRIFT_FREQUENCY * 5;
 
     
@@ -75,7 +76,7 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite',
         this.move({ x: Math.floor(Math.random()*3 - 1), y: 1 });
       }
       else if (this.steps%Plankton.DRIFT_FREQUENCY === 0) {
-        this.move({ x: 0, y: 1 });
+        if (Math.random() < SINK_CHANCE) this.move({ x: 0, y: 1 });
       }
 
       this.steps = (this.steps + 1)%HORIZONTAL_DRIFT_FREQUENCY;
