@@ -32,7 +32,8 @@ define(['underscore', 'core/graphics/sprite'], function (_, Sprite) {
   //               containing raw sprite data and the center of the raw sprites
   SpriteArchive.load = function (rawSprites) {
     _.each(rawSprites, function (v, k) {
-      this.add(k, v.pixels);
+      if (v.pixels) this.add(k, v.pixels);
+      else this.add(k, v.elements);
     }, this);
   };
 
