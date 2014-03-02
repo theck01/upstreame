@@ -13,15 +13,14 @@ require.config({
 });
 
 
-require(["jquery", "underscore", "core/interface/pixelcolorer",
-         "core/interface/statusalert", "bootstrap",
+require(["jquery", "underscore", "core/controller/modelbuilder",
+         "core/graphics/color", "core/interface/statusalert", "bootstrap",
          "core/interface/toollayoutloginform"],
-  function ($, _, PixelColorer, StatusAlert) {
+  function ($, _, ModelBuilder, Color, StatusAlert) {
     // persistent UI variables
     var $backgroundColorInput;
     var $backgroundColorPreview;
     var $canvas;
-    var pixelArtCanvas;
     var $pixelColorInput;
     var $pixelColorPreview;
     var $pixelHeight;
@@ -31,6 +30,8 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
     var statusAlert;
     var $spriteActionButton;
     var $undoButton;
+
+    var modelBuilder;
 
     // initial canvas sizing variable
     var initialSize = 16;
@@ -45,29 +46,42 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
     }
 
 
+    function updateColorUI(dontModifyTextFields) {
+      $backgroundColorPreview.css("background-color",
+                                  modelBuilder.getDefaultElement().color);
+      $pixelColorPreview.css("background-color",
+                             modelBuilder.getCurrentElement().color);
+
+      if (!dontModifyTextFields) {
+        $pixelColorInput.val(modelBuilder.getCurrentElement().color);
+        $backgroundColorInput.val(modelBuilder.getDefaultElement().color);
+      }
+    }
+
+
     $(function () {
       statusAlert = new StatusAlert("#status-alert");
 
       $("#hide-grid-button").click(function () {
-        pixelArtCanvas.toggleGrid();
+        modelBuilder.toggleGrid();
       });
 
       $("#clear-canvas-button").click(function () {
-        pixelArtCanvas.clearCanvas();
+        modelBuilder.clear();
       });
 
       $("input:radio[name=action]").change(function () {
-        pixelArtCanvas.setAction($(this).val());
+        modelBuilder.setAction($(this).val());
       });
 
       $undoButton = $("#undo-action-button");
       $undoButton.click(function () {
-        pixelArtCanvas.undo();
+        modelBuilder.undo();
       });
 
       $redoButton = $("#redo-action-button");
       $redoButton.click(function () {
-        pixelArtCanvas.redo();
+        modelBuilder.redo();
       });
 
       $canvas = $("#pixel-art-canvas");
@@ -84,7 +98,7 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
           $("#hide-grid-button").click();
         }
         // 'D' for draw
-        if (e.which === 100) {
+        else if (e.which === 100) {
           $("#set-radio-button").click();
         }
         // 'E' for erase
@@ -109,64 +123,62 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
         }
       });
 
-      pixelArtCanvas = new PixelColorer({
+      modelBuilder = new ModelBuilder({
         width: initialSize,
         height: initialSize
-      }, "#pixel-art-canvas");
+      }, "#pixel-art-canvas", { color: "#FFFFFF" }, { color: "#000000" });
 
-      pixelArtCanvas.mousemove(function () {
+      modelBuilder.mousemove(function () {
         if($("input:radio[name=action]:checked").val() === "get"){
-          $pixelColorInput.val(pixelArtCanvas.getColor());
-          $pixelColorPreview.css("background-color", pixelArtCanvas.getColor());
+          updateColorUI();
         }
       });
-      pixelArtCanvas.paint();
+      modelBuilder.paint();
 
       $pixelHeight = $("#pixel-height-input");
       $pixelHeight.keyup(function () {
-        pixelArtCanvas.resize(parseInt($pixelWidth.val(), 10) || 1,
-                              parseInt($pixelHeight.val(), 10) || 1);
+        modelBuilder.resize(parseInt($pixelWidth.val(), 10) || 1,
+                            parseInt($pixelHeight.val(), 10) || 1);
       });
       $pixelHeight.val(initialSize.toString());
 
       $pixelWidth = $("#pixel-width-input");
       $pixelWidth.keyup(function () {
-        pixelArtCanvas.resize(parseInt($pixelWidth.val(), 10) || 1,
-                              parseInt($pixelHeight.val(), 10) || 1);
+        modelBuilder.resize(parseInt($pixelWidth.val(), 10) || 1,
+                            parseInt($pixelHeight.val(), 10) || 1);
       });
       $pixelWidth.val(initialSize.toString());
 
       $pixelColorPreview = $("#pixel-color-preview");
-      $pixelColorPreview.css("background-color", pixelArtCanvas.getColor());
-
       $pixelColorInput = $("#pixel-color-input");
       $pixelColorInput.keyup(function () {
-        pixelArtCanvas.setColor($pixelColorInput.val());
-        $pixelColorPreview.css("background-color", pixelArtCanvas.getColor());
+        modelBuilder.setCurrentElement({
+          color: Color.sanitize($pixelColorInput.val())
+        });
+        updateColorUI(true);
       });
-      $pixelColorInput.val(pixelArtCanvas.getColor());
 
       $backgroundColorPreview = $("#background-color-preview");
-      $backgroundColorPreview.css("background-color",
-                                  pixelArtCanvas.getBackgroundColor());
-
       $backgroundColorInput = $("#background-color-input");
       $backgroundColorInput.keyup(function () {
-        pixelArtCanvas.setBackgroundColor($backgroundColorInput.val());
-        $backgroundColorPreview.css("background-color",
-                                    pixelArtCanvas.getBackgroundColor());
+        modelBuilder.setDefaultElement({
+          color: Color.sanitize($backgroundColorInput.val())
+        });
+        updateColorUI(true);
       });
-      $backgroundColorInput.val(pixelArtCanvas.getBackgroundColor());
+      
+      updateColorUI();
+
 
       $spriteNameInput = $("#sprite-name-input");
 
       $spriteActionButton = $("#sprite-action-button");
       $spriteActionButton.click(function () {
         var name = $spriteNameInput.val();
-        var imageJSON = pixelArtCanvas.exportImage();
+        var imageJSON = modelBuilder.exportModel();
         var image = JSON.parse(imageJSON);
 
-        if(_.isEmpty(image.pixels) &&
+        if(_.isEmpty(image.elements) &&
           $spriteActionButton.text() === "Save Sprite"){
           statusAlert.display("Please draw a sprite before saving", true);
         }
@@ -215,7 +227,7 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
                 }
               },
               success: function (data) {
-                pixelArtCanvas.importImage(data);
+                modelBuilder.importModel(data);
 
                 var image = JSON.parse(data);
 
@@ -223,15 +235,7 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
                   $pixelHeight.val(image.dimensions.height.toString());
                   $pixelWidth.val(image.dimensions.width.toString());
                 }
-
-                $pixelColorPreview.css("background-color",
-                                       pixelArtCanvas.getColor());
-                $pixelColorInput.val(pixelArtCanvas.getColor());
-
-                $backgroundColorPreview.css("background-color",
-                                           pixelArtCanvas.getBackgroundColor());
-                $backgroundColorInput.val(pixelArtCanvas.getBackgroundColor());
-
+                updateColorUI();
                 statusAlert.hide();
                 $spriteNameInput.val("");
               }
@@ -250,7 +254,7 @@ require(["jquery", "underscore", "core/interface/pixelcolorer",
 
       $(window).resize(function() {
         sizeCanvas();
-        pixelArtCanvas.paint();
+        modelBuilder.paint();
       });
     });
   }
