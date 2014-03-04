@@ -14,9 +14,10 @@ require.config({
 
 
 require(["jquery", "underscore", "core/controller/modelbuilder",
-         "core/graphics/color", "core/interface/statusalert", "bootstrap",
+         "core/graphics/color", "core/interface/statusalert", 
+         "core/model/converters/spriteconverter", "bootstrap",
          "core/interface/toollayoutloginform"],
-  function ($, _, ModelBuilder, Color, StatusAlert) {
+  function ($, _, ModelBuilder, Color, StatusAlert, SpriteConverter) {
     // persistent UI variables
     var $backgroundColorInput;
     var $backgroundColorPreview;
@@ -124,9 +125,11 @@ require(["jquery", "underscore", "core/controller/modelbuilder",
       });
 
       modelBuilder = new ModelBuilder({
-        width: initialSize,
-        height: initialSize
-      }, "#pixel-art-canvas", { color: "#FFFFFF" }, { color: "#000000" });
+          width: initialSize,
+          height: initialSize
+        }, "#pixel-art-canvas", { color: "#FFFFFF" }, { color: "#000000" },
+        SpriteConverter
+      );
 
       modelBuilder.mousemove(function () {
         if($("input:radio[name=action]:checked").val() === "get"){
@@ -178,7 +181,7 @@ require(["jquery", "underscore", "core/controller/modelbuilder",
         var imageJSON = modelBuilder.exportModel();
         var image = JSON.parse(imageJSON);
 
-        if(_.isEmpty(image.elements) &&
+        if(_.isEmpty(image.pixels) &&
           $spriteActionButton.text() === "Save Sprite"){
           statusAlert.display("Please draw a sprite before saving", true);
         }

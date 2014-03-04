@@ -112,16 +112,19 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
     //                   the model, containing at least 'color' field
     //   initialElement: initial element to begin buidling model, containing at
     //                   least 'color' field
+    //   converter: A converter object with toCommonModelFormat and
+    //              fromCommonModelFormat methods
     var ModelBuilder = function (dimensions, canvasID, defaultElement,
-                                 initialElement) {
+                                 initialElement, converter) {
       var that = this;
 
       this.$htmlCanvas = $(canvasID);
       this.action = "set";
-      this.defaultElement = _.omit(defaultElement, 'x', 'y');
       this.canvasID = canvasID;
+      this.converter = converter;
       this.currentChange = null; // always null unless mouse is down in canvas
-      this.currentElement = _.omit(initialElement, 'x', 'y');
+      this.currentElement = _.omit(initialElement, "x", "y");
+      this.defaultElement = _.omit(defaultElement, "x", "y");
       this.dim = _.clone(dimensions);
       this.mouseDown = false;
       this.mouseMoveAction = function () {};
@@ -253,7 +256,7 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
         }, this)
       };
 
-      return JSON.stringify(model);
+      return JSON.stringify(this.converter.fromCommonModelFormat(model));
     };
 
 
@@ -279,26 +282,11 @@ define(["jquery", "underscore", "core/graphics/pixelcanvas",
 
     // importModel loads an model JSON string saved using exportModel 
     ModelBuilder.prototype.importModel = function (modelJSON) {
-      var model = JSON.parse(modelJSON);
+      var model = this.converter.toCommonModelFormat(JSON.parse(modelJSON));
 
-      // handle all previous versions of models
-      if (model.backgroundColor) {
-        this.setDefaultElement({ color: model.backgroundColor });
-      }
-      if (model.defaultElement) {
-        this.setDefaultElement(model.defaultElement);
-      }
-      if (model.currentColor) {
-        this.setCurrentElement({ color: model.currentColor });
-      }
-      if (model.currentElement) {
-        this.setCurrentElement(model.currentElement);
-      }
-      if (model.dimensions) {
-        this.resize(model.dimensions.width, model.dimensions.height);
-      }
-      if (model.pixels && !model.elements) model.elements = model.pixels;
-
+      this.setDefaultElement(model.defaultElement);
+      this.setCurrentElement(model.currentElement);
+      this.resize(model.dimensions.width, model.dimensions.height);
       this.commitChange({ action: "import", elements: model.elements });
 
       this.paint();
