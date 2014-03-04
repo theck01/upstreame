@@ -13,9 +13,9 @@ var agent = supertest.agent(app);
 describe("sprite routes", function () {
   var filename = __dirname + "/../../public/assets/sprites/__test__.json";
   var sprite = {
-    elements: [{ x: 1, y: 2, color: "#000000" }],
-    defaultElement: { color: "#FFFFFF" },
-    currentElement: { color: "#FFFFFF" },
+    pixels: [{ x: 1, y: 2, color: "#000000" }],
+    backgroundColor: "#FFFFFF",
+    currentColor: "#FFFFFF",
     dimensions: { width: 3, height: 3 }
   };
 
