@@ -84,6 +84,7 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     var PixelCanvas = function (dimensions, canvasID, backgroundColor) {
       Frame.call(this, dimensions, { x: 0, y: 0 });
 
+      this.canvasID = canvasID;
       this.dim = _.clone(dimensions);
       if (backgroundColor) {
         this.backgroundColor = Color.sanitize(backgroundColor);
@@ -106,6 +107,16 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
       context.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
       this.pastBuffer = makePixelGrid(this.dim.width, this.dim.height,
                                       undefined);
+    };
+
+
+    // getCanvasID returns the css style element id of the encapsulated HTML5
+    // canvas object
+    //
+    // Returns:
+    //   A css style element id
+    PixelCanvas.prototype.getCanvasID = function () {
+      return this.canvasID;
     };
 
       
