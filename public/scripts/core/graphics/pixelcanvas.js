@@ -1,5 +1,5 @@
-define(["jquery", "underscore", "core/graphics/color"],
-  function ($, _, Color) {
+define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
+  function ($, _, Color, Frame) {
 
     // makePixelGrid creates a 2D array with given dimensions containin an RGB
     // string at each location in the array
@@ -82,6 +82,8 @@ define(["jquery", "underscore", "core/graphics/color"],
     //   backgroundColor: default color of pixels not drawn to, "#RRGGBB" string
     //                    Optional, default is undefined (transparent)
     var PixelCanvas = function (dimensions, canvasID, backgroundColor) {
+      Frame.call(this, dimensions, { x: 0, y: 0 });
+
       this.dim = _.clone(dimensions);
       if (backgroundColor) {
         this.backgroundColor = Color.sanitize(backgroundColor);
@@ -94,6 +96,8 @@ define(["jquery", "underscore", "core/graphics/color"],
       this.htmlCanvas = $(canvasID)[0];
       this.cachedCanvasDim = Object.create(null);
     };
+    PixelCanvas.prototype = Object.create(Frame.prototype);
+    PixelCanvas.prototype.constructor = PixelCanvas;
 
 
     // clear the canvas
