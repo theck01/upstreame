@@ -30,10 +30,11 @@ define(['underscore', 'core/util/eventhub', 'core/util/frame',
     // Arguments: 
     //   element: element to set within the actionbox
     ActionBox.prototype.set = function (element) {
+      var origin = this.getOrigin();
       var pixels = element.pixels();
       _.each(pixels, function (p) {
-        this.cFrame.set(element, { x: p.x - this.origin.x,
-                                   y: p.y - this.origin.y });
+        this.cFrame.set(element, { x: p.x - origin.x,
+                                   y: p.y - origin.y });
       }, this);
     };
 

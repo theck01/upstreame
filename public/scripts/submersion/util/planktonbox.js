@@ -32,8 +32,10 @@ define(['underscore', 'core/util/frame', 'core/util/subscriber',
         if (box.step === 0) box.repopulate();
       });
 
-      for (var i=this.origin.x; i<this.origin.x + this.dim.width; i++) {
-        for (var j=this.origin.y; j<this.origin.y + this.dim.height; j++) {
+      var dim = this.getDimensions();
+      var origin = this.getOrigin();
+      for (var i=origin.x; i<origin.x + dim.width; i++) {
+        for (var j=origin.y; j<origin.y + dim.height; j++) {
           if (Math.random() < this.density) {
             new Plankton({
               center: { x: i, y: j },
@@ -51,35 +53,37 @@ define(['underscore', 'core/util/frame', 'core/util/subscriber',
     // repopulate generates new plankton in the area that the frame has
     // moved since last repopulation
     PlanktonBox.prototype.repopulate = function () {
-      var posDiff = { x: this.prevOrigin.x - this.origin.x,
-                      y: this.prevOrigin.y - this.origin.y };
-      this.prevOrigin = _.clone(this.origin);
+      var dim = this.getDimensions();
+      var origin = this.getOrigin();
+      var posDiff = { x: this.prevOrigin.x - origin.x,
+                      y: this.prevOrigin.y - origin.y };
+      this.prevOrigin = _.clone(origin);
 
       var range = {};
       if (posDiff.x >= 0) {
-        range.x = { from: this.origin.x,
-                    to: this.origin.x + Math.min(this.dim.width, posDiff.x) };
+        range.x = { from: origin.x,
+                    to: origin.x + Math.min(dim.width, posDiff.x) };
       }
       else {
-        range.x = { from: this.origin.x +
-                          Math.max(0, this.dim.width + posDiff.x),
-                    to: this.origin.x + this.dim.width };
-      }
-      if (posDiff.y > 0) {
-        range.y = { from: this.origin.y,
-                    to: this.origin.y + Math.min(this.dim.height,
-                                                 posDiff.y) };
-      }
-      else if (posDiff.y < 0) {
-        range.y = { from: this.origin.y +
-                          Math.max(0, this.dim.height + posDiff.y),
-                    to: this.origin.y + this.dim.height };
-      }
-      else {
-        range.y = { from: this.origin.y, to: this.origin.y + 1 };
+        range.x = { from: origin.x +
+                          Math.max(0, dim.width + posDiff.x),
+                    to: origin.x + dim.width };
       }
 
-      for (var i=this.origin.x; i<this.origin.x + this.dim.width; i++) {
+      if (posDiff.y > 0) {
+        range.y = { from: origin.y,
+                    to: origin.y + Math.min(dim.height, posDiff.y) };
+      }
+      else if (posDiff.y < 0) {
+        range.y = { from: origin.y +
+                          Math.max(0, dim.height + posDiff.y),
+                    to: origin.y + dim.height };
+      }
+      else {
+        range.y = { from: origin.y, to: origin.y + 1 };
+      }
+
+      for (var i=origin.x; i<origin.x + dim.width; i++) {
         for (var j=range.y.from; j<range.y.to; j++) {
           if (Math.random() < this.density) {
             new Plankton({
@@ -93,11 +97,11 @@ define(['underscore', 'core/util/frame', 'core/util/subscriber',
 
       if (posDiff.y >= 0) {
         range.y.from = range.y.to;
-        range.y.to = this.origin.y + this.dim.height;
+        range.y.to = origin.y + dim.height;
       }
       else {
         range.y.to = range.y.from;
-        range.y.from = this.origin.y;
+        range.y.from = origin.y;
       }
 
       for (var i=range.x.from; i<range.x.to; i++) {

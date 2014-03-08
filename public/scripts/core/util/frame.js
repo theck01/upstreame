@@ -6,8 +6,8 @@ define(['underscore'], function (_) {
   //   dimensions: object with 'width' and 'height' fields
   //   origin: object with 'x' and 'y' fields
   var Frame = function (dimensions, origin) {
-    this.dim = _.clone(dimensions);
-    this.origin = _.clone(origin);
+    this._dim = _.clone(dimensions);
+    this._origin = _.clone(origin);
   };
 
 
@@ -15,16 +15,16 @@ define(['underscore'], function (_) {
   //
   // Returns an object with 'xmin', 'xmax', 'ymin', 'ymax' fields
   Frame.prototype.bounds = function () {
-    return { xmin: this.origin.x, ymin: this.origin.y,
-             xmax: this.origin.x + this.dim.width,
-             ymax: this.origin.y + this.dim.height };
+    return { xmin: this._origin.x, ymin: this._origin.y,
+             xmax: this._origin.x + this._dim.width,
+             ymax: this._origin.y + this._dim.height };
   };
 
 
   // center returns the center of the frame in the game world
   Frame.prototype.center = function () {
-    return { x: Math.floor(this.origin.x + this.dim.width/2),
-             y: Math.floor(this.origin.y + this.dim.height/2) };
+    return { x: Math.floor(this._origin.x + this._dim.width/2),
+             y: Math.floor(this._origin.y + this._dim.height/2) };
   };
 
 
@@ -32,12 +32,41 @@ define(['underscore'], function (_) {
   // 
   // Arguments:
   //   element: any element instance
+  // Returns:
+  //   A boolean
   Frame.prototype.contains = function (element) {
-    return !!_.find(element.pixels(), function (p) {
-      var x = p.x - this.origin.x;
-      var y = p.y - this.origin.y;
-      return (x >= 0 && x < this.dim.width && y >=0 && y < this.dim.height);
-    }, this);
+    return !!_.find(element.pixels(), this.containsCoord, this);
+  };
+
+
+  // containsCoord checks to see whether an x,y coordinate is within the frame
+  //
+  // Arguments:
+  //   coord: object with 'x' and 'y' fields
+  // Returns:
+  //   A boolean
+  Frame.prototype.containsCoord = function (coord) {
+    var x = coord.x - this._origin.x;
+    var y = coord.y - this._origin.y;
+    return (x >= 0 && x < this._dim.width && y >=0 && y < this._dim.height);
+  };
+
+
+  // getOrigin returns the frames dimensions
+  //
+  // Returns:
+  //   object with 'width' and 'height' fields
+  Frame.prototype.getDimensions = function () {
+    return _.clone(this._dim);
+  };
+
+
+  // getOrigin returns the frames origin
+  //
+  // Returns:
+  //   object with x and y fields
+  Frame.prototype.getOrigin = function () {
+    return _.clone(this._origin);
   };
 
 
@@ -50,12 +79,12 @@ define(['underscore'], function (_) {
     method = method || 'offset';
 
     if (method === 'absolute') {
-      this.origin.x = Math.floor(coord.x);
-      this.origin.y = Math.floor(coord.y);
+      this._origin.x = Math.floor(coord.x);
+      this._origin.y = Math.floor(coord.y);
     }
     else {
-      this.origin.x = Math.floor(this.origin.x + coord.x);
-      this.origin.y = Math.floor(this.origin.y + coord.y);
+      this._origin.x = Math.floor(this._origin.x + coord.x);
+      this._origin.y = Math.floor(this._origin.y + coord.y);
     }
   };
 

@@ -33,9 +33,10 @@ define(['underscore', 'core/graphics/layeredcanvas', 'core/util/eventhub',
         return;
       }
 
+      var origin = this.getOrigin();
       var pixels = element.pixels();
       _.each(pixels, function (p) {
-        this.canvas.setPixel(p.x - this.origin.x, p.y - this.origin.y,
+        this.canvas.setPixel(p.x - origin.x, p.y - origin.y,
                              p.color, element.layer());
       }, this);
     };
