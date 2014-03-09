@@ -11,21 +11,22 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
          "core/interface/keypoll", "core/util/frameclock", "core/util/eventhub",
          "core/util/follower", "core/world/actionbox",
          "submersion/actors/submersible", "submersion/actors/fishschool",
-         "submersion/actors/creatures/turtle", "submersion/util/layer",
+         "submersion/actors/creatures/turtle",
+         "submersion/actors/creatures/octopus", "submersion/util/layer",
          "submersion/util/planktonbox"],
   function($, SpriteArchive, Viewport, KeyPoll, FrameClock, EventHub,
-           Follower, ActionBox, Submersible, FishSchool, Turtle, Layer,
-           PlanktonBox) {
+           Follower, ActionBox, Submersible, FishSchool, Turtle, Octopus,
+           Layer, PlanktonBox) {
 
     var VIEWPORT_DIMENSIONS = { width: 400, height: 237 };
-    var ACTIONBOX_DIMENSIONS = { width: 500, height: 337 };
+    var ACTIONBOX_DIMENSIONS = { width: 800, height: 475 };
     var $canvas;
     var Game = Object.create(null);
     var planktonBox;
     var sub;
     var tigerSchoolRight;
     var surgeonSchoolLeft;
-    var turtle;
+    var octopus;
 
 
     function sizeCanvas () {
@@ -109,14 +110,14 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
             velocity: { x: -1.5, y: -1 }
           });
 
-          turtle = new Turtle({
+          octopus = new Octopus({
             center: {
-              x: Math.floor(VIEWPORT_DIMENSIONS.width * 0.33),
-              y: Math.floor(VIEWPORT_DIMENSIONS.height * 0.33)
+              x: Math.floor(VIEWPORT_DIMENSIONS.width * 0.5),
+              y: Math.floor(VIEWPORT_DIMENSIONS.height * 1.25)
             },
             layer: Layer.rearFocus,
             frameClock: Game.clock,
-            velocity: { x: 1, y: 0 }
+            velocity: { x: 0, y: -0.5 }
           });
 
           new Follower(sub, [{ frame: Game.viewport, followRadius: 25 },
