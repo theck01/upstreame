@@ -76,23 +76,24 @@ define(["jquery", "underscore", "core/util/eventhub"],
     // paint writes all stored pixels to the PixelCanvas and calls the
     // PixelCanvas" paint method
     ClickCanvasInterface.prototype.paintGrid = function () {
+      var dim = this.pCanvas.getDimensions();
       var context = this.$htmlCanvas[0].getContext("2d");
       var i = 0;
       var sparams = this.pCanvas.screenParams();
 
       context.beginPath();
 
-      for( ; i<=this.dim.width; i++){
+      for( ; i<=dim.width; i++){
         context.moveTo(sparams.xoffset + i*sparams.pixelSize,
                        sparams.yoffset);
         context.lineTo(sparams.xoffset + i*sparams.pixelSize,
-                       sparams.yoffset + this.dim.height*sparams.pixelSize);
+                       sparams.yoffset + dim.height*sparams.pixelSize);
       }
 
-      for(i=0 ; i<=this.dim.height; i++){
+      for(i=0 ; i<=dim.height; i++){
         context.moveTo(sparams.xoffset,
                        sparams.yoffset + i*sparams.pixelSize);
-        context.lineTo(sparams.xoffset + this.dim.width*sparams.pixelSize,
+        context.lineTo(sparams.xoffset + dim.width*sparams.pixelSize,
                        sparams.yoffset + i*sparams.pixelSize);
       }
 
