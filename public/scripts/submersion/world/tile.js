@@ -1,40 +1,37 @@
 define(['underscore', 'core/util/frame'], function (_, Frame) {
 
-  var OCEAN_TILE_PROPS = {
+  var TILE_PROPS = {
     dimensions: { width: 128, height: 128 }
   };
 
-  // OceanTile describes a small area within the game world
+  // Tile describes a small area within the game world
   //
   // Argument object fields:
   //   origin: object with 'x' and 'y' fields, the origin of the top left
   //           corner of the tile
-  //   currentVelocity: object with 'x' and 'y' fields, offset to move actors
-  //                    occupying tile area
-  var OceanTile = function (origin, currentVelocity) {
-    Frame.call(this, OCEAN_TILE_PROPS.dimensions, origin);
-    this.current = _.clone(currentVelocity);
+  var Tile = function (origin) {
+    Frame.call(this, TILE_PROPS.dimensions, origin);
   };
-  OceanTile.prototype = Object.create(Frame.prototype);
-  OceanTile.prototype.constructor = OceanTile;
+  Tile.prototype = Object.create(Frame.prototype);
+  Tile.prototype.constructor = Tile;
 
 
   // applyAreaEffect applies some effect to the actor occupying the tiles area
-  // overload in subtypes but be sure to call OceanTile version to apply current
+  // overload
   //
   // Arguments:
   //   actor: actor instance to apply area affect to
-  OceanTile.prototype.applyAreaEffect = function (actor) {
-    actor.move(this.current);
+  Tile.prototype.applyAreaEffect = function () {
+    throw new Error('Cannot call applyAreaEffect on Tile instance');
   };
 
 
   // properties returns an object containing name and values of all tile
   // properties
-  OceanTile.properties = function () {
-    return _.clone(OCEAN_TILE_PROPS);
+  Tile.properties = function () {
+    return _.clone(TILE_PROPS);
   };
 
 
-  return OceanTile;
+  return Tile;
 });
