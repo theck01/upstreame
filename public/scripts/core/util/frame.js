@@ -89,5 +89,11 @@ define(['underscore'], function (_) {
   };
 
 
+  // resize sets the frames dimensions to the given value
+  Frame.prototype.resize = function (dimensions) {
+    this._dim = _.clone(dimensions);
+  };
+
+
   return Frame;
 });
