@@ -85,15 +85,11 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
       Frame.call(this, dimensions, { x: 0, y: 0 });
 
       this.canvasID = canvasID;
-      this.dim = _.clone(dimensions);
       if (backgroundColor) {
         this.backgroundColor = Color.sanitize(backgroundColor);
       }
       else this.backgroundColor = undefined;
-      this.pastBuffer = makePixelGrid(this.dim.width, this.dim.height,
-                                      undefined);
-      this.pixelBuffer = makePixelGrid(this.dim.width, this.dim.height,
-                                       this.backgroundColor);
+      this.resize(dimensions);
       this.htmlCanvas = $(canvasID)[0];
       this.cachedCanvasDim = Object.create(null);
     };
@@ -103,9 +99,10 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
 
     // clear the canvas
     PixelCanvas.prototype.clear = function () {
+      var dim = this.getDimensions();
       var context = this.htmlCanvas.getContext("2d");
       context.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
-      this.pastBuffer = makePixelGrid(this.dim.width, this.dim.height,
+      this.pastBuffer = makePixelGrid(dim.width, dim.height,
                                       undefined);
     };
 
@@ -131,7 +128,8 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     // Returns:
     //   A color hexadecimal string in the format "#RRGGBB"
     PixelCanvas.prototype.getPixel = function (x, y) {
-      if(x > this.dim.width || x < 0 || y > this.dim.height || y < 0)
+      var dim = this.getDimensions();
+      if(x > dim.width || x < 0 || y > dim.height || y < 0)
         return "#000000";
       return this.pixelBuffer[x][y];
     };
@@ -140,7 +138,6 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     // paint draws the pixel buffer to the HTML canvas and resets the buffer
     // to contain all white pixels
     PixelCanvas.prototype.paint = function () {
-
       var context = this.htmlCanvas.getContext("2d");
 
       // if the canvas has been resized, clear it as everthing must be redrawn
@@ -181,6 +178,21 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     };
 
 
+    // resize the pixel canvas to have given width and height in macro pixels
+    //
+    // Arguments:
+    //   dimensions: object with 'width' and 'height' fields
+    PixelCanvas.prototype.resize = function (dimensions) {
+      Frame.prototype.resize.call(this, dimensions);
+
+      var dim = this.getDimensions();
+      this.pastBuffer = makePixelGrid(dim.width, dim.height,
+                                      undefined);
+      this.pixelBuffer = makePixelGrid(dim.width, dim.height,
+                                       this.backgroundColor);
+    };
+
+
     // screenParams measures current canvas dimensions and returns an object 
     // with the fields:
     //
@@ -191,13 +203,13 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     //   yoffset: yoffset in screen pixels of the top most pixels from the
     //            top most edge of the canvas
     PixelCanvas.prototype.screenParams = function () {
-
+      var dim = this.getDimensions();
       var retval = Object.create(null);
       var height = this.htmlCanvas.height;
       var width = this.htmlCanvas.width;
       
-      var xfactor = Math.floor(width/this.dim.width);
-      var yfactor = Math.floor(height/this.dim.height);
+      var xfactor = Math.floor(width/dim.width);
+      var yfactor = Math.floor(height/dim.height);
 
       // meta-pixel dimensions determined by the smallest screen pixel to 
       // meta-pixel ratio, so that all pixels will fit on screen
@@ -205,11 +217,17 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
 
       // compute offsets using computed pixelSize and number of pixels in each
       // dimension so that the canvas is centered
-      retval.xoffset = Math.floor((width - retval.pixelSize*this.dim.width)/2);
-      retval.yoffset = Math.floor((height -
-                                   retval.pixelSize*this.dim.height)/2);
+      retval.xoffset = Math.floor((width - retval.pixelSize*dim.width)/2);
+      retval.yoffset = Math.floor((height - retval.pixelSize*dim.height)/2);
 
       return retval;
+    };
+
+
+    // setBackgroundColor sets the background color of the canvas
+    PixelCanvas.prototype.setBackgroundColor = function (backgroundColor) {
+      this.backgroundColor = Color.sanitize(backgroundColor);
+      this.resize(this.getDimensions());
     };
 
 
@@ -223,8 +241,8 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     //      most (+ height)
     //   color: A hexadecimal string in the format "#RRGGBB"
     PixelCanvas.prototype.setPixel = function (x, y, color) {
-      // dont write to buffer if location is outside canvas bounds
-      if (x >= this.dim.width || x < 0 || y >= this.dim.height || y < 0) return;
+      var dim = this.getDimensions();
+      if (x >= dim.width || x < 0 || y >= dim.height || y < 0) return;
       this.pixelBuffer[x][y] = Color.sanitize(color);
     };
 
