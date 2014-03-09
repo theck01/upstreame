@@ -14,10 +14,12 @@ require.config({
 
 
 require(["jquery", "underscore", "core/controller/modelbuilder",
-         "core/graphics/color", "core/interface/statusalert", 
-         "core/model/converters/spriteconverter", "bootstrap",
-         "core/interface/toollayoutloginform"],
-  function ($, _, ModelBuilder, Color, StatusAlert, SpriteConverter) {
+         "core/graphics/color", "core/graphics/pixelcanvas",
+         "core/interface/clickcanvasinterface", "core/interface/statusalert",
+         "core/model/converters/spriteconverter", "core/util/eventhub",
+         "bootstrap", "core/interface/toollayoutloginform"],
+  function ($, _, ModelBuilder, Color, PixelCanvas, CanvasClickInterface,
+            StatusAlert, SpriteConverter, EventHub) {
     // persistent UI variables
     var $backgroundColorInput;
     var $backgroundColorPreview;
@@ -33,6 +35,10 @@ require(["jquery", "underscore", "core/controller/modelbuilder",
     var $undoButton;
 
     var modelBuilder;
+    var pixelCanvas;
+    var clickInterface;
+    var gridEnabled = true;
+
 
     // initial canvas sizing variable
     var initialSize = 16;
@@ -64,7 +70,8 @@ require(["jquery", "underscore", "core/controller/modelbuilder",
       statusAlert = new StatusAlert("#status-alert");
 
       $("#hide-grid-button").click(function () {
-        modelBuilder.toggleGrid();
+        gridEnabled = !gridEnabled;
+        modelBuilder.paint();
       });
 
       $("#clear-canvas-button").click(function () {
@@ -124,18 +131,25 @@ require(["jquery", "underscore", "core/controller/modelbuilder",
         }
       });
 
-      modelBuilder = new ModelBuilder({
-          width: initialSize,
-          height: initialSize
-        }, "#pixel-art-canvas", { color: "#FFFFFF" }, { color: "#000000" },
-        SpriteConverter
-      );
+      pixelCanvas = new PixelCanvas({
+        width: initialSize,
+        height: initialSize
+      }, "#pixel-art-canvas", "#FFFFFF");
 
+      clickInterface = new CanvasClickInterface(pixelCanvas);
+
+      modelBuilder = new ModelBuilder(pixelCanvas, { color: "#FFFFFF" },
+                                      { color: "#000000" }, SpriteConverter);
       modelBuilder.mousemove(function () {
         if($("input:radio[name=action]:checked").val() === "get"){
           updateColorUI();
         }
       });
+
+      EventHub.subscribe("modelbuilder.redraw", function () {
+        if (gridEnabled) clickInterface.paintGrid();
+      });
+
       modelBuilder.paint();
 
       $pixelHeight = $("#pixel-height-input");
