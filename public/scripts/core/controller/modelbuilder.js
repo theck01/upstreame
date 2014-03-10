@@ -231,12 +231,14 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/subscriber",
     // _onCanvasAction listens updates change state when 'canvas.action' event
     // is fired
     ModelBuilder.prototype._onCanvasAction = function (params) {
-      var dim = this.pCanvas.getDimensions();
       var coords = params.positions;
       this.currentChange = Object.create(null);
+      var mousePos = _.last(coords);
 
       if (this.action === "get") {
-        var element = this.elements[Encoder.coordToScalar(_.last(coords), dim)];
+        var element = _.find(this.elements, function (e) {
+          return e.x === mousePos.x && e.y === mousePos.y;
+        });
         element = element || this.defaultElement;
         this.setCurrentElement(element);
         return;
@@ -249,7 +251,7 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/subscriber",
         this.paint();
       }
       else if (this.action === "fill") {
-        this.currentChange.elements = fillArea(this.elements, _.last(coords),
+        this.currentChange.elements = fillArea(this.elements, mousePos,
                                                this.pCanvas.getDimensions(),
                                                this.currentElement);
         this.currentChange.action = this.action;
