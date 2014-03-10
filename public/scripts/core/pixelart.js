@@ -149,6 +149,12 @@ require(["jquery", "underscore", "core/controller/modelbuilder",
       EventHub.subscribe("modelbuilder.redraw", function () {
         if (gridEnabled) clickInterface.paintGrid();
       });
+      EventHub.subscribe("canvas.action", function () {
+        updateColorUI();
+      });
+      EventHub.subscribe("canvas.release", function () {
+        updateColorUI();
+      });
 
       modelBuilder.paint();
 
