@@ -116,7 +116,6 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/subscriber",
       this.currentChange = null; // always null unless mouse is down in canvas
       this.currentElement = _.omit(initialElement, "x", "y");
       this.defaultElement = _.omit(defaultElement, "x", "y");
-      this.dim = pixelCanvas.getDimensions();
       this.elements = [];
       this.pCanvas = pixelCanvas;
       this.redoStack = [];
@@ -152,7 +151,8 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/subscriber",
         this.currentChange = null;
       }
 
-      this.elements = applyChanges([change], this.elements, this.dim);
+      this.elements = applyChanges([change], this.elements,
+                                   this.pCanvas.getDimensions());
       if (!preserveRedoStack) this.redoStack = [];
       this.undoStack.push(change);
     };
@@ -169,13 +169,14 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/subscriber",
     //               width and height fields
     //   elements: An array of objects with at least x, y, and color fields
     ModelBuilder.prototype.exportModel = function () {
+      var dim = this.pCanvas.getDimensions();
       var model = {
         defaultElement: this.defaultElement,
         currentElement: this.currentElement,
-        dimensions: this.dim,
+        dimensions: dim,
         elements: _.filter(this.elements, function (e) {
-        return e.x >=0 && e.x < this.dim.width && e.y >= 0 &&
-               e.y < this.dim.height;
+        return e.x >=0 && e.x < dim.width && e.y >= 0 &&
+               e.y < dim.height;
         }, this)
       };
 
@@ -230,12 +231,13 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/subscriber",
     // _onCanvasAction listens updates change state when 'canvas.action' event
     // is fired
     ModelBuilder.prototype._onCanvasAction = function (params) {
+      var dim = this.pCanvas.getDimensions();
       var coords = params.positions;
       this.currentChange = Object.create(null);
 
       if (this.action === "get") {
-        var element = this.elements[Encoder.coordToScalar(_.last(coords))] ||
-                      this.defaultElement;
+        var element = this.elements[Encoder.coordToScalar(_.last(coords), dim)];
+        element = element || this.defaultElement;
         this.setCurrentElement(element);
         return;
       }
@@ -248,7 +250,8 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/subscriber",
       }
       else if (this.action === "fill") {
         this.currentChange.elements = fillArea(this.elements, _.last(coords),
-                                               this.dim, this.currentElement);
+                                               this.pCanvas.getDimensions(),
+                                               this.currentElement);
         this.currentChange.action = this.action;
         this.paint();
       }
@@ -267,16 +270,16 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/subscriber",
     // paint writes all stored pixels to the PixelCanvas and calls the
     // PixelCanvas" paint method
     ModelBuilder.prototype.paint = function () {
+      var dim = this.pCanvas.getDimensions();
       var elements;
 
       if (this.currentChange) {
-        elements = applyChanges([this.currentChange], this.elements, this.dim);
+        elements = applyChanges([this.currentChange], this.elements, dim);
       }
       else elements = this.elements;
 
       _.each(elements, function(e) {
-        if (e.x >= 0 && e.x < this.dim.width && e.y >= 0 &&
-            e.y < this.dim.height) {
+        if (e.x >= 0 && e.x < dim.width && e.y >= 0 && e.y < dim.height) {
           this.pCanvas.setPixel(e.x, e.y, e.color);
         }
       }, this);
@@ -293,7 +296,8 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/subscriber",
     ModelBuilder.prototype.redo = function () {
       if (this.redoStack.length === 0) return;
       var change = this.redoStack.pop();
-      this.elements = applyChanges([change], this.elements, this.dim);
+      this.elements = applyChanges([change], this.elements,
+                                   this.pCanvas.getDimensions());
       this.commitChange(change, true);
       this.paint();
     };
@@ -306,11 +310,11 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/subscriber",
     //   width: width of the pixel canvas in meta-pixels
     //   height: height of the pixel canvas in meta-pixels
     ModelBuilder.prototype.resize = function (width, height){
-      this.dim = { width: width, height: height };
-      this.pCanvas.resize(this.dim);
+      this.pCanvas.resize({ width: width, height: height });
 
       if (this.undoStack.length !== 0) {
-        this.elements = applyChanges(this.undoStack, [], this.dim);
+        this.elements = applyChanges(this.undoStack, [],
+                                     this.pCanvas.getDimensions());
       }
 
       this.paint();
@@ -360,7 +364,8 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/subscriber",
     ModelBuilder.prototype.undo = function () {
       if (this.undoStack.length === 0) return;
       this.redoStack.push(this.undoStack.pop());
-      this.elements = applyChanges(this.undoStack, [], this.dim);
+      this.elements = applyChanges(this.undoStack, [],
+                                   this.pCanvas.getDimensions());
       this.paint();
     };
 
