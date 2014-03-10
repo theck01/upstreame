@@ -8,7 +8,6 @@ define(["jquery", "underscore", "core/util/eventhub"],
     var ClickCanvasInterface = function (pixelCanvas) {
       this.$htmlCanvas = $(pixelCanvas.getCanvasID());
       this.mouseDown = false;
-      this.mouseMoveAction = function () {};
       this.path = [];
       this.pCanvas = pixelCanvas;
 
