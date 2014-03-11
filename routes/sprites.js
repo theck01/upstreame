@@ -16,7 +16,7 @@ exports.all = function (req, res) {
 
   fs.readdir(spriteDir, function (err, files) {
 
-    if(err) res.send(500);
+    if(err) res.json(500, 'Internal server error');
     else{
       sprites = _.reduce(files, function (memo, f) {
         var file = __dirname + '/../public/assets/sprites/' + f;
@@ -38,7 +38,7 @@ exports.load = function (req, res) {
   filename += '.json';
 
   fs.readFile(filename, { encoding: 'utf8' }, function (err, data) {
-    if(err) res.send(404);
+    if(err) res.send(404, 'Sprite named ' + req.params.name + ' not found.');
     else{
       res.type('application/json');
       res.send(200, data);
@@ -51,12 +51,18 @@ exports.save = function (req, res) {
   var filename = __dirname + '/../public/assets/sprites/' + req.params.name;
   filename += '.json';
   
-  if(!req.params.name || verifier.validate(req.body, spriteTemplate) === null){
-    res.send(400);
+  if(!req.params.name) {
+    res.send(400, 'Sprite name required to save.');
+    return;
   }
-  else{
+
+  var sprite = verifier.validate(req.body, spriteTemplate, function (msg) {
+    res.send(400, msg);
+  });
+
+  if (sprite) {
     fs.writeFile(filename, JSON.stringify(req.body), function (err) {
-      if(err) res.send(500);
+      if(err) res.send(500, 'Internal server error.');
       else res.send(200);
     });
   }

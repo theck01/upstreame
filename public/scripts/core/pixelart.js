@@ -222,7 +222,9 @@ require(["jquery", "underscore", "core/controller/modelbuilder",
               data: imageJSON,
               error: function (jqXHR) {
                 if(jqXHR.status  === 400) {
-                  statusAlert.display("Client error.", true);
+                  statusAlert.display("Client error, see console output.",
+                                      true);
+                  console.log(jqXHR.responseText);
                 }
                 else if(jqXHR.status === 401) {
                   statusAlert.display("Please login before saving sprites.",

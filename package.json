@@ -7,7 +7,7 @@
     "express": "~3.4.0",
     "jade": "~0.35.0",
     "underscore": "~1.5.2",
-    "verifier": "~0.1.1",
+    "verifier": "~0.2.0",
     "passport": "~0.1.17",
     "passport-local": "~0.1.6"
   },
