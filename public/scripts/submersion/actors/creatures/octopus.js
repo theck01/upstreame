@@ -10,12 +10,14 @@ define(['submersion/actors/seacreature', 'submersion/util/group'],
     //   velocity: Object with 'x' and 'y' fields
     var Octopus = function (opts) {
       opts.animation = [
-        { spriteName: 'swimming-octopus-0-1', frames: 25 },
+        { spriteName: 'swimming-octopus-0-1', frames: 12 },
         { spriteName: 'swimming-octopus-0-2', frames: 11 },
         { spriteName: 'swimming-octopus-0-3', frames: 11 },
-        { spriteName: 'swimming-octopus-0-4', frames: 17 },
-        { spriteName: 'swimming-octopus-0-3', frames: 6 },
-        { spriteName: 'swimming-octopus-0-2', frames: 4 }
+        { spriteName: 'swimming-octopus-0-4', frames: 12 },
+        { spriteName: 'swimming-octopus-0-4b', frames: 6 },
+        { spriteName: 'swimming-octopus-0-3b', frames: 6 },
+        { spriteName: 'swimming-octopus-0-2b', frames: 4 },
+        { spriteName: 'swimming-octopus-0-1b', frames: 13 }
       ];
       opts.group = 'Turtle';
       opts.noncollidables = Group.collect('friendlies');
