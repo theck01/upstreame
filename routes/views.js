@@ -66,3 +66,17 @@ exports.submersion = function (req, res) {
 
   res.render('submersion', opts);
 };
+
+exports.worldbuilder = function (req, res) {
+  var opts = {
+    title: 'World Builder',
+    loggedIn: auth.isLoggedIn(req),
+    main: 'scripts/core/worldbuilder.js'
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    opts.main = 'scripts/dist/worldbuilder.min.js';
+  }
+
+  res.render('worldbuilder', opts);
+};

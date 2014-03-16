@@ -1,6 +1,5 @@
 var animations = require('./routes/animations');
-var auth = require('./lib/auth');
-var express = require('express');
+var auth = require('./lib/auth'); var express = require('express');
 var LocalStrategy = require('passport-local').Strategy;
 var passport = require('passport');
 var sessions = require('./routes/sessions');
@@ -55,6 +54,7 @@ app.get('/animator', views.animator);
 app.get('/invaders', views.invaders);
 app.get('/pixelart', views.pixelart);
 app.get('/submersion', views.submersion);
+app.get('/worldbuilder', views.worldbuilder);
 
 // animation routes
 app.get('/animation/:name', animations.load);

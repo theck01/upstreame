@@ -1,0 +1,76 @@
+extend toollayout
+
+block navbar-title
+  a.navbar-brand(href="#") World Builder
+
+block mainarea
+  canvas#world-builder-canvas
+
+block wellarea
+  .control-row
+    .input-group
+      input#world-name-input.form-control
+      span.input-group-btn
+        #world-action-button.btn.btn-primary Load Sprite
+        #world-action-select.btn.btn-primary.dropdown-toggle(data-toggle="dropdown")
+          span.caret
+        ul.dropdown-menu(role="menu")
+          li
+            a#world-save-link(href="#") Save Sprite
+          li
+            a#world-load-link(href="#") Load Sprite
+  .control-row
+    .form-inline
+      input#pixel-width-input.dimension-input.form-control
+      label.control-label.dimension-label Pixels Wide
+      input#pixel-height-input.dimension-input.form-control
+      label.control-label.last-dimension-label Pixels Tall
+  .control-row
+    #default-element-color-preview.color-preview
+    .color-controls.form-inline
+      label.control-label Default Element
+      input#default-element-color-input.form-control.color-input
+    .float-spacer
+  #default-element-params
+  .control-row
+    #current-element-color-preview.color-preview
+    .color-controls.form-inline
+      label.control-label Current Element
+      input#current-element-color-input.form-control.color-input
+    .float-spacer
+  #current-element-params
+  .control-row
+    .btn-group.btn-group-justified(data-toggle="buttons")
+      label.btn.btn-default.active
+        input#set-radio-button(type="radio" name="action" value="set") 
+        i.icon-pencil.icon-large
+      label.btn.btn-default
+        input#fill-radio-button(type="radio" name="action" value="fill") 
+        i.icon-bitbucket.icon-large
+      label.btn.btn-default
+        input#get-radio-button(type="radio" name="action" value="get")
+        i.icon-pencil.icon-tint
+      label.btn.btn-default
+        input#clear-radio-button(type="radio" name="action" value="clear")
+        i.icon-pencil.icon-eraser
+  .control-row
+    .btn-group.btn-group-justified
+      a#undo-action-button.btn.btn-default(href="#")
+        i.icon-undo.icon-large
+      a#redo-action-button.btn.btn-default(href="#")
+        i.icon-repeat.icon-large
+      a#hide-grid-button.btn.btn-default(href="#" data-toggle="buttons")
+        i.icon-th.icon-large
+      a#clear-canvas-button.btn.btn-default(href="#")
+        i.icon-trash.icon-large
+  .control-row
+    h4 Keyboard Shortcuts
+    p.
+      D - activate draw mode, paint pixel(s) on the canvas <br/>
+      F - activate fill mode, paint areas on the canvas <br/>
+      G - activate get mode, retrieve a color from the canvas <br/>
+      E - activate erase mode, clear pixel(s) on the canvas <br/>
+      U - undo last action <br/>
+      R - redo last action <br/>
+      C - toggle grid coordinate system
+
