@@ -1,6 +1,6 @@
-define(["jquery", "underscore", "core/graphics/color", "core/util/subscriber",
+define(["underscore", "core/graphics/color", "core/util/subscriber",
         "core/util/encoder", "core/controller/eventhub"],
-  function($, _, Color, Subscriber, Encoder, EventHub){
+  function(_, Color, Subscriber, Encoder, EventHub){
 
 
     // applyChanges applies an array of changes to the model
