@@ -66,7 +66,7 @@ define([], function () {
     shadedColor += shadeComponent(green, change);
     shadedColor += shadeComponent(blue, change);
 
-    return shadedColor;
+    return Color.sanitize(shadedColor);
   };
 
   return Color;
