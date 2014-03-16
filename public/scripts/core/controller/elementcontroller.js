@@ -1,18 +1,27 @@
-define(['jquery', 'underscore'], function ($, _) {
+define([], function () {
 
   var ElementController = Object.create(null);
-  ElementController.elements = Object.create(null);
-  ElementController.elements.byName = Object.create(null);
-  ElementController.elements.byType = Object.create(null);
+
+
+  // clear removes all elements from the controller
+  ElementController.clear = function () {
+    ElementController._elements = Object.create(null);
+    ElementController._elements.byName = Object.create(null);
+    ElementController._elements.byType = Object.create(null);
+  };
+
+
+  // Initialize the controller
+  ElementController.clear();
 
 
   // create returns the element specified by the model object
   //
   // Arguments:
   //   model: Raw model object used to create element
-  ElementController.create = function (model) {
-    var constructor = ElementController.elements.byName[model.name].constructor;
-    return constructor(model);
+  ElementController.create = function (name, model) {
+    var element = ElementController._elements.byName[name];
+    return !!element ? element.constructor(model) : null;
   };
 
 
@@ -20,8 +29,9 @@ define(['jquery', 'underscore'], function ($, _) {
   //
   // Arguments:
   //   elementType: string such as 'background' or 'actor'
+  // Returns an array of element names with that type
   ElementController.getByType = function (elementType) {
-    return ElementController.elements.byType[elementType];
+    return ElementController._elements.byType[elementType] || [];
   };
 
 
@@ -36,7 +46,8 @@ define(['jquery', 'underscore'], function ($, _) {
   //   values may be numbers, strings, or objects containing numbers
   //   strings and/or objects...
   ElementController.getMenu = function (name) {
-    return ElementController.elements.byName[name].menu;
+    var element = ElementController._elements.byName[name];
+    return !!element ? element.menu : undefined;
   };
 
 
@@ -53,12 +64,12 @@ define(['jquery', 'underscore'], function ($, _) {
   //         strings and/or objects...
   ElementController.register = function (name, elementType, constructor,
                                          menu) {
-    ElementController.elements.byName[name] = { constructor: constructor,
+    ElementController._elements.byName[name] = { constructor: constructor,
                                                 menu: menu,
                                                 elementType: elementType };
-    ElementController.elements.byType[elementType] =
-                          ElementController.elements.byType[elementType] || [];
-    ElementController.elements.byType[elementType].push(name);
+    ElementController._elements.byType[elementType] =
+                          ElementController._elements.byType[elementType] || [];
+    ElementController._elements.byType[elementType].push(name);
   };
 
 
