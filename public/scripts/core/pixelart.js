@@ -16,7 +16,7 @@ require.config({
 require(["jquery", "underscore", "core/controller/modelbuilder",
          "core/graphics/color", "core/graphics/pixelcanvas",
          "core/interface/clickcanvasinterface", "core/interface/statusalert",
-         "core/model/converters/spriteconverter", "core/util/eventhub",
+         "core/model/converters/spriteconverter", "core/controller/eventhub",
          "bootstrap", "core/interface/toollayoutloginform"],
   function ($, _, ModelBuilder, Color, PixelCanvas, CanvasClickInterface,
             StatusAlert, SpriteConverter, EventHub) {

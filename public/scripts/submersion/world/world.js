@@ -1,4 +1,4 @@
-define(['underscore', 'core/util/encoder', 'core/util/eventhub',
+define(['underscore', 'core/util/encoder', 'core/controller/eventhub',
         'core/util/subscriber','submersion/world/oceantile'],
   function (_, Encoder, EventHub, Subscriber, OceanTile) {
 

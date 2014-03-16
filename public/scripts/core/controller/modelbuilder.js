@@ -1,5 +1,5 @@
 define(["jquery", "underscore", "core/graphics/color", "core/util/subscriber",
-        "core/util/encoder", "core/util/eventhub"],
+        "core/util/encoder", "core/controller/eventhub"],
   function($, _, Color, Subscriber, Encoder, EventHub){
 
 

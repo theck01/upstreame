@@ -1,4 +1,4 @@
-define(['underscore', 'core/util/eventhub', 'core/world/element'],
+define(['underscore', 'core/controller/eventhub', 'core/world/element'],
   function (_, EventHub, Element) {
 
     function intCenter (center) {

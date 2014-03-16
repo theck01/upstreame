@@ -8,10 +8,10 @@ require.config({
 });
 
 require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
-         "core/interface/keypoll", "core/util/frameclock", "core/util/eventhub",
-         "core/util/follower", "core/world/actionbox",
-         "submersion/actors/submersible", "submersion/actors/fishschool",
-         "submersion/actors/creatures/turtle",
+         "core/interface/keypoll", "core/util/frameclock",
+         "core/controller/eventhub", "core/util/follower",
+         "core/world/actionbox", "submersion/actors/submersible",
+         "submersion/actors/fishschool", "submersion/actors/creatures/turtle",
          "submersion/actors/creatures/octopus", "submersion/util/layer",
          "submersion/util/planktonbox"],
   function($, SpriteArchive, Viewport, KeyPoll, FrameClock, EventHub,

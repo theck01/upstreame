@@ -1,4 +1,4 @@
-define(['underscore', 'core/util/eventhub', 'core/util/subscriber'],
+define(['underscore', 'core/controller/eventhub', 'core/util/subscriber'],
   function (_, EventHub, Subscriber) {
 
     // World object encapsulates information needed to simulate game world:

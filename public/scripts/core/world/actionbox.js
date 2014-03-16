@@ -1,4 +1,4 @@
-define(['underscore', 'core/util/eventhub', 'core/util/frame',
+define(['underscore', 'core/controller/eventhub', 'core/util/frame',
         'core/world/collisionframe'],
   function (_, EventHub, Frame, CollisionFrame) {
 

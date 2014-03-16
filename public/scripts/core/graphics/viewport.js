@@ -1,4 +1,4 @@
-define(['underscore', 'core/graphics/layeredcanvas', 'core/util/eventhub',
+define(['underscore', 'core/graphics/layeredcanvas', 'core/controller/eventhub',
         'core/util/frame'],
   function (_, LayeredCanvas, EventHub, Frame) {
 

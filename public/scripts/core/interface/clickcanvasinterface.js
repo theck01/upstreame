@@ -1,4 +1,4 @@
-define(["jquery", "underscore", "core/util/eventhub"],
+define(["jquery", "underscore", "core/controller/eventhub"],
   function($, _, EventHub){
     
     // ClickCanvasInterface provides a mouse input interface to a PixelCanvas

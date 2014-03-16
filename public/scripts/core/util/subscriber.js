@@ -1,4 +1,4 @@
-define(['underscore', 'core/util/eventhub'], function (_, EventHub) {
+define(['underscore', 'core/controller/eventhub'], function (_, EventHub) {
 
   // Subscriber is a mixin for any object that subscribes to EventHub events
   // and can also be destroyed and needing to unsubscribe from those events.

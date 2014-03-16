@@ -11,7 +11,7 @@ requirejs.config({
   }
 });
 
-var EventHub = requirejs('core/util/eventhub');
+var EventHub = requirejs('core/controller/eventhub');
 
 describe('EventHub', function () {
   before(function (done) {
