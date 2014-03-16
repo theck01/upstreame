@@ -1,78 +1,5 @@
 define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
   function ($, _, Color, Frame) {
-
-    // makePixelGrid creates a 2D array with given dimensions containin an RGB
-    // string at each location in the array
-    //
-    // Arguments:
-    //   width: width of the pixel canvas in meta-pixels
-    //   height: height of the pixel canvas in meta-pixels
-    //   color: default color of pixels not drawn to, "#RRGGBB" string. If
-    //          undefined the pixels not drawn to are transparent
-    function makePixelGrid (width, height, color) {
-      var ary = [];
-
-      for(var i=0; i<width; i++){
-        ary[i] = [];
-        for(var j=0; j<height; j++){
-          ary[i][j] = color;
-        }
-      }
-      
-      return ary;
-    }
-
-
-    // clearPixelGrid clears a 2D color array to contain only the given color
-    // color
-    //
-    // Arguments:
-    //   grid: existing pixel grid
-    //   color: default color of pixels not drawn to, "#RRGGBB" string. If
-    //          undefined the pixels not drawn to are transparent
-    function clearPixelGrid (grid, color) {
-      var ary = [];
-
-      for(var i=0; i<grid.length; i++){
-        for(var j=0; j<grid[i].length; j++){
-          grid[i][j] = color;
-        }
-      }
-      
-      return ary;
-    }
-
-
-
-    // diffFrames returns the change between the current pixel grid and the
-    // previous pixel grid, for efficent drawing
-    //
-    // Arguments:
-    //   present: current pixel grid
-    //   past: previous pixel grid. Optional, if unspecified then present is
-    //         compared to a completely empty grid
-    //
-    // Returns:
-    //   A map of color strings (or "transparent") to x,y pairs, indicating
-    //   pixel values that have changed between past and present
-    function diffFrames (present, past) {
-      var i,j;
-      var color;
-      var diff = Object.create(null);
-
-      for (i=0; i<present.length; i++) {
-        for (j=0; j < present[i].length; j++) {
-          if (!past || present[i][j] !== past[i][j]) {
-            color = present[i][j] || "transparent";
-            diff[color] = diff[color] || [];
-            diff[color].push({ x: i, y: j });
-          }
-        }
-      }
-      return diff;
-    }
-
-
     // PixelCanvas object abstracts the HTML canvas object and exposes an API to
     // draw meta-pixels on the canvas. Clears the canvas on creation
     //
@@ -102,8 +29,57 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
       var dim = this.getDimensions();
       var context = this.htmlCanvas.getContext("2d");
       context.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
-      this.pastBuffer = makePixelGrid(dim.width, dim.height,
-                                      undefined);
+      this.pastBuffer = PixelCanvas._makePixelGrid(dim.width, dim.height,
+                                                   undefined);
+    };
+
+
+    // clearPixelGrid clears a 2D color array to contain only the given color
+    // color
+    //
+    // Arguments:
+    //   grid: existing pixel grid
+    //   color: default color of pixels not drawn to, "#RRGGBB" string. If
+    //          undefined the pixels not drawn to are transparent
+    PixelCanvas._clearPixelGrid  = function (grid, color) {
+      var ary = [];
+
+      for(var i=0; i<grid.length; i++){
+        for(var j=0; j<grid[i].length; j++){
+          grid[i][j] = color;
+        }
+      }
+      
+      return ary;
+    };
+
+
+    // diffFrames returns the change between the current pixel grid and the
+    // previous pixel grid, for efficent drawing
+    //
+    // Arguments:
+    //   present: current pixel grid
+    //   past: previous pixel grid. Optional, if unspecified then present is
+    //         compared to a completely empty grid
+    //
+    // Returns:
+    //   A map of color strings (or "transparent") to x,y pairs, indicating
+    //   pixel values that have changed between past and present
+    PixelCanvas._diffFrames = function (present, past) {
+      var i,j;
+      var color;
+      var diff = Object.create(null);
+
+      for (i=0; i<present.length; i++) {
+        for (j=0; j < present[i].length; j++) {
+          if (!past || present[i][j] !== past[i][j]) {
+            color = present[i][j] || "transparent";
+            diff[color] = diff[color] || [];
+            diff[color].push({ x: i, y: j });
+          }
+        }
+      }
+      return diff;
     };
 
 
@@ -135,6 +111,28 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     };
 
 
+    // makePixelGrid creates a 2D array with given dimensions containin an RGB
+    // string at each location in the array
+    //
+    // Arguments:
+    //   width: width of the pixel canvas in meta-pixels
+    //   height: height of the pixel canvas in meta-pixels
+    //   color: default color of pixels not drawn to, "#RRGGBB" string. If
+    //          undefined the pixels not drawn to are transparent
+    PixelCanvas._makePixelGrid  = function (width, height, color) {
+      var ary = [];
+
+      for(var i=0; i<width; i++){
+        ary[i] = [];
+        for(var j=0; j<height; j++){
+          ary[i][j] = color;
+        }
+      }
+      
+      return ary;
+    };
+
+
     // paint draws the pixel buffer to the HTML canvas and resets the buffer
     // to contain all white pixels
     PixelCanvas.prototype.paint = function () {
@@ -148,7 +146,7 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
                                  height: this.htmlCanvas.height };
       }
 
-      var diff = diffFrames(this.pixelBuffer, this.pastBuffer);
+      var diff = PixelCanvas._diffFrames(this.pixelBuffer, this.pastBuffer);
       var sparams = this.screenParams();
       var x, y;
 
@@ -174,7 +172,7 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
       var tmp = this.pastBuffer;
       this.pastBuffer = this.pixelBuffer;
       this.pixelBuffer = tmp;
-      clearPixelGrid(this.pixelBuffer, this.backgroundColor);
+      PixelCanvas._clearPixelGrid(this.pixelBuffer, this.backgroundColor);
     };
 
 
@@ -186,10 +184,10 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
       Frame.prototype.resize.call(this, dimensions);
 
       var dim = this.getDimensions();
-      this.pastBuffer = makePixelGrid(dim.width, dim.height,
-                                      undefined);
-      this.pixelBuffer = makePixelGrid(dim.width, dim.height,
-                                       this.backgroundColor);
+      this.pastBuffer = PixelCanvas._makePixelGrid(dim.width, dim.height,
+                                                   undefined);
+      this.pixelBuffer = PixelCanvas._makePixelGrid(dim.width, dim.height,
+                                                    this.backgroundColor);
     };
 
 
