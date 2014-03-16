@@ -1,6 +1,6 @@
 # test task variables
 MOCHA = node_modules/.bin/mocha
-MOCHA_OPTS = -R spec
+MOCHA_OPTS = -R dot
 SPEC_DIR = spec
 SPECS = $(shell find $(SPEC_DIR) -name '*.spec.js')
 
