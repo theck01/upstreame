@@ -1,8 +1,9 @@
 # test task variables
-MOCHA = node_modules/.bin/mocha
-MOCHA_OPTS = -R dot
 SPEC_DIR = spec
 SPECS = $(shell find $(SPEC_DIR) -name '*.spec.js')
+MOCHA = node_modules/.bin/mocha
+MOCHA_OPTS = -R dot
+MOCHA_WATCH_OPTS = -R min -w --recursive $(SPEC_DIR)
 
 # css task variables
 LESSC = node_modules/.bin/lessc
@@ -65,3 +66,6 @@ test: install
 
 test-debug: install
 	@$(MOCHA) debug $(MOCHA_OPTS) $(SPECS)
+
+test-watch: install
+	@NODE_ENV=test $(MOCHA) $(MOCHA_WATCH_OPTS)
