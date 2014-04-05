@@ -13,12 +13,12 @@ require.config({
 });
 
 
-require(["jquery", "underscore", "core/controller/modelbuilder",
+require(["jquery", "underscore", "core/controller/gridmodelbuilder",
          "core/graphics/color", "core/graphics/pixelcanvas",
          "core/interface/clickcanvasinterface", "core/interface/statusalert",
          "core/model/converters/spriteconverter", "core/controller/eventhub",
          "bootstrap", "core/interface/toollayoutloginform"],
-  function ($, _, ModelBuilder, Color, PixelCanvas, CanvasClickInterface,
+  function ($, _, GridModelBuilder, Color, PixelCanvas, CanvasClickInterface,
             StatusAlert, SpriteConverter, EventHub) {
     // persistent UI variables
     var $backgroundColorInput;
@@ -138,8 +138,9 @@ require(["jquery", "underscore", "core/controller/modelbuilder",
 
       clickInterface = new CanvasClickInterface(pixelCanvas);
 
-      modelBuilder = new ModelBuilder(pixelCanvas, { color: "#FFFFFF" },
-                                      { color: "#000000" }, SpriteConverter);
+      modelBuilder = new GridModelBuilder(pixelCanvas, { color: "#FFFFFF" },
+                                          { color: "#000000" },
+                                          SpriteConverter);
       modelBuilder.mousemove(function () {
         if($("input:radio[name=action]:checked").val() === "get"){
           updateColorUI();

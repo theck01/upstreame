@@ -1,49 +1,7 @@
-define(["underscore", "core/graphics/color", "core/util/subscriber",
-        "core/util/encoder", "core/controller/eventhub"],
-  function(_, Color, Subscriber, Encoder, EventHub){
-
-
-    // applyChanges applies an array of changes to the model
-    //
-    // Arguments:
-    //   changeset: Array of objects with 'action' and 'elements' fields
-    //   elements: Array of objects with which to update the model, each
-    //             with at least 'x', 'y', and 'color' fields
-    //   dim: dimensions of the model
-    // Returns final elements after applying changes
-    function applyChanges (changeset, elements, dim) {
-      var existingElementMap = _.reduce(elements, function (map, e) {
-        if (e.x < dim.width && e.x >= 0 && e.y < dim.height && e.y >= 0) {
-          map[Encoder.coordToScalar(e, dim)] = e;
-        }
-        return map;
-      }, Object.create(null));
-
-      _.each(changeset, function (change) {
-        if (change.action === "clear all" || change.action === "import") {
-          existingElementMap = Object.create(null);
-        }
-        if (change.action === "clear all") return;
-
-        _.each(change.elements, function (e) {
-          if (e.x >= dim.width || e.x < 0 || e.y >= dim.height || e.y < 0) {
-            return;
-          }
-          var encoded = Encoder.coordToScalar(e, dim);
-
-          if (change.action === "clear" &&
-              _.has(existingElementMap, encoded)) {
-            delete existingElementMap[encoded];
-          }
-          else if (change.action === "set" || change.action === "import" ||
-                   change.action === "fill") {
-            existingElementMap[encoded] = e;
-          }
-        });
-      });
-
-      return _.values(existingElementMap);
-    }
+define(["underscore", "core/graphics/color", "core/model/gridmodel",
+        "core/util/subscriber", "core/util/frame", "core/util/encoder",
+        "core/controller/eventhub"],
+  function(_, Color, GridModel, Subscriber, Frame, Encoder, EventHub){
 
 
     // fillArea performs a fill operation on a region of elements of the same
@@ -95,66 +53,93 @@ define(["underscore", "core/graphics/color", "core/util/subscriber",
     }
 
     
-    // ModelBuilder provides methods for creating models in the browser and
+    // GridModelBuilder provides methods for creating models in the browser and
     // exporting that model as a JSON string, using a PixelCanvas instance to
     // render a representation of the model in progress
     //
-    // Constructor Arguments;
+    // Constructor Arguments:
+    //   model: GridModel instance
     //   pixelCanvas: PixelCanvas instance
     //   defaultElement: default element for all unspecified elements within
     //                   the model, containing at least 'color' field
     //   initialElement: initial element to begin buidling model, containing at
     //                   least 'color' field
-    //   converter: A converter object with toCommonModelFormat and
-    //              fromCommonModelFormat methods
-    var ModelBuilder = function (pixelCanvas, defaultElement,
-                                 initialElement, converter) {
+    //   converter: A converter object with toGridModelFormat and
+    //              fromGridModelFormat methods
+    var GridModelBuilder = function (model, pixelCanvas, defaultElement,
+                                     initialElement, converter) {
       Subscriber.call(this);
+      Frame.call(this, pixelCanvas.getDimensions(), { x: 0, y: 0 });
 
-      this.action = "set";
+      this.action = GridModelBuilder.CONTROLLER_ACTIONS.SET;
       this.converter = converter;
       this.currentChange = null; // always null unless mouse is down in canvas
-      this.currentElement = _.omit(initialElement, "x", "y");
-      this.defaultElement = _.omit(defaultElement, "x", "y");
-      this.elements = [];
+      this.model = model;
       this.pCanvas = pixelCanvas;
       this.redoStack = [];
-      this.showGrid = true;
       this.undoStack = [];
+
+      this.setCurrentElement(initialElement);
+      this.setDefaultElement(defaultElement);
 
       this.register("canvas.action", this._onCanvasAction.bind(this));
       this.register("canvas.release", this._onCanvasRelease.bind(this));
     };
-    ModelBuilder.prototype = Object.create(Subscriber.prototype);
-    ModelBuilder.prototype.constructor = ModelBuilder;
+    _.extend(GridModelBuilder.prototype, Frame.prototype, Subscriber.prototype);
+    GridModelBuilder.prototype.constructor = GridModelBuilder;
 
 
-    // clear removes all elements from the model
-    ModelBuilder.prototype.clear = function () {
-      this.commitChange({ action: "clear all" });
-      this.pCanvas.clear();
+    // Actions that the controller can perform on the model.
+    GridModelBuilder.CONTROLLER_ACTIONS = {
+      CLEAR: GridModel.MODEL_ACTIONS.CLEAR,
+      FILL: "fill",
+      GET: "get",
+      SET: GridModel.MODEL_ACTIONS.SET
+    };
+
+
+    // clear removes all elements from the model within the GridModelBuilder
+    // frame.
+    GridModelBuilder.prototype.clear = function () {
+      this.commitChange({ action: GridModel.MODEL_ACTIONS.CLEAR,
+                          elements: this._elementsToClear() });
       this.paint();
     };
 
 
-    // commitChange commits the argument change, or the current changeset
+    // commitChanges commits the argument changes, or the current changeset
     // being constructed
     //
     // Arguments:
-    //   change: Optional, change to commit. If unspecified commit currentChange
-    //   preserveRedoStack: optional, if true does not clear redo stack on
-    //   commit
-    ModelBuilder.prototype.commitChange = function (change,
-                                                    preserveRedoStack) {
-      if (!change) {
-        change = this.currentChange;
+    //   changes: Optional, Array of changes to commit. If unspecified commit
+    //            currentChange
+    //   preserveRedoStack: Optional, if true does not clear redo stack on
+    //                      commit
+    GridModelBuilder.prototype.commitChanges = function (changes,
+                                                     preserveRedoStack) {
+      if (!changes) {
+        changes = [this.currentChange];
         this.currentChange = null;
       }
-
-      this.elements = applyChanges([change], this.elements,
-                                   this.pCanvas.getDimensions());
+      this.model.applyChanges(changes);
       if (!preserveRedoStack) this.redoStack = [];
-      this.undoStack.push(change);
+      this.undoStack.push(changes);
+    };
+
+
+    // _elementsToClear returns an array containing elements for all
+    // coordinates within the controller's dimensions.
+    GridModelBuilder.prototype._elementsToClear = function () {
+      var dim = this.getDimensions();
+
+      var elementsToClear = [];
+      for (var i=0; i<dim.width; i++) {
+        for (var j=0; j<dim.height; j++) {
+          elementsToClear.push({ x: i, y: j, color: "#000000" });
+        }
+      }
+      
+      return elementsToClear;
     };
 
 
@@ -168,19 +153,15 @@ define(["underscore", "core/graphics/color", "core/util/subscriber",
     //   dimensions: dimensions of the model used during editing, object with
     //               width and height fields
     //   elements: An array of objects with at least x, y, and color fields
-    ModelBuilder.prototype.exportModel = function () {
-      var dim = this.pCanvas.getDimensions();
+    GridModelBuilder.prototype.exportModel = function () {
       var model = {
         defaultElement: this.defaultElement,
         currentElement: this.currentElement,
-        dimensions: dim,
-        elements: _.filter(this.elements, function (e) {
-        return e.x >=0 && e.x < dim.width && e.y >= 0 &&
-               e.y < dim.height;
-        }, this)
+        dimensions: this.getDimensions(),
+        elements: this.model.getElements(this)
       };
 
-      return JSON.stringify(this.converter.fromCommonModelFormat(model));
+      return JSON.stringify(this.converter.fromGridModelFormat(model));
     };
 
 
@@ -189,7 +170,7 @@ define(["underscore", "core/graphics/color", "core/util/subscriber",
     //
     // Returns:
     //   An object with at least a 'color' field
-    ModelBuilder.prototype.getDefaultElement = function () {
+    GridModelBuilder.prototype.getDefaultElement = function () {
       return this.defaultElement;
     };
 
@@ -199,19 +180,24 @@ define(["underscore", "core/graphics/color", "core/util/subscriber",
     //
     // Returns:
     //   An object with at least a 'color' field
-    ModelBuilder.prototype.getCurrentElement = function () {
+    GridModelBuilder.prototype.getCurrentElement = function () {
       return this.currentElement;
     };
 
 
     // importModel loads an model JSON string saved using exportModel 
-    ModelBuilder.prototype.importModel = function (modelJSON) {
-      var model = this.converter.toCommonModelFormat(JSON.parse(modelJSON));
+    GridModelBuilder.prototype.importModel = function (modelJSON) {
+      var modelObj = this.converter.toGridModelFormat(JSON.parse(modelJSON));
 
-      this.setDefaultElement(model.defaultElement);
-      this.setCurrentElement(model.currentElement);
-      this.resize(model.dimensions.width, model.dimensions.height);
-      this.commitChange({ action: "import", elements: model.elements });
+      this.setDefaultElement(modelObj.defaultElement);
+      this.setCurrentElement(modelObj.currentElement);
+      this.resize(modelObj.dimensions.width, modelObj.dimensions.height);
+      this.commitChanges([
+        { action: GridModel.MODEL_ACTIONS.CLEAR,
+          elements: this._elementsToClear() },
+        { action: GridModel.MODEL_ACTIONS.SET,
+          elements: this._modelObj.elements }
+      ]);
 
       this.paint();
     };
@@ -223,38 +209,39 @@ define(["underscore", "core/graphics/color", "core/util/subscriber",
     // Arguments:
     //   callbackFunction: A function that may optionally take a jQuery click
     //                     event to do further processing with the click
-    ModelBuilder.prototype.mousemove = function (callbackFunction) {
+    GridModelBuilder.prototype.mousemove = function (callbackFunction) {
       this.mouseMoveAction = callbackFunction;
     };
 
 
     // _onCanvasAction listens updates change state when 'canvas.action' event
     // is fired
-    ModelBuilder.prototype._onCanvasAction = function (params) {
+    GridModelBuilder.prototype._onCanvasAction = function (params) {
       var coords = params.positions;
       this.currentChange = Object.create(null);
       var mousePos = _.last(coords);
 
-      if (this.action === "get") {
-        var element = _.find(this.elements, function (e) {
+      if (this.action === GridModelBuilder.CONTROLLER_ACTIONS.GET) {
+        var element = _.find(this.model.getElements(this), function (e) {
           return e.x === mousePos.x && e.y === mousePos.y;
         });
         element = element || this.defaultElement;
         this.setCurrentElement(element);
         return;
       }
-      else if (this.action === "set" || this.action === "clear") {
+      else if (this.action === GridModelBuilder.CONTROLLER_ACTIONS.SET ||
+               this.action === GridModelBuilder.CONTROLLER_ACTIONS.CLEAR) {
         this.currentChange.elements = _.map(params.positions, function (p) {
           return _.extend(_.clone(this.currentElement), p);
         }, this);
         this.currentChange.action = this.action;
         this.paint();
       }
-      else if (this.action === "fill") {
+      else if (this.action === GridModelBuilder.CONTROLLER_ACTIONS.FILL) {
         this.currentChange.elements = fillArea(this.elements, mousePos,
-                                               this.pCanvas.getDimensions(),
+                                               this.getDimensions(),
                                                this.currentElement);
-        this.currentChange.action = this.action;
+        this.currentChange.action = GridModel.MODEL_ACTIONS.SET;
         this.paint();
       }
     };
@@ -262,28 +249,22 @@ define(["underscore", "core/graphics/color", "core/util/subscriber",
 
     // _onCanvasAction listens commits change state when 'canvas.action' event
     // is fired
-    ModelBuilder.prototype._onCanvasRelease = function (params) {
+    GridModelBuilder.prototype._onCanvasRelease = function (params) {
       this._onCanvasAction(params);
       if (!this.currentChange.elements || !this.currentChange.action) return;
-      this.commitChange();
+      this.commitChanges();
     };
 
 
     // paint writes all stored pixels to the PixelCanvas and calls the
     // PixelCanvas" paint method
-    ModelBuilder.prototype.paint = function () {
-      var dim = this.pCanvas.getDimensions();
+    GridModelBuilder.prototype.paint = function () {
       var elements;
 
-      if (this.currentChange) {
-        elements = applyChanges([this.currentChange], this.elements, dim);
-      }
-      else elements = this.elements;
+      elements = this.model.getElements(this, [this.currentChange]);
 
       _.each(elements, function(e) {
-        if (e.x >= 0 && e.x < dim.width && e.y >= 0 && e.y < dim.height) {
-          this.pCanvas.setPixel(e.x, e.y, e.color);
-        }
+        this.pCanvas.setPixel(e.x, e.y, e.color);
       }, this);
 
       this.pCanvas.clear();
@@ -292,15 +273,12 @@ define(["underscore", "core/graphics/color", "core/util/subscriber",
     };
 
 
-
     // redo reapplys a change removed by an undo command if such a change
     // exists
-    ModelBuilder.prototype.redo = function () {
+    GridModelBuilder.prototype.redo = function () {
       if (this.redoStack.length === 0) return;
-      var change = this.redoStack.pop();
-      this.elements = applyChanges([change], this.elements,
-                                   this.pCanvas.getDimensions());
-      this.commitChange(change, true);
+      var changes = this.redoStack.pop();
+      this.commitChanges(changes, true);
       this.paint();
     };
 
@@ -311,14 +289,9 @@ define(["underscore", "core/graphics/color", "core/util/subscriber",
     // Arguments:
     //   width: width of the pixel canvas in meta-pixels
     //   height: height of the pixel canvas in meta-pixels
-    ModelBuilder.prototype.resize = function (width, height){
+    GridModelBuilder.prototype.resize = function (width, height){
+      Frame.prototype.resize.call(this, { width: width, height: height });
       this.pCanvas.resize({ width: width, height: height });
-
-      if (this.undoStack.length !== 0) {
-        this.elements = applyChanges(this.undoStack, [],
-                                     this.pCanvas.getDimensions());
-      }
-
       this.paint();
     };
 
@@ -333,8 +306,10 @@ define(["underscore", "core/graphics/color", "core/util/subscriber",
     //                 "get", returns the color of the pixel clicked on
     //                 "set", sets the color of the pixel clicked on
     //                 "fill", fills the like area around the clicked pixel
-    ModelBuilder.prototype.setAction = function (actionString) {
-      this.action = actionString;
+    GridModelBuilder.prototype.setAction = function (actionString) {
+      if (_.has(_.invert(GridModelBuilder.CONTROLLER_ACTIONS), actionString)) {
+        this.action = actionString;
+      }
     };
 
 
@@ -343,7 +318,7 @@ define(["underscore", "core/graphics/color", "core/util/subscriber",
     //
     // Arguments:
     //   element: an object with at least 'color' field
-    ModelBuilder.prototype.setDefaultElement = function (element) {
+    GridModelBuilder.prototype.setDefaultElement = function (element) {
       this.defaultElement = _.omit(element, "x", "y");
       this.defaultElement.color = Color.sanitize(this.defaultElement.color);
       this.pCanvas.setBackgroundColor(this.defaultElement.color);
@@ -356,21 +331,21 @@ define(["underscore", "core/graphics/color", "core/util/subscriber",
     //
     // Arguments:
     //   element: an object with at least 'color' field
-    ModelBuilder.prototype.setCurrentElement = function (element) {
+    GridModelBuilder.prototype.setCurrentElement = function (element) {
       this.currentElement = _.omit(element, "x", "y");
       this.currentElement.color = Color.sanitize(this.currentElement.color);
     };
 
 
     // undo removes the most recent change and places it in the redoStack
-    ModelBuilder.prototype.undo = function () {
+    GridModelBuilder.prototype.undo = function () {
       if (this.undoStack.length === 0) return;
       this.redoStack.push(this.undoStack.pop());
-      this.elements = applyChanges(this.undoStack, [],
-                                   this.pCanvas.getDimensions());
+      this.model.clear();
+      this.model.applyChanges(_.flatten(this.undoStack));
       this.paint();
     };
 
-    return ModelBuilder;
+    return GridModelBuilder;
   }
 );

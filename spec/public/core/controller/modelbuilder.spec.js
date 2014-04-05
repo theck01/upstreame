@@ -12,32 +12,35 @@ requirejs.config({
   }
 });
 
-var ModelBuilder = requirejs('core/controller/modelbuilder');
+var GridModelBuilder = requirejs('core/controller/gridmodelbuilder');
+var GridModel = requirejs('core/model/gridmodel');
 var IdentityConverter = requirejs('core/model/converters/identityconverter');
 var Encoder = requirejs('core/util/encoder');
 
 // Helper function makes multiple edits to given modelBuilder
 function makeEdits(modelBuilder) {
-  modelBuilder.commitChange({
-    action: 'set',
-    elements: [
-      { x: 0, y: 1, color: '#000000' },
-      { x: 1, y: 0, color: '#000000' },
-      { x: 1, y: 1, color: '#000000' }
-    ]
-  });
-  modelBuilder.commitChange({
-    action: 'fill',
-    elements: [
-      { x: 0, y: 0, color: '#FF0000' }
-    ]
-  });
-  modelBuilder.commitChange({
-    action: 'clear',
-    elements: [
-      { x: 1, y: 1, color: '#000000' }
-    ]
-  });
+  modelBuilder.commitChanges([
+    {
+      action: 'set',
+      elements: [
+        { x: 0, y: 1, color: '#000000' },
+        { x: 1, y: 0, color: '#000000' },
+        { x: 1, y: 1, color: '#000000' }
+      ]
+    },
+    {
+      action: 'fill',
+      elements: [
+        { x: 0, y: 0, color: '#FF0000' }
+      ]
+    },
+    {
+      action: 'clear',
+      elements: [
+        { x: 1, y: 1, color: '#000000' }
+      ]
+    }
+  ]);
 }
 
 
@@ -70,20 +73,23 @@ function assertObjectArraysEqual(oa1, oa2, dimensions, optOrderMatters) {
 }
 
 
-describe('ModelBuilder', function () {
+describe('GridModelBuilder', function () {
   var dimensions;
   var mockCanvas;
+  var gridModel;
   var modelBuilder;
 
   beforeEach(function () {
     dimensions = { width: 3, height: 3 };
     mockCanvas = new MockPixelCanvas(dimensions, '#FFFFFF');
-    modelBuilder = new ModelBuilder(mockCanvas, { color: '#FFFFFF' },
-                                    { color: '#000000'}, IdentityConverter);
+    gridModel = new GridModel();
+    modelBuilder = new GridModelBuilder(gridModel, mockCanvas,
+                                        { color: '#FFFFFF' },
+                                        { color: '#000000'}, IdentityConverter);
   });
 
 
-  it('should clear model on ModelBuilder#clear', function () {
+  it('should clear model on GridModelBuilder#clear', function () {
     makeEdits(modelBuilder);
     modelBuilder.clear();
 
@@ -91,7 +97,7 @@ describe('ModelBuilder', function () {
   });
 
 
-  describe('ModelBuilder#commitChange', function () {
+  describe('GridModelBuilder#commitChange', function () {
     context('when a current change is present', function () {
       it('should use current change when no arguments are provided',
         function () {
@@ -225,7 +231,7 @@ describe('ModelBuilder', function () {
     });
   });
 
-  describe('ModelBuilder#exportModel', function () {
+  describe('GridModelBuilder#exportModel', function () {
     before(function () {
       sinon.spy(IdentityConverter, 'fromCommonModelFormat');
     });
