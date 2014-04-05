@@ -89,6 +89,17 @@ define(['underscore'], function (_) {
   };
 
 
+  // relativePosition transforms a coordinate to be based upon the internal
+  // frame coordinate system.
+  //
+  // Arguments:
+  //   coord: object with 'x' and 'y' fields.
+  // Returns an object with 'x' and 'y' fields.
+  Frame.prototype.relativePosition = function (coord) {
+    return { x: coord.x - this._origin.x, y: coord.y - this._origin.y };
+  };
+
+
   // resize sets the frames dimensions to the given value
   Frame.prototype.resize = function (dimensions) {
     this._dim = _.clone(dimensions);
