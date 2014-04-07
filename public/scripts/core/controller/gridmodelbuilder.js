@@ -12,7 +12,7 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     //   loc: location of initial fill operation
     //   dim: dimensions of canvas
     //   fillElement: element to fill
-    // Returns an array of pixels that are affected by the fill operation
+    // Returns an array of elements that are added by the fill operation
     function fillArea (elements, loc, dim, fillElement) {
       var filledElements = Object.create(null);
       var locationStack = [loc];
@@ -101,8 +101,10 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     // clear removes all elements from the model within the GridModelBuilder
     // frame.
     GridModelBuilder.prototype.clear = function () {
-      this.commitChange({ action: GridModel.MODEL_ACTIONS.CLEAR,
-                          elements: this._elementsToClear() });
+      this.commitChanges([{
+        action: GridModel.MODEL_ACTIONS.CLEAR,
+        elements: this._elementsToClear()
+      }]);
       this.paint();
     };
 
@@ -111,7 +113,9 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     // being constructed
     //
     // Arguments:
-    //   changes: Optional, Array of changes to commit. If unspecified commit
+    //   changes: Optional, Array of changes to commit, which are objects
+    //            with 'action' field (any GridModel.MODEL_ACTION) and
+    //            'elements' field. Defaults to an array containing
     //            currentChange
     //   preserveRedoStack: Optional, if true does not clear redo stack on
     //                      commit
@@ -161,7 +165,7 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
         elements: this.model.getElements(this)
       };
 
-      return JSON.stringify(this.converter.fromGridModelFormat(model));
+      return JSON.stringify(this.converter.fromCommonModelFormat(model));
     };
 
 
@@ -182,6 +186,17 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     //   An object with at least a 'color' field
     GridModelBuilder.prototype.getCurrentElement = function () {
       return this.currentElement;
+    };
+
+
+    // getModelElements returns the model elements contained within the bounds
+    // of the GridModelBuilder frame
+    //
+    // Returns an array containing objects with at least 'x', 'y', and 'color'
+    // fields
+    GridModelBuilder.prototype.getModelElements = function () {
+      var changes = this.currentChange ? [this.currentChange] : [];
+      return this.model.getElements(this, changes);
     };
 
 
@@ -261,7 +276,8 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     GridModelBuilder.prototype.paint = function () {
       var elements;
 
-      elements = this.model.getElements(this, [this.currentChange]);
+      var changes = this.currentChange ? [this.currentChange] : [];
+      elements = this.model.getElements(this, changes);
 
       _.each(elements, function(e) {
         this.pCanvas.setPixel(e.x, e.y, e.color);
