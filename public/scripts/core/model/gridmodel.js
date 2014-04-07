@@ -71,7 +71,7 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
         // dimensions to allow element to be inserted.
         if (offsetCoord.x >= this._dim.width || offsetCoord.x < 0 ||
             offsetCoord.y >= this._dim.height || offsetCoord.y < 0) {
-          this._updateSizing(offsetCoord);
+          this._updateSizing(offsetCoord, _.values(existingElementMap));
           existingElementMap = this._createElementMap(
               _.values(existingElementMap));
         }
@@ -85,8 +85,8 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
         else if (change.action === GridModel.MODEL_ACTIONS.SET) {
           existingElementMap[encoded] = e;
         }
-      });
-    });
+      }, this);
+    }, this);
 
     return _.values(existingElementMap);
   };
@@ -105,7 +105,7 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
       this._elementsWithChanges(opt_changes) : this._elements;
 
     return _.reduce(elements, function (memo, e) {
-      if (frame.contains(e)) {
+      if (frame.containsCoord(e)) {
         memo.push(_.extend(_.clone(e), frame.relativePosition(e)));
       }
       return memo;
@@ -142,13 +142,13 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
     }
     if (offsetCoord.y < 0) {
       this._offset.y += -1 * offsetCoord.y;
-      this._dim.width = 0;
+      this._dim.height = 0;
     }
 
     _.each(opt_elements || this._elements, function (e) {
       var offsetElement = this._offsetElement(e);
-      this._dim.x = Math.max(this._dim.width, offsetElement.x);
-      this._dim.y = Math.max(this._dim.height, offsetElement.y);
+      this._dim.width = Math.max(this._dim.width, offsetElement.x);
+      this._dim.height = Math.max(this._dim.height, offsetElement.y);
     }, this);
   };
 
