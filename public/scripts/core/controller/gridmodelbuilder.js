@@ -71,13 +71,14 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
       Subscriber.call(this);
       Frame.call(this, pixelCanvas.getDimensions(), { x: 0, y: 0 });
 
-      this.action = GridModelBuilder.CONTROLLER_ACTIONS.SET;
-      this.converter = converter;
-      this.currentChange = null; // always null unless mouse is down in canvas
-      this.model = model;
-      this.pCanvas = pixelCanvas;
-      this.redoStack = [];
-      this.undoStack = [];
+      this._action = GridModelBuilder.CONTROLLER_ACTIONS.SET;
+      this._converter = converter;
+      this._currentChange = null; // always null unless mouse is down in canvas
+      this._model = model;
+      this._pCanvas = pixelCanvas;
+      this._redoStack = [];
+      this._undoStack = [];
+      this._userCanvasActionCallback = function () {};
 
       this.setCurrentElement(initialElement);
       this.setDefaultElement(defaultElement);
@@ -120,14 +121,14 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     //   preserveRedoStack: Optional, if true does not clear redo stack on
     //                      commit
     GridModelBuilder.prototype.commitChanges = function (changes,
-                                                     preserveRedoStack) {
+                                                         preserveRedoStack) {
       if (!changes) {
-        changes = [this.currentChange];
-        this.currentChange = null;
+        changes = [this._currentChange];
+        this._currentChange = null;
       }
-      this.model.applyChanges(changes);
-      if (!preserveRedoStack) this.redoStack = [];
-      this.undoStack.push(changes);
+      this._model.applyChanges(changes);
+      if (!preserveRedoStack) this._redoStack = [];
+      this._undoStack.push(changes);
     };
 
 
@@ -162,10 +163,10 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
         defaultElement: this.defaultElement,
         currentElement: this.currentElement,
         dimensions: this.getDimensions(),
-        elements: this.model.getElements(this)
+        elements: this._model.getElements(this)
       };
 
-      return JSON.stringify(this.converter.fromCommonModelFormat(model));
+      return JSON.stringify(this._converter.fromCommonModelFormat(model));
     };
 
 
@@ -195,14 +196,14 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     // Returns an array containing objects with at least 'x', 'y', and 'color'
     // fields
     GridModelBuilder.prototype.getModelElements = function () {
-      var changes = this.currentChange ? [this.currentChange] : [];
-      return this.model.getElements(this, changes);
+      var changes = this._currentChange ? [this._currentChange] : [];
+      return this._model.getElements(this, changes);
     };
 
 
     // importModel loads an model JSON string saved using exportModel 
     GridModelBuilder.prototype.importModel = function (modelJSON) {
-      var modelObj = this.converter.toGridModelFormat(JSON.parse(modelJSON));
+      var modelObj = this._converter.toCommonModelFormat(JSON.parse(modelJSON));
 
       this.setDefaultElement(modelObj.defaultElement);
       this.setCurrentElement(modelObj.currentElement);
@@ -211,7 +212,7 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
         { action: GridModel.MODEL_ACTIONS.CLEAR,
           elements: this._elementsToClear() },
         { action: GridModel.MODEL_ACTIONS.SET,
-          elements: this._modelObj.elements }
+          elements: modelObj.elements }
       ]);
 
       this.paint();
@@ -222,10 +223,10 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     // PixelCanvas onclick event has run
     //
     // Arguments:
-    //   callbackFunction: A function that may optionally take a jQuery click
-    //                     event to do further processing with the click
-    GridModelBuilder.prototype.mousemove = function (callbackFunction) {
-      this.mouseMoveAction = callbackFunction;
+    //   callbackFunction: A function that takes zero arguments, to be called
+    //                     after canvas actions.
+    GridModelBuilder.prototype.afterCanvasAction = function (callbackFunction) {
+      this._userCanvasActionCallback = callbackFunction;
     };
 
 
@@ -233,32 +234,34 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     // is fired
     GridModelBuilder.prototype._onCanvasAction = function (params) {
       var coords = params.positions;
-      this.currentChange = Object.create(null);
+      this._currentChange = Object.create(null);
       var mousePos = _.last(coords);
 
-      if (this.action === GridModelBuilder.CONTROLLER_ACTIONS.GET) {
-        var element = _.find(this.model.getElements(this), function (e) {
+      if (this._action === GridModelBuilder.CONTROLLER_ACTIONS.GET) {
+        var element = _.find(this._model.getElements(this), function (e) {
           return e.x === mousePos.x && e.y === mousePos.y;
         });
         element = element || this.defaultElement;
         this.setCurrentElement(element);
         return;
       }
-      else if (this.action === GridModelBuilder.CONTROLLER_ACTIONS.SET ||
-               this.action === GridModelBuilder.CONTROLLER_ACTIONS.CLEAR) {
-        this.currentChange.elements = _.map(params.positions, function (p) {
+      else if (this._action === GridModelBuilder.CONTROLLER_ACTIONS.SET ||
+               this._action === GridModelBuilder.CONTROLLER_ACTIONS.CLEAR) {
+        this._currentChange.elements = _.map(params.positions, function (p) {
           return _.extend(_.clone(this.currentElement), p);
         }, this);
-        this.currentChange.action = this.action;
+        this._currentChange.action = this._action;
         this.paint();
       }
-      else if (this.action === GridModelBuilder.CONTROLLER_ACTIONS.FILL) {
-        this.currentChange.elements = fillArea(this.elements, mousePos,
-                                               this.getDimensions(),
-                                               this.currentElement);
-        this.currentChange.action = GridModel.MODEL_ACTIONS.SET;
+      else if (this._action === GridModelBuilder.CONTROLLER_ACTIONS.FILL) {
+        this._currentChange.elements = fillArea(this.elements, mousePos,
+                                                this.getDimensions(),
+                                                this.currentElement);
+        this._currentChange.action = GridModel.MODEL_ACTIONS.SET;
         this.paint();
       }
+      
+      this._userCanvasActionCallback();
     };
 
 
@@ -266,7 +269,7 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     // is fired
     GridModelBuilder.prototype._onCanvasRelease = function (params) {
       this._onCanvasAction(params);
-      if (!this.currentChange.elements || !this.currentChange.action) return;
+      if (!this._currentChange.elements || !this._currentChange.action) return;
       this.commitChanges();
     };
 
@@ -276,15 +279,15 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     GridModelBuilder.prototype.paint = function () {
       var elements;
 
-      var changes = this.currentChange ? [this.currentChange] : [];
-      elements = this.model.getElements(this, changes);
+      var changes = this._currentChange ? [this._currentChange] : [];
+      elements = this._model.getElements(this, changes);
 
       _.each(elements, function(e) {
-        this.pCanvas.setPixel(e.x, e.y, e.color);
+        this._pCanvas.setPixel(e.x, e.y, e.color);
       }, this);
 
-      this.pCanvas.clear();
-      this.pCanvas.paint();
+      this._pCanvas.clear();
+      this._pCanvas.paint();
       EventHub.trigger("modelbuilder.redraw");
     };
 
@@ -292,8 +295,8 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     // redo reapplys a change removed by an undo command if such a change
     // exists
     GridModelBuilder.prototype.redo = function () {
-      if (this.redoStack.length === 0) return;
-      var changes = this.redoStack.pop();
+      if (this._redoStack.length === 0) return;
+      var changes = this._redoStack.pop();
       this.commitChanges(changes, true);
       this.paint();
     };
@@ -307,7 +310,7 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     //   height: height of the pixel canvas in meta-pixels
     GridModelBuilder.prototype.resize = function (width, height){
       Frame.prototype.resize.call(this, { width: width, height: height });
-      this.pCanvas.resize({ width: width, height: height });
+      this._pCanvas.resize({ width: width, height: height });
       this.paint();
     };
 
@@ -324,7 +327,7 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     //                 "fill", fills the like area around the clicked pixel
     GridModelBuilder.prototype.setAction = function (actionString) {
       if (_.has(_.invert(GridModelBuilder.CONTROLLER_ACTIONS), actionString)) {
-        this.action = actionString;
+        this._action = actionString;
       }
     };
 
@@ -337,7 +340,7 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     GridModelBuilder.prototype.setDefaultElement = function (element) {
       this.defaultElement = _.omit(element, "x", "y");
       this.defaultElement.color = Color.sanitize(this.defaultElement.color);
-      this.pCanvas.setBackgroundColor(this.defaultElement.color);
+      this._pCanvas.setBackgroundColor(this.defaultElement.color);
       this.paint();
     };
 
@@ -355,10 +358,10 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
 
     // undo removes the most recent change and places it in the redoStack
     GridModelBuilder.prototype.undo = function () {
-      if (this.undoStack.length === 0) return;
-      this.redoStack.push(this.undoStack.pop());
-      this.model.clear();
-      this.model.applyChanges(_.flatten(this.undoStack));
+      if (this._undoStack.length === 0) return;
+      this._redoStack.push(this._undoStack.pop());
+      this._model.clear();
+      this._model.applyChanges(_.flatten(this._undoStack));
       this.paint();
     };
 
