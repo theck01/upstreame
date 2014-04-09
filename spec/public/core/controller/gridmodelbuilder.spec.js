@@ -12,6 +12,7 @@ requirejs.config({
   }
 });
 
+var EventHub = requirejs('core/controller/eventhub');
 var GridModelBuilder = requirejs('core/controller/gridmodelbuilder');
 var GridModel = requirejs('core/model/gridmodel');
 var IdentityConverter = requirejs('core/model/converters/identityconverter');
@@ -89,7 +90,7 @@ describe('GridModelBuilder', function () {
             elements: elements
           };
 
-          modelBuilder.currentChange = expectedChange;
+          EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
           modelBuilder.commitChanges();
 
           assert(applyChangesSpy.calledOnce);
@@ -171,6 +172,7 @@ describe('GridModelBuilder', function () {
     });
   });
 
+
   describe('exportModel', function () {
     before(function () {
       sinon.spy(IdentityConverter, 'fromCommonModelFormat');
@@ -197,5 +199,82 @@ describe('GridModelBuilder', function () {
     after(function () {
       IdentityConverter.fromCommonModelFormat.restore();
     });
+  });
+
+
+  it('should retrieve the active element on getCurrentElement', function () {
+    assert(_.isEqual(modelBuilder.getCurrentElement(), { color: '#000000' }));
+  });
+
+
+  it('should retrieve the active element on getDefaultElement', function () {
+    assert(_.isEqual(modelBuilder.getDefaultElement(), { color: '#FFFFFF' }));
+  });
+
+
+  it('should retrieve elements within builder frame relative to the frame on ' +
+    'getModelElements', function () {
+      makeEdits(modelBuilder);
+
+      var elements = [
+        { x: 0, y: 1, color: '#000000' },
+        { x: 1, y: 0, color: '#000000' },
+        { x: 0, y: 0, color: '#FF0000' }
+      ];
+      assert(elementArraysEqual(modelBuilder.getModelElements, elements));
+      
+      modelBuilder.move({ x: -1, y: -1 });
+      modelBuilder.resize({ width: 2, height: 2 });
+
+      elements = [
+        { x: 1, y: 1, color: '#FF0000' }
+      ];
+      assert(elementArraysEqual(modelBuilder.getModelElements, elements));
+    }
+  );
+
+
+  it('should import a model encoded as a JSON string on importModel',
+    function () {
+      var modelObj = {
+        defaultElement: { color: '#777777' },
+        currentElement: { color: '#AAAAAA' },
+        dimensions: { width: 10, height: 10 },
+        elements: [
+          { x: 0, y: 0, color: '#FFFFFF' },
+          { x: 5, y: 5, color: '#00FF00' },
+          { x: 9, y: 9, color: '#0000FF' }
+        ]
+      };
+
+      modelBuilder.importModel(JSON.stringify(modelObj));
+      assert(_.isEqual(modelBuilder.getCurrentElement(),
+                       modelObj.currentElement));
+      assert(_.isEqual(modelBuilder.getDefaultElement(),
+                       modelObj.defaultElement));
+      assert(_.isEqual(modelBuilder.getDimensions(), modelObj.dimensions));
+      assert(elementArraysEqual(modelBuilder.getModelElements(),
+                                modelObj.elements));
+    }
+  );
+
+
+  it('should set callback to be called on mouse move actions on mousemove',
+    function () {
+      var canvasActionSpy = sinon.spy();
+      modelBuilder.afterCanvasAction(canvasActionSpy);
+      EventHub.trigger('canvas.action', { positions: [] });
+
+      assert(canvasActionSpy.calledOnce);
+    }
+  );
+
+
+  describe('paint', function () {
+    it('should paint all elements within builder frame to the canvas',
+      function () {
+
+      }
+    );
   });
 });
