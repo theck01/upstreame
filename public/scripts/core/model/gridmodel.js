@@ -113,6 +113,18 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
   };
 
 
+  // getPosition returns the current offset and dimensions maintained by the
+  // GridModel instance
+  //
+  // Returns an object with 'offset' and  'dimensions' fields
+  GridModel.prototype.getPosition = function () {
+    return {
+      offset: _.clone(this._offset),
+      dimensions: _.clone(this._dim)
+    };
+  };
+
+
   // _offsetElement returns the coordinate location of the element offset by
   // the internal model offset.
   //

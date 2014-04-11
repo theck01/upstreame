@@ -99,6 +99,17 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     };
 
 
+    // afterCanvasAction registers mousemove callback for canvas to run after
+    // the body PixelCanvas onclick event has run
+    //
+    // Arguments:
+    //   callbackFunction: A function that takes zero arguments, to be called
+    //                     after canvas actions.
+    GridModelBuilder.prototype.afterCanvasAction = function (callbackFunction) {
+      this._userCanvasActionCallback = callbackFunction;
+    };
+
+
     // clear removes all elements from the model within the GridModelBuilder
     // frame.
     GridModelBuilder.prototype.clear = function () {
@@ -170,13 +181,12 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     };
 
 
-    // getDefaultElement returns the default element used for all unset
-    // elements in the model
+    // getCurrentChange returns the pending change that has yet to be committed
+    // to the model.
     //
-    // Returns:
-    //   An object with at least a 'color' field
-    GridModelBuilder.prototype.getDefaultElement = function () {
-      return this.defaultElement;
+    // Returns an object with at 'elements' and 'action' fields.
+    GridModelBuilder.prototype.getCurrentChange = function () {
+      return _.clone(this._currentChange);
     };
 
 
@@ -190,6 +200,16 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     };
 
 
+    // getDefaultElement returns the default element used for all unset
+    // elements in the model
+    //
+    // Returns:
+    //   An object with at least a 'color' field
+    GridModelBuilder.prototype.getDefaultElement = function () {
+      return this.defaultElement;
+    };
+
+
     // getModelElements returns the model elements contained within the bounds
     // of the GridModelBuilder frame
     //
@@ -198,6 +218,14 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     GridModelBuilder.prototype.getModelElements = function () {
       var changes = this._currentChange ? [this._currentChange] : [];
       return this._model.getElements(this, changes);
+    };
+
+
+    // hasRedos returns true if the builder has redos available, false if not.
+    //
+    // Returns a boolean.
+    GridModelBuilder.prototype.hasRedos = function () {
+      return this._redoStack.length > 0;
     };
 
 
@@ -219,22 +247,11 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     };
 
 
-    // mousemove registers mousemove callback for canvas to run after the body
-    // PixelCanvas onclick event has run
-    //
-    // Arguments:
-    //   callbackFunction: A function that takes zero arguments, to be called
-    //                     after canvas actions.
-    GridModelBuilder.prototype.afterCanvasAction = function (callbackFunction) {
-      this._userCanvasActionCallback = callbackFunction;
-    };
-
-
     // _onCanvasAction listens updates change state when 'canvas.action' event
     // is fired
     GridModelBuilder.prototype._onCanvasAction = function (params) {
       var coords = params.positions;
-      this._currentChange = Object.create(null);
+      this._currentChange = null;
       var mousePos = _.last(coords);
 
       if (this._action === GridModelBuilder.CONTROLLER_ACTIONS.GET) {
@@ -247,17 +264,21 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
       }
       else if (this._action === GridModelBuilder.CONTROLLER_ACTIONS.SET ||
                this._action === GridModelBuilder.CONTROLLER_ACTIONS.CLEAR) {
-        this._currentChange.elements = _.map(params.positions, function (p) {
-          return _.extend(_.clone(this.currentElement), p);
-        }, this);
-        this._currentChange.action = this._action;
+        this._currentChange = {
+          elements : _.map(params.positions, function (p) {
+            return _.extend(_.clone(this.currentElement), p);
+          }, this),
+          action: this._action
+        };
+
         this.paint();
       }
       else if (this._action === GridModelBuilder.CONTROLLER_ACTIONS.FILL) {
-        this._currentChange.elements = fillArea(this.elements, mousePos,
-                                                this.getDimensions(),
-                                                this.currentElement);
-        this._currentChange.action = GridModel.MODEL_ACTIONS.SET;
+        this._currentChange = {
+          elements: fillArea(this.elements, mousePos, this.getDimensions(),
+                              this.currentElement),
+          action: GridModel.MODEL_ACTIONS.SET
+        };
         this.paint();
       }
       
@@ -269,7 +290,7 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     // is fired
     GridModelBuilder.prototype._onCanvasRelease = function (params) {
       this._onCanvasAction(params);
-      if (!this._currentChange.elements || !this._currentChange.action) return;
+      if (!this._currentChange) return;
       this.commitChanges();
     };
 

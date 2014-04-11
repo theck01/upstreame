@@ -11,6 +11,7 @@ requirejs.config({
 });
 
 var GridModel = requirejs('core/model/gridmodel');
+var Encoder = requirejs('core/util/encoder');
 var Frame = requirejs('core/util/frame');
 
 
@@ -48,12 +49,33 @@ function makeEdits(gridModel) {
 }
 
 
-function elementArraysEqual(ary1, ary2) {
-  return _.reduce(ary1, function (memo, e1) {
-    return memo && _.find(ary2, function (e2) {
-      return _.isEqual(e1, e2);
-    });
-  }, true);
+function assertModelHasElements(model, frame, elements, opt_changes) {
+  var oa1 = model.getElements(frame, opt_changes ? opt_changes : []);
+  var oa2 = elements;
+
+  var modelPosition = model.getPosition();
+  var dimensions = {};
+  dimensions.width = modelPosition.dimensions.width + modelPosition.offset.x;
+  dimensions.height = modelPosition.dimensions.height + modelPosition.offset.y;
+
+  if (oa1.length !== oa2.length) {
+    throw new Error('Pixel arrays not equivalent lengths');
+  }
+
+  oa1 = _.sortBy(oa1, function (p) {
+    return Encoder.coordToScalar(model._offsetElement(p), dimensions);
+  });
+  oa2 = _.sortBy(oa2, function (p) {
+    return Encoder.coordToScalar(model._offsetElement(p), dimensions);
+  });
+
+  var zipped = _.zip(oa1, oa2);
+
+  _.each(zipped, function (pair) {
+    if (!_.isEqual(pair[0], pair[1])) {
+      throw new Error('Model does not have expected elements.');
+    }
+  });
 }
 
 
@@ -94,7 +116,7 @@ describe('GridModel', function () {
           var elements = gridModel.getElements(frame);
 
           assert(elements.length === 3);
-          assert(elementArraysEqual(elements, relativeElements));
+          assertModelHasElements(gridModel, frame, relativeElements);
         });
 
         it('should overwrite existing elements', function () {
@@ -131,7 +153,7 @@ describe('GridModel', function () {
           var elements = gridModel.getElements(frame);
 
           assert(elements.length === 3);
-          assert(elementArraysEqual(elements, relativeElements));
+          assertModelHasElements(gridModel, frame, relativeElements);
         });
       }
     );
@@ -168,7 +190,7 @@ describe('GridModel', function () {
           var elements = gridModel.getElements(frame);
 
           assert(elements.length === 1);
-          assert(elementArraysEqual(elements, relativeElements));
+          assertModelHasElements(gridModel, frame, relativeElements);
         });
 
 
@@ -206,7 +228,7 @@ describe('GridModel', function () {
           var elements = gridModel.getElements(frame);
 
           assert(elements.length === 3);
-          assert(elementArraysEqual(elements, relativeElements));
+          assertModelHasElements(gridModel, frame, relativeElements);
         });
       }
     );
@@ -228,16 +250,15 @@ describe('GridModel', function () {
         function () {
           var expectedElements = makeEdits(gridModel);
 
-          assert(elementArraysEqual(gridModel.getElements(frame),
-                                    expectedElements));
+          debugger;
+          assertModelHasElements(gridModel, frame, expectedElements);
 
           frame.resize({ width: 2, height: 1 });
           frame.move({ x: 0, y: 1 });
 
           expectedElements = [{ x: 0, y: 1, color: '#FFFFFF' }];
 
-          assert(elementArraysEqual(gridModel.getElements(frame),
-                                    expectedElements));
+          assertModelHasElements(gridModel, frame, expectedElements);
         }
       );
     });
@@ -253,8 +274,7 @@ describe('GridModel', function () {
 
         expectedElements.push(changeElement);
 
-        assert(elementArraysEqual(gridModel.getElements(frame, changes),
-                                  expectedElements));
+        assertModelHasElements(gridModel, frame, expectedElements, changes);
       });
 
       it('should not permanetly apply changes to the model', function () {
@@ -266,8 +286,7 @@ describe('GridModel', function () {
         }];
 
         gridModel.getElements(frame, changes);
-        assert(elementArraysEqual(gridModel.getElements(frame),
-                                  expectedElements));
+        assertModelHasElements(gridModel, frame, expectedElements, changes);
       });
     });
   });

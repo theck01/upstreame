@@ -61,6 +61,7 @@ MockPixelCanvas.prototype.getRenderedPixels = function () {
   return _.values(this.renderedPixels);
 };
 
+
 // paint clears rendered pixels
 MockPixelCanvas.prototype.paint = function () {
   this.renderedPixels = Object.create(null);
