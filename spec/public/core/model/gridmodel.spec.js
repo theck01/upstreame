@@ -250,7 +250,6 @@ describe('GridModel', function () {
         function () {
           var expectedElements = makeEdits(gridModel);
 
-          debugger;
           assertModelHasElements(gridModel, frame, expectedElements);
 
           frame.resize({ width: 2, height: 1 });

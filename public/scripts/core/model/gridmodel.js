@@ -46,7 +46,7 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
   //                 'color' fields.
   GridModel.prototype._createElementMap = function (opt_elements) {
     return _.reduce(opt_elements || this._elements, function (map, e) {
-      map[Encoder.coordToScalar(e, this._dim)] = e;
+      map[Encoder.coordToScalar(this._offsetElement(e), this._dim)] = e;
       return map;
     }, Object.create(null), this);
   };
@@ -71,12 +71,13 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
         // dimensions to allow element to be inserted.
         if (offsetCoord.x >= this._dim.width || offsetCoord.x < 0 ||
             offsetCoord.y >= this._dim.height || offsetCoord.y < 0) {
-          this._updateSizing(offsetCoord, _.values(existingElementMap));
+          this._updateSizing(offsetCoord);
           existingElementMap = this._createElementMap(
               _.values(existingElementMap));
+          offsetCoord = this._offsetElement(e);
         }
 
-        var encoded = Encoder.coordToScalar(e, this._dim);
+        var encoded = Encoder.coordToScalar(offsetCoord, this._dim);
 
         if (change.action === GridModel.MODEL_ACTIONS.CLEAR &&
             _.has(existingElementMap, encoded)) {
@@ -142,26 +143,23 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
   // Arguments:
   //    offsetCoord: The offset coordinate tha does not fit within the existing
   //                 model dimensions.
-  //    opt_elements: Optional An array of objects with 'x', 'y' and 'color'
-  //                  fields. Internal state will be used if argument is not
-  //                  specified.
-  GridModel.prototype._updateSizing = function (offsetCoord, opt_elements) {
+  GridModel.prototype._updateSizing = function (offsetCoord) {
     this._dim = { width: offsetCoord.x, height: offsetCoord.y };
 
     if (offsetCoord.x < 0) {
-      this._offset.x += -1 * offsetCoord.x;
-      this._dim.width = 0;
+      this._offset.x += -offsetCoord.x;
+      this._dim.width += -offsetCoord.x;
+    }
+    else if (this._dim.width <= offsetCoord.x) {
+      this._dim.width = offsetCoord.x + 1;
     }
     if (offsetCoord.y < 0) {
-      this._offset.y += -1 * offsetCoord.y;
-      this._dim.height = 0;
+      this._offset.y += -offsetCoord.y;
+      this._dim.height += -offsetCoord.y;
     }
-
-    _.each(opt_elements || this._elements, function (e) {
-      var offsetElement = this._offsetElement(e);
-      this._dim.width = Math.max(this._dim.width, offsetElement.x);
-      this._dim.height = Math.max(this._dim.height, offsetElement.y);
-    }, this);
+    else if (this._dim.height <= offsetCoord.y) {
+      this._dim.height = offsetCoord.y + 1;
+    }
   };
 
 
