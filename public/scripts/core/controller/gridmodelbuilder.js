@@ -235,7 +235,7 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
 
       this.setDefaultElement(modelObj.defaultElement);
       this.setCurrentElement(modelObj.currentElement);
-      this.resize(modelObj.dimensions.width, modelObj.dimensions.height);
+      this.resize(modelObj.dimensions);
       this.commitChanges([
         { action: GridModel.MODEL_ACTIONS.CLEAR,
           elements: this._elementsToClear() },
@@ -327,11 +327,10 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
     // on the canvas element
     //
     // Arguments:
-    //   width: width of the pixel canvas in meta-pixels
-    //   height: height of the pixel canvas in meta-pixels
-    GridModelBuilder.prototype.resize = function (width, height){
-      Frame.prototype.resize.call(this, { width: width, height: height });
-      this._pCanvas.resize({ width: width, height: height });
+    //   dimensions: object with 'width' and 'height' fields.
+    GridModelBuilder.prototype.resize = function (dimensions){
+      Frame.prototype.resize.call(this, dimensions);
+      this._pCanvas.resize(dimensions);
       this.paint();
     };
 

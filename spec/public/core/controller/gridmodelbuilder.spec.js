@@ -43,33 +43,35 @@ function makeEdits(modelBuilder) {
 }
 
 
-function assertModelBuilderHasElements(modelBuilder, elements,
-                                       opt_orderMatters) {
-  var oa1 = modelBuilder.getModelElements();
-  var oa2 = elements;
-  var dimensions = modelBuilder.getDimensions();
-
-  if (oa1.length !== oa2.length) {
+function assertElementArraysEqual(ea1, ea2, dimensions, opt_orderMatters) {
+  if (ea1.length !== ea2.length) {
     throw new Error('Pixel arrays not equivalent lengths');
   }
 
   if (!opt_orderMatters) {
-    oa1 = _.sortBy(oa1, function (p) {
+    ea1 = _.sortBy(ea1, function (p) {
       return Encoder.coordToScalar(p, dimensions);
     });
-    oa2 = _.sortBy(oa2, function (p) {
+    ea2 = _.sortBy(ea2, function (p) {
       return Encoder.coordToScalar(p, dimensions);
     });
   }
 
-  var zipped = _.zip(oa1, oa2);
+  var zipped = _.zip(ea1, ea2);
 
   _.each(zipped, function (pair) {
     if (!_.isEqual(pair[0], pair[1])) {
-      throw new Error('Element arrays not equal:\n' + JSON.stringify(oa1) +
-                      '\n' + JSON.stringify(oa2));
+      throw new Error('Element arrays not equal:\n' + JSON.stringify(ea1) +
+                      '\n' + JSON.stringify(ea2));
     }
   });
+}
+
+
+function assertModelBuilderHasElements(modelBuilder, elements,
+                                       opt_orderMatters) {
+  assertElementArraysEqual(modelBuilder.getModelElements(), elements,
+                           modelBuilder.getDimensions(), opt_orderMatters);
 }
 
 
@@ -252,7 +254,6 @@ describe('GridModelBuilder', function () {
         { x: 1, y: 0, color: '#000000' },
         { x: 0, y: 0, color: '#FF0000' }
       ];
-      debugger;
       assertModelBuilderHasElements(modelBuilder, elements);
       
       modelBuilder.move({ x: -1, y: -1 });
@@ -318,19 +319,22 @@ describe('GridModelBuilder', function () {
     assertModelBuilderHasElements(modelBuilder, expectedElements);
 
     modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.CLEAR);
-    EventHub.trigger('canvas.action', { positions: [{ x: 1, y: 1 }] });
+    EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
     assert(_.isEqual(modelBuilder.getCurrentChange(), {
       action: GridModel.MODEL_ACTIONS.CLEAR,
-      elements: [{ x: 1, y: 1, color: '#000000' }]
+      elements: [{ x: 0, y: 0, color: '#000000' }]
     }));
 
-    delete expectedElements[2];
+    expectedElements.splice(2, 1);
     assertModelBuilderHasElements(modelBuilder, expectedElements);
   });
 
 
   it('should build and commit the current change on "canvas.release" events',
     function () {
+      makeEdits(modelBuilder);
+      modelBuilder.resize({ width: 5, height: 5 });
+
       EventHub.trigger('canvas.release', { positions: [{ x: 3, y: 3 }] });
 
       var expectedElements = [
@@ -344,7 +348,7 @@ describe('GridModelBuilder', function () {
 
       modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.CLEAR);
       EventHub.trigger('canvas.release', { positions: [{ x: 0, y: 0 }] });
-      delete expectedElements[2];
+      expectedElements.splice(2, 1);
       assert(modelBuilder.getCurrentChange() === null);
       assertModelBuilderHasElements(modelBuilder, expectedElements);
     }
@@ -360,6 +364,7 @@ describe('GridModelBuilder', function () {
     it('should paint all elements within builder frame to the canvas',
       function () {
         makeEdits(modelBuilder);
+        modelBuilder.resize({ width: 5, height: 5 });
 
         EventHub.trigger('canvas.action', { positions: [{ x: 3, y: 3 }] });
 
@@ -373,7 +378,9 @@ describe('GridModelBuilder', function () {
           { x: 3, y: 3, color: '#000000' }
         ];
 
-        assertModelBuilderHasElements(modelBuilder, expectedElements);
+        assertElementArraysEqual(mockCanvas.getRenderedPixels(),
+                                 expectedElements,
+                                 modelBuilder.getDimensions());
         assert(stub.calledOnce);
       }
     );
@@ -394,7 +401,7 @@ describe('GridModelBuilder', function () {
 
 
     context('when there are redos in the redo stack', function () {
-      it('should process redos on the stack redos as they come', function () {
+      it('should process redos on the stack in order', function () {
         makeEdits(modelBuilder);
         modelBuilder.undo();
         modelBuilder.undo();
@@ -410,7 +417,7 @@ describe('GridModelBuilder', function () {
         assertModelBuilderHasElements(modelBuilder, expectedElements);
         assert(modelBuilder.hasRedos());
 
-        delete expectedElements[3];
+        expectedElements.splice(3, 1);
         modelBuilder.redo();
         assertModelBuilderHasElements(modelBuilder, expectedElements);
         assert(!modelBuilder.hasRedos());

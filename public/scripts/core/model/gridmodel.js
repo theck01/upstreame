@@ -144,8 +144,6 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
   //    offsetCoord: The offset coordinate tha does not fit within the existing
   //                 model dimensions.
   GridModel.prototype._updateSizing = function (offsetCoord) {
-    this._dim = { width: offsetCoord.x, height: offsetCoord.y };
-
     if (offsetCoord.x < 0) {
       this._offset.x += -offsetCoord.x;
       this._dim.width += -offsetCoord.x;

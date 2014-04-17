@@ -59,7 +59,7 @@ function assertModelHasElements(model, frame, elements, opt_changes) {
   dimensions.height = modelPosition.dimensions.height + modelPosition.offset.y;
 
   if (oa1.length !== oa2.length) {
-    throw new Error('Pixel arrays not equivalent lengths');
+    throw new Error('Element arrays not equivalent lengths');
   }
 
   oa1 = _.sortBy(oa1, function (p) {
@@ -255,7 +255,7 @@ describe('GridModel', function () {
           frame.resize({ width: 2, height: 1 });
           frame.move({ x: 0, y: 1 });
 
-          expectedElements = [{ x: 0, y: 1, color: '#FFFFFF' }];
+          expectedElements = [{ x: 0, y: 0, color: '#FFFFFF' }];
 
           assertModelHasElements(gridModel, frame, expectedElements);
         }
@@ -285,7 +285,7 @@ describe('GridModel', function () {
         }];
 
         gridModel.getElements(frame, changes);
-        assertModelHasElements(gridModel, frame, expectedElements, changes);
+        assertModelHasElements(gridModel, frame, expectedElements);
       });
     });
   });
