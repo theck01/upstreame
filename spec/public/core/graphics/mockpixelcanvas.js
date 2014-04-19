@@ -19,7 +19,8 @@ var Frame = requirejs('core/util/frame');
 var MockPixelCanvas = function (dimensions, backgroundColor) {
   Frame.call(this, dimensions, { x: 0, y: 0 });
   this.backgroundColor = Color.sanitize(backgroundColor);
-  this.clear();
+  this.pixelsToRender = Object.create(null);
+  this.renderedPixels = Object.create(null);
 };
 MockPixelCanvas.prototype = Object.create(Frame.prototype);
 MockPixelCanvas.prototype.constructor = MockPixelCanvas;
@@ -49,7 +50,7 @@ MockPixelCanvas.prototype.getCanvasID = function () {
 //   A color hexadecimal string in the format "#RRGGBB"
 MockPixelCanvas.prototype.getPixel = function (x, y) {
   var scalar = Encoder.coordToScalar({ x: x, y: y }, this.getDimensions());
-  return this.renderedPixels[scalar] || this.backgroundColor;
+  return this.pixelsToRender[scalar] || this.backgroundColor;
 };
 
 
@@ -61,9 +62,11 @@ MockPixelCanvas.prototype.getRenderedPixels = function () {
   return _.values(this.renderedPixels);
 };
 
+
 // paint clears rendered pixels
 MockPixelCanvas.prototype.paint = function () {
-  this.renderedPixels = Object.create(null);
+  this.renderedPixels = this.pixelsToRender;
+  this.pixelsToRender = Object.create(null);
 };
 
 
@@ -73,6 +76,7 @@ MockPixelCanvas.prototype.paint = function () {
 //   dimensions: object with 'width' and 'height' fields
 MockPixelCanvas.prototype.resize = function (dimensions) {
   Frame.prototype.resize.call(this, dimensions);
+  this.pixelsToRender = Object.create(null);
   this.renderedPixels = Object.create(null);
 };
 
@@ -102,7 +106,7 @@ MockPixelCanvas.prototype.setBackgroundColor = function (backgroundColor) {
 //   color: A hexadecimal string in the format "#RRGGBB"
 MockPixelCanvas.prototype.setPixel = function (x, y, color) {
   var scalar = Encoder.coordToScalar({ x: x, y: y }, this.getDimensions());
-  this.renderedPixels[scalar] = { x: x, y: y, color: Color.sanitize(color) };
+  this.pixelsToRender[scalar] = { x: x, y: y, color: Color.sanitize(color) };
 };
 
 
