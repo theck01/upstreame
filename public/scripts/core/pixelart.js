@@ -13,13 +13,14 @@ require.config({
 });
 
 
-require(["jquery", "underscore", "core/controller/modelbuilder",
+require(["jquery", "underscore", "core/controller/gridmodelbuilder",
          "core/graphics/color", "core/graphics/pixelcanvas",
          "core/interface/clickcanvasinterface", "core/interface/statusalert",
-         "core/model/converters/spriteconverter", "core/controller/eventhub",
-         "bootstrap", "core/interface/toollayoutloginform"],
-  function ($, _, ModelBuilder, Color, PixelCanvas, CanvasClickInterface,
-            StatusAlert, SpriteConverter, EventHub) {
+         "core/model/converters/spriteconverter", "core/model/gridmodel",
+         "core/controller/eventhub", "bootstrap",
+         "core/interface/toollayoutloginform"],
+  function ($, _, GridModelBuilder, Color, PixelCanvas, CanvasClickInterface,
+            StatusAlert, SpriteConverter, GridModel, EventHub) {
     // persistent UI variables
     var $backgroundColorInput;
     var $backgroundColorPreview;
@@ -138,9 +139,11 @@ require(["jquery", "underscore", "core/controller/modelbuilder",
 
       clickInterface = new CanvasClickInterface(pixelCanvas);
 
-      modelBuilder = new ModelBuilder(pixelCanvas, { color: "#FFFFFF" },
-                                      { color: "#000000" }, SpriteConverter);
-      modelBuilder.mousemove(function () {
+      modelBuilder = new GridModelBuilder(
+          new GridModel(pixelCanvas.getDimensions()), pixelCanvas,
+          { color: "#FFFFFF" }, { color: "#000000" }, SpriteConverter);
+
+      modelBuilder.afterCanvasAction(function () {
         if($("input:radio[name=action]:checked").val() === "get"){
           updateColorUI();
         }
@@ -160,15 +163,15 @@ require(["jquery", "underscore", "core/controller/modelbuilder",
 
       $pixelHeight = $("#pixel-height-input");
       $pixelHeight.keyup(function () {
-        modelBuilder.resize(parseInt($pixelWidth.val(), 10) || 1,
-                            parseInt($pixelHeight.val(), 10) || 1);
+        modelBuilder.resize({ width: parseInt($pixelWidth.val(), 10) || 1,
+                              height: parseInt($pixelHeight.val(), 10) || 1 });
       });
       $pixelHeight.val(initialSize.toString());
 
       $pixelWidth = $("#pixel-width-input");
       $pixelWidth.keyup(function () {
-        modelBuilder.resize(parseInt($pixelWidth.val(), 10) || 1,
-                            parseInt($pixelHeight.val(), 10) || 1);
+        modelBuilder.resize({ width: parseInt($pixelWidth.val(), 10) || 1,
+                              height: parseInt($pixelHeight.val(), 10) || 1 });
       });
       $pixelWidth.val(initialSize.toString());
 
@@ -189,9 +192,8 @@ require(["jquery", "underscore", "core/controller/modelbuilder",
         });
         updateColorUI(true);
       });
-      
-      updateColorUI();
 
+      updateColorUI();
 
       $spriteNameInput = $("#sprite-name-input");
 
@@ -224,7 +226,6 @@ require(["jquery", "underscore", "core/controller/modelbuilder",
                 if(jqXHR.status  === 400) {
                   statusAlert.display("Client error, see console output.",
                                       true);
-                  console.log(jqXHR.responseText);
                 }
                 else if(jqXHR.status === 401) {
                   statusAlert.display("Please login before saving sprites.",
