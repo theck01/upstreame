@@ -67,5 +67,11 @@ test: install
 test-debug: install
 	@$(MOCHA) debug $(MOCHA_OPTS) $(SPECS)
 
+test-named: install
+	@$(MOCHA) $(MOCHA_OPTS) ${TEST}
+
+test-named-debug: install
+	@$(MOCHA) debug $(MOCHA_OPTS) ${TEST}
+
 test-watch: install
 	@NODE_ENV=test $(MOCHA) $(MOCHA_WATCH_OPTS)
