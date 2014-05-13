@@ -18,8 +18,14 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
       else this.backgroundColor = undefined;
       this.resize(dimensions);
       this.htmlCanvas = $(canvasID)[0];
-      this.cachedCanvasDim = Object.create(null);
-      this.cachedImageData_ = null;
+      
+      var context = this.htmlCanvas.getContext("2d");
+
+      this._cachedCanvasDim = { width: this.htmlCanvas.width,
+                                height: this.htmlCanvas.height };
+      this._cachedImageData = context.createImageData(
+          this.htmlCanvas.width, this.htmlCanvas.height);
+      this._cachedScreenParams = null;
     };
     PixelCanvas.prototype = Object.create(Frame.prototype);
     PixelCanvas.prototype.constructor = PixelCanvas;
@@ -29,7 +35,8 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     PixelCanvas.prototype.clear = function () {
       var dim = this.getDimensions();
       var context = this.htmlCanvas.getContext("2d");
-      context.clearRect(0, 0, this.htmlCanvas.width, this.htmlCanvas.height);
+      this._cachedImageData = context.createImageData(
+          this._cachedCanvasDim.width, this._cachedCanvasDim.height);
       this.pastBuffer = PixelCanvas._makePixelGrid(dim.width, dim.height,
                                                    undefined);
     };
@@ -140,16 +147,12 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
       var context = this.htmlCanvas.getContext("2d");
 
       // if the canvas has been resized, clear it as everthing must be redrawn
-      if (this.htmlCanvas.width !== this.cachedCanvasDim.width ||
-          this.htmlCanvas.height !== this.cachedCanvasDim.height) {
+      if (this.htmlCanvas.width !== this._cachedCanvasDim.width ||
+          this.htmlCanvas.height !== this._cachedCanvasDim.height) {
+        this._cachedCanvasDim = { width: this.htmlCanvas.width,
+                                  height: this.htmlCanvas.height };
         this.clear();
-        this.cachedCanvasDim = { width: this.htmlCanvas.width,
-                                 height: this.htmlCanvas.height };
-      }
-
-      if (!this.cachedImageData) {
-        this.cachedImageData = context.getImageData(
-            0, 0, this.cachedCanvasDim.width, this.cachedCanvasDim.height);
+        this._cachedScreenParams = null;
       }
 
       var diff = PixelCanvas._diffFrames(this.pixelBuffer, this.pastBuffer);
@@ -166,7 +169,7 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
         }
       }
 
-      context.putImageData(this.cachedImageData, 0, 0);
+      context.putImageData(this._cachedImageData, 0, 0);
 
       // reset grid to background color
       var tmp = this.pastBuffer;
@@ -199,7 +202,7 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
       };
 
       var imgIndex = null;
-      var imgData = this.cachedImageData;
+      var imgData = this._cachedImageData;
       var width = imgData.width;
       for (var x = bounds.xmin; x < bounds.xmax; x++) {
         for (var y = bounds.ymin; y < bounds.ymax; y++) {
@@ -244,24 +247,30 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     //   yoffset: yoffset in screen pixels of the top most pixels from the
     //            top most edge of the canvas
     PixelCanvas.prototype.screenParams = function () {
+      if (this._cachedScreenParams) return this._cachedScreenParams;
+
       var dim = this.getDimensions();
-      var retval = Object.create(null);
       var height = this.htmlCanvas.height;
       var width = this.htmlCanvas.width;
-      
+
       var xfactor = Math.floor(width/dim.width);
       var yfactor = Math.floor(height/dim.height);
 
+      this._cachedScreenParams = Object.create(null);
+
       // meta-pixel dimensions determined by the smallest screen pixel to 
       // meta-pixel ratio, so that all pixels will fit on screen
-      retval.pixelSize = xfactor < yfactor ? xfactor : yfactor;
+      this._cachedScreenParams.pixelSize = xfactor < yfactor ?
+        xfactor : yfactor;
 
       // compute offsets using computed pixelSize and number of pixels in each
       // dimension so that the canvas is centered
-      retval.xoffset = Math.floor((width - retval.pixelSize*dim.width)/2);
-      retval.yoffset = Math.floor((height - retval.pixelSize*dim.height)/2);
+      this._cachedScreenParams.xoffset = Math.floor(
+          (width - this._cachedScreenParams.pixelSize*dim.width)/2);
+      this._cachedScreenParams.yoffset = Math.floor(
+          (height - this._cachedScreenParams.pixelSize*dim.height)/2);
 
-      return retval;
+      return this._cachedScreenParams;
     };
 
 
