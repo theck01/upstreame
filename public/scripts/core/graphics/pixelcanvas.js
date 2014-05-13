@@ -19,6 +19,7 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
       this.resize(dimensions);
       this.htmlCanvas = $(canvasID)[0];
       this.cachedCanvasDim = Object.create(null);
+      this.cachedImageData_ = null;
     };
     PixelCanvas.prototype = Object.create(Frame.prototype);
     PixelCanvas.prototype.constructor = PixelCanvas;
@@ -75,7 +76,7 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
           if (!past || present[i][j] !== past[i][j]) {
             color = present[i][j] || "transparent";
             diff[color] = diff[color] || [];
-            diff[color].push({ x: i, y: j });
+            diff[color].push({ x: i, y: j, color: color });
           }
         }
       }
@@ -146,33 +147,75 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
                                  height: this.htmlCanvas.height };
       }
 
+      if (!this.cachedImageData) {
+        this.cachedImageData = context.getImageData(
+            0, 0, this.cachedCanvasDim.width, this.cachedCanvasDim.height);
+      }
+
       var diff = PixelCanvas._diffFrames(this.pixelBuffer, this.pastBuffer);
       var sparams = this.screenParams();
-      var x, y;
 
-      _.each(diff, function (pixels, color) {
-        if (color === "transparent") {
-          _.each(pixels, function (p) {
-            x = sparams.xoffset + p.x*sparams.pixelSize;
-            y = sparams.yoffset + p.y*sparams.pixelSize;
-            context.clearRect(x, y, sparams.pixelSize, sparams.pixelSize);
-          });
+      var pairs = _.pairs(diff);
+      var colorObj = { red: 255, green: 255, blue: 255 };
+      var pixels = [];
+      for(var i=0; i < pairs.length; i++) {
+        colorObj = Color.toObject(pairs[i][0], true /* opt_skipSanitation */);
+        pixels = pairs[i][1];
+        for (var j=0; j < pixels.length; j++) {
+          this._paintPixel(pixels[j], colorObj, sparams);
         }
-        else {
-          context.fillStyle = color;
-          _.each(pixels, function (p) {
-            x = sparams.xoffset + p.x*sparams.pixelSize;
-            y = sparams.yoffset + p.y*sparams.pixelSize;
-            context.fillRect(x, y, sparams.pixelSize, sparams.pixelSize);
-          });
-        }
-      });
+      }
+
+      context.putImageData(this.cachedImageData, 0, 0);
 
       // reset grid to background color
       var tmp = this.pastBuffer;
       this.pastBuffer = this.pixelBuffer;
       this.pixelBuffer = tmp;
       PixelCanvas._clearPixelGrid(this.pixelBuffer, this.backgroundColor);
+    };
+
+
+    // _paintPixel an individual metapixel in the ImageData object given screen
+    // and canvas information.
+    //
+    // Arguments:
+    //   pixel: Object with 'x', 'y', and color fields, the metapixel (x, y)
+    //          coordinate and color information.
+    //   colorObj: Object with 'red', 'green', and 'blue' fields. Color to paint
+    //             the pixel.
+    //   opt_screenParams: Optional screen parameters retrieved in a previous
+    //                     call PixelCanvas#screenParams. If unspecified new
+    //                     parameters are calculated.
+    PixelCanvas.prototype._paintPixel = function (pixel, colorObj,
+                                                  opt_screenParams) {
+      var sparams = opt_screenParams || this.screenParams();
+      
+      var bounds = {
+        xmin: pixel.x * sparams.pixelSize + sparams.xoffset,
+        xmax: (pixel.x + 1) * sparams.pixelSize + sparams.xoffset,
+        ymin: pixel.y * sparams.pixelSize + sparams.yoffset,
+        ymax: (pixel.y + 1) * sparams.pixelSize + sparams.yoffset
+      };
+
+      var imgIndex = null;
+      var imgData = this.cachedImageData;
+      var width = imgData.width;
+      for (var x = bounds.xmin; x < bounds.xmax; x++) {
+        for (var y = bounds.ymin; y < bounds.ymax; y++) {
+          imgIndex  = (y * width + x) * 4;
+
+          if (pixel.color === undefined) {
+            imgData.data[imgIndex + 3] = 0;
+          }
+          else {
+            imgData.data[imgIndex] = colorObj.red;
+            imgData.data[imgIndex + 1] = colorObj.green;
+            imgData.data[imgIndex + 2] = colorObj.blue;
+            imgData.data[imgIndex + 3] = 255;
+          }
+        }
+      }
     };
 
 
