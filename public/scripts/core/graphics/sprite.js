@@ -48,7 +48,7 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
   //
   // Returns and object with 'xmin', 'xmax', 'ymin' and 'ymax' fields
   Sprite.prototype.bounds = function () {
-    return _.clone(this.bnds);
+    return this.bnds;
   };
 
 

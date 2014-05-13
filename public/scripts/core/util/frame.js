@@ -57,7 +57,7 @@ define(['underscore'], function (_) {
   // Returns:
   //   object with 'width' and 'height' fields
   Frame.prototype.getDimensions = function () {
-    return _.clone(this._dim);
+    return this._dim;
   };
 
 
@@ -66,7 +66,7 @@ define(['underscore'], function (_) {
   // Returns:
   //   object with x and y fields
   Frame.prototype.getOrigin = function () {
-    return _.clone(this._origin);
+    return this._origin;
   };
 
 

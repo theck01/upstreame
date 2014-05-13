@@ -51,11 +51,12 @@ define(['underscore', 'core/util/bounds', 'core/util/subscriber'],
     // bounds method returns the bounds of the element
     Element.prototype.bounds = function () {
       var bounds = this.sprite.bounds();
-      bounds.xmin += this.center.x;
-      bounds.xmax += this.center.x;
-      bounds.ymin += this.center.y;
-      bounds.ymax += this.center.y;
-      return bounds;
+      return {
+        xmin: bounds.xmin + this.center.x,
+        xmax: bounds.xmax + this.center.x,
+        ymin: bounds.ymin + this.center.y,
+        ymax: bounds.ymax + this.center.y
+      };
     };
 
     
