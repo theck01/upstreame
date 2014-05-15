@@ -1,6 +1,7 @@
 define(['underscore', 'core/util/frame', 'core/util/subscriber',
-        'submersion/actors/plankton', 'submersion/util/layer'],
-  function (_, Frame, Subscriber, Plankton, Layer) {
+        'core/util/random', 'submersion/actors/plankton',
+        'submersion/util/layer'],
+  function (_, Frame, Subscriber, Random, Plankton) {
 
     var INITIAL_PLANKTON_DENSITY = 0.0001;
     var MAXIMUM_PLANKTON_DENSITY = 0.0003;
@@ -36,11 +37,11 @@ define(['underscore', 'core/util/frame', 'core/util/subscriber',
       var origin = this.getOrigin();
       for (var i=origin.x; i<origin.x + dim.width; i++) {
         for (var j=origin.y; j<origin.y + dim.height; j++) {
-          if (Math.random() < this.density) {
+          if (Random.probability(this.density)) {
             new Plankton({
               center: { x: i, y: j },
-              layer: Layer.random(Plankton.BASE_PLANKTON_LAYER,
-                                  Plankton.TOP_PLANKTON_LAYER)
+              layer: Random.integerWithinRange(Plankton.BASE_PLANKTON_LAYER,
+                                               Plankton.TOP_PLANKTON_LAYER)
             });
           }
         }
@@ -85,11 +86,11 @@ define(['underscore', 'core/util/frame', 'core/util/subscriber',
 
       for (var i=origin.x; i<origin.x + dim.width; i++) {
         for (var j=range.y.from; j<range.y.to; j++) {
-          if (Math.random() < this.density) {
+          if (Random.probability(this.density)) {
             new Plankton({
               center: { x: i, y: j },
-              layer: Layer.random(Plankton.BASE_PLANKTON_LAYER,
-                                  Plankton.TOP_PLANKTON_LAYER)
+              layer: Random.integerWithinRange(Plankton.BASE_PLANKTON_LAYER,
+                                               Plankton.TOP_PLANKTON_LAYER)
             });
           }
         }
@@ -106,11 +107,11 @@ define(['underscore', 'core/util/frame', 'core/util/subscriber',
 
       for (var i=range.x.from; i<range.x.to; i++) {
         for (var j=range.y.from; j<range.y.to; j++) {
-          if (Math.random() < this.density) {
+          if (Random.probability(this.density)) {
             new Plankton({
               center: { x: i, y: j },
-              layer: Layer.random(Plankton.BASE_PLANKTON_LAYER,
-                                  Plankton.TOP_PLANKTON_LAYER)
+              layer: Random.integerWithinRange(Plankton.BASE_PLANKTON_LAYER,
+                                               Plankton.TOP_PLANKTON_LAYER)
             });
           }
         }

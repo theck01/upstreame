@@ -9,16 +9,5 @@ define([], function () {
     foreground: 6
   };
 
-
-  // return a random layer between two layers, inclusive
-  //
-  // Arguments:
-  //   bg: Integer, the most background layer possibly selected
-  //   fg: Integer, the most forground layer possibly selected
-  Layer.random = function (bg, fg) {
-    var range = fg - bg;
-    return Math.floor(Math.random() * range) + bg;
-  };
-
   return Layer;
 });

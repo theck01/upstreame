@@ -1,6 +1,6 @@
 define(['underscore', 'core/actors/base', 'core/graphics/sprite',
-        'submersion/util/group'],
-  function (_, Base, Sprite, Group) {
+        'core/util/random', 'submersion/util/group'],
+  function (_, Base, Sprite, Random, Group) {
 
     // CONSTANTS
     var FISH_DRIFT_FREQUENCY = 30;
@@ -59,7 +59,7 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite',
       var i = ary.length;
 
       while(i > 0) {
-        var j = Math.floor(Math.random() * (i--));
+        var j = Random.integerWithinRange(0, --i);
         var tmp = ary[i];
         ary[i] = ary[j];
         ary[j] = tmp;
@@ -101,7 +101,7 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite',
       circularPath({ x: 0, y: 0 });
       while (this.fish.length < opts.count) {
         var pos = circularPath();
-        if (Math.random() < this.fishDensity) {
+        if (Random.probability(this.fishDensity)) {
           this.fish.push({ o: _.clone(pos), v: { x: 0, y: 0 }});
         }
       }
@@ -131,9 +131,9 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite',
         period = (period + 1) % FISH_MOVEMENT_PERIODS;
 
         for (var i=start; i<end; i++) {
-          school.fish[i].v.x = (Math.floor(Math.random()*3) - 1) *
+          school.fish[i].v.x = Random.integerWithinRange(0, 2) *
                                 FISH_DRIFT_VELOCITY;
-          school.fish[i].v.y = (Math.floor(Math.random()*3) - 1) *
+          school.fish[i].v.y = Random.integerWithinRange(0, 2) *
                                 FISH_DRIFT_VELOCITY;
         }
       }, FISH_DRIFT_FREQUENCY/FISH_MOVEMENT_PERIODS);

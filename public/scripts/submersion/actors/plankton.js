@@ -1,6 +1,6 @@
 define(['underscore', 'core/actors/base', 'core/graphics/sprite',
-        'submersion/util/group', 'submersion/util/layer'],
-  function (_, Base, Sprite, Group, Layer) {
+        'core/util/random', 'submersion/util/group', 'submersion/util/layer'],
+  function (_, Base, Sprite, Random, Group, Layer) {
 
     var PLANKTON_COLOR = '#5B5';
 
@@ -51,7 +51,7 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite',
       }
 
       var size = opts.layer - Plankton.BASE_PLANKTON_LAYER;
-      var randIndex = Math.floor(Math.random() * SPRITES[size].length);
+      var randIndex = Random.integerWithinRange(0, SPRITES[size].length - 1);
       opts.sprite = SPRITES[size][randIndex];
       opts.group = 'Plankton';
       opts.noncollidables = Group.collect('friendlies');
@@ -73,10 +73,10 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite',
     // overloaded Base#_act function
     Plankton.prototype._act = function () {
       if (this.steps === 0) {
-        this.move({ x: Math.floor(Math.random()*3 - 1), y: 1 });
+        this.move({ x: Random.integerWithinRange(0, 2), y: 1 });
       }
       else if (this.steps%Plankton.DRIFT_FREQUENCY === 0) {
-        if (Math.random() < SINK_CHANCE) this.move({ x: 0, y: 1 });
+        if (Random.probability(SINK_CHANCE)) this.move({ x: 0, y: 1 });
       }
 
       this.steps = (this.steps + 1)%HORIZONTAL_DRIFT_FREQUENCY;
