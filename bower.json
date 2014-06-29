@@ -9,6 +9,8 @@
     "underscore-amd": "~1.5.2",
     "animate.css": "~2.1.0",
     "font-awesome": "~3.2.1",
-    "jquery": "~2.0.3"
+    "jquery": "~2.0.3",
+    "domkit": "~0.1.0",
+    "pixel-editor-icons": "~0.1.0"
   }
 }
