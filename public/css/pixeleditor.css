@@ -1,13 +1,33 @@
-.action-button {
+body {
+  margin: 0px;
+}
+.toolbar-button {
   width: 100px;
   height: 50px;
 }
 .toolbar-container {
-  width: 100px;
   padding: 10px;
+  width: 100px;
   height: 100%;
 }
-.icon {
-  font-size: 35px;
+.toolbar-icon {
+  font-size: 36px;
   color: #444444;
+}
+.toolbar-icon:before {
+  position: relative;
+  top: 5px;
+}
+.toolbar-spacer {
+  height: 5px;
+  width: 5px;
+}
+.toolbar-bottom-attached {
+  position: absolute;
+  bottom: 10px;
+}
+@media (max-height: 620px) {
+  .toolbar-bottom-attached {
+    position: static;
+  }
 }

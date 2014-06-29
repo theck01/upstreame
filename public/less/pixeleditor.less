@@ -1,15 +1,59 @@
-.action-button {
-  width: 100px;
-  height: 50px;
+@num-toolbar-buttons: 11;
+@toolbar-button-height: 50px;
+@toolbar-button-width: 100px;
+@toolbar-container-padding: 10px;
+@toolbar-container-width: @toolbar-button-width;
+@toolbar-icon-size: 36px;
+@toolbar-icon-color: #444444;
+@toolbar-icon-offset: 5px;
+@toolbar-spacer-size: 5px;
+@toolbar-container-min-height: (@num-toolbar-buttons * @toolbar-button-height +
+    (@num-toolbar-buttons - 1) * @toolbar-spacer-size +
+    2 * @toolbar-container-padding);
+
+body {
+  margin: 0px;
 }
 
+
+.toolbar-button {
+  width: @toolbar-button-width;
+  height: @toolbar-button-height;
+}
+
+
 .toolbar-container {
-  width: 100px;
-  padding: 10px;
+  padding: @toolbar-container-padding;
+  width: @toolbar-container-width;
   height: 100%;
 }
 
-.icon {
-  font-size: 35px;
-  color: #444444;
+
+.toolbar-icon {
+  font-size: @toolbar-icon-size;
+  color: @toolbar-icon-color;
+}
+
+
+.toolbar-icon:before {
+  position: relative;
+  top: @toolbar-icon-offset;
+}
+
+
+.toolbar-spacer {
+  height: @toolbar-spacer-size;
+  width: @toolbar-spacer-size;
+}
+
+
+.toolbar-bottom-attached {
+  position: absolute;
+  bottom: @toolbar-container-padding;
+}
+
+@media (max-height: @toolbar-container-min-height) {
+  .toolbar-bottom-attached {
+    position: static;
+  }
 }
