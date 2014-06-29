@@ -1,4 +1,6 @@
 @num-toolbar-buttons: 11;
+@num-tool-select-buttons: 4;
+
 @container-padding: 10px;
 @container-height: calc(~"100% - "(2 * @container-padding));
 @toolbar-button-height: 50px;
@@ -11,6 +13,7 @@
 @toolbar-container-min-height: (@num-toolbar-buttons * @toolbar-button-height +
     (@num-toolbar-buttons - 1) * @toolbar-spacer-size +
     2 * @container-padding);
+
 
 html {
   height: 100%;
@@ -27,6 +30,11 @@ body {
   height: @container-height;
   overflow: hidden;
   padding: @container-padding;
+}
+
+
+.palette-menu-staging-area {
+  display: none;
 }
 
 
@@ -72,4 +80,11 @@ body {
   .toolbar-bottom-attached {
     position: static;
   }
+}
+
+
+#tool-select-menu {
+  width: @toolbar-button-width;
+  height: (@num-tool-select-buttons * @toolbar-button-height +
+    (@num-tool-select-buttons - 1) * @toolbar-spacer-size);
 }

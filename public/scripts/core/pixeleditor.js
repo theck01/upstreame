@@ -35,20 +35,45 @@ require(
     buttons.toolbar.settings = Button.create('#settings-button');
     buttons.toolbar.session = Button.create('#session-button');
 
+    buttons.toolSelectMenu = Object.create(null);
+    buttons.toolSelectMenu.paintBrush =
+        Button.create('#select-paint-brush-button');
+    buttons.toolSelectMenu.dropper = Button.create('#select-dropper-button');
+    buttons.toolSelectMenu.paintBucket =
+        Button.create('#select-paint-bucket-button');
+    buttons.toolSelectMenu.eraser = Button.create('#select-eraser-button');
+
     return buttons;
   }
 
 
   // onload -- main
   $(function () {
-    window.buttons = initializeButtons();
-    window.toolbarRadioGroup = new RadioGroup(_.values(_.omit(
-        window.buttons.toolbar, ['undo', 'redo'])));
+    var buttons = initializeButtons();
+    var toolbarRadioGroup = new RadioGroup(_.values(_.omit(
+        buttons.toolbar, ['undo', 'redo'])));
+
+    var toolSelectButtons = [
+      buttons.toolSelectMenu.paintBrush, buttons.toolSelectMenu.dropper,
+      buttons.toolSelectMenu.paintBucket, buttons.toolSelectMenu.eraser,
+    ];
+    var toolSelectRadioGroup = new RadioGroup(
+      toolSelectButtons, 0 /* activeIndex */);
+
+    var toolSelectPalette = new Palette({
+      anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
+      anchorEdgeBounds: { min: 0, max: $(window).height() },
+      menu: '#tool-select-menu',
+      sibling: '#tool-select-button'
+    });
+    buttons.toolbar.toolSelect.addStateHandler(function (state) {
+      toolSelectPalette.visible(state);
+    });
 
     $(document).bind('keydown', function (e) {
       // If the escape key was pressed clear toolbar selection.
       if (e.which === 27) {
-        window.toolbarRadioGroup.clear();
+        toolbarRadioGroup.clear();
       }
     });
   });
