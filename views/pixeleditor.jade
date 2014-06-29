@@ -1,0 +1,45 @@
+extend layout
+
+block sources
+  link(rel='stylesheet', href='domkit/domkit/css/domkit.css')
+  link(rel='stylesheet', href='pixel-editor-icons/styles.css')
+  link(rel='stylesheet', href='css/pixeleditor.css')
+
+
+block content
+  .toolbar-container
+    #top-toolbar
+      button#active-color-button.dk-toggleable-button.action-button
+        .icon-active-color.icon
+      .dk-spacer
+      button#default-color-button.dk-toggleable-button.action-button
+        .icon-default-color.icon
+      .dk-spacer
+      button#tool-select-button.dk-toggleable-button.action-button
+        .icon-paint-brush.icon
+      .dk-spacer
+      button#undo-button.dk-toggleable-button.action-button
+        .icon-undo.icon
+      .dk-spacer
+      button#redo-button.dk-toggleable-button.action-button
+        .icon-undo.icon
+      .dk-spacer
+      button#zoom-button.dk-toggleable-button.action-button
+        .icon-zoom-in.icon
+      .dk-spacer
+      button#trash-button.dk-toggleable-button.action-button
+        .icon-trash.icon
+      .dk-spacer
+    #bottom-toolbar
+      button#load-button.dk-toggleable-button.action-button
+        .icon-open.icon
+      .dk-spacer
+      button#save-button.dk-toggleable-button.action-button
+        .icon-save.icon
+      .dk-spacer
+      button#settings-button.dk-toggleable-button.action-button
+        .icon-settings.icon
+      .dk-spacer
+      button#session-button.dk-toggleable-button.action-button
+        .icon-login.icon
+      .dk-spacer

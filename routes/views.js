@@ -54,6 +54,16 @@ exports.pixelart = function (req, res) {
   res.render('pixelart', opts);
 };
 
+exports.pixeleditor = function (req, res) {
+  var opts = {
+    title: 'Pixel Editor',
+    loggedIn: auth.isLoggedIn(req),
+    main: 'scripts/core/pixeleditor.js'
+  };
+
+  res.render('pixeleditor', opts);
+};
+
 exports.submersion = function (req, res) {
   var opts = {
     title: 'Submersion',

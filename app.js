@@ -53,6 +53,7 @@ app.get('/', views.index);
 app.get('/animator', views.animator);
 app.get('/invaders', views.invaders);
 app.get('/pixelart', views.pixelart);
+app.get('/pixeleditor', views.pixeleditor);
 app.get('/submersion', views.submersion);
 app.get('/worldbuilder', views.worldbuilder);
 
