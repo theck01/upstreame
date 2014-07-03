@@ -49,3 +49,69 @@ body {
   width: 100px;
   height: 215px;
 }
+.select-color-submenu {
+  display: inline-block;
+  vertical-align: top;
+  width: 102px;
+  height: 154px;
+}
+.select-color-preview {
+  width: 100px;
+  height: 100px;
+  border: 1px solid #9f9f9f;
+  border-radius: 8px;
+  background-color: #FFFF00;
+}
+.select-color-spacer {
+  width: 20px;
+  height: 20px;
+}
+.select-color-text-input {
+  width: 100px;
+  height: 30px;
+  border: 1px solid #9f9f9f;
+  border-radius: 8px;
+  background-color: #FF00FF;
+}
+.color-submenu-divider {
+  display: inline-block;
+  vertical-align: top;
+  height: 154px;
+  width: 1px;
+  background-clip: content-box;
+  background-color: #444444;
+  padding: 0px 10px;
+}
+.previous-color-submenu {
+  display: inline-block;
+  vertical-align: top;
+  width: 113px;
+  height: 154px;
+}
+.previous-color {
+  display: inline-block;
+  width: 29px;
+  height: 29px;
+  border: 1px solid #9f9f9f;
+  border-radius: 8px;
+  background-color: #00FFFF;
+}
+.previous-color:hover {
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5);
+}
+.previous-color-row {
+  height: 31px;
+}
+.previous-color-row-spacer {
+  width: 10px;
+  height: 10px;
+}
+.previous-color-spacer {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+}
+.color-menu {
+  width: 236px;
+  height: 154px;
+}
