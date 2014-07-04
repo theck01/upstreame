@@ -116,3 +116,35 @@ body {
   width: 236px;
   height: 154px;
 }
+.confirmation-menu {
+  width: 250px;
+  height: 90px;
+}
+.confirmation-message {
+  font-family: Roboto;
+  font-size: 18px;
+  width: 250px;
+  height: 40px;
+}
+.confirmation-menu-spacer {
+  width: 20px;
+  height: 20px;
+}
+.confirmation-select-spacer {
+  display: inline-block;
+  vertical-align: top;
+  width: 43.333333333333336px;
+  height: 30px;
+}
+.confirmation-select-submenu {
+  width: 250px;
+  height: 60px;
+}
+.confirmation-button {
+  display: inline-block;
+  vertical-align: top;
+  font-family: Roboto;
+  font-size: 14px;
+  width: 60px;
+  height: 30px;
+}

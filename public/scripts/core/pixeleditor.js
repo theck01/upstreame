@@ -43,6 +43,10 @@ require(
         Button.create('#select-paint-bucket-button');
     buttons.toolSelectMenu.eraser = Button.create('#select-eraser-button');
 
+    buttons.trashMenu = Object.create(null);
+    buttons.trashMenu.yes = Button.create('#trash-confirm-yes');
+    buttons.trashMenu.no = Button.create('#trash-confirm-no');
+
     return buttons;
   }
 
@@ -102,6 +106,16 @@ require(
     });
     buttons.toolbar.defaultColor.addStateHandler(function (state) {
       palettes.defaultColorSelect.visible(state);
+    });
+
+    palettes.trash = new Palette({
+      anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
+      anchorEdgeBounds: { min: 0, max: $(window).height() },
+      menu: '#trash-confirmation-menu',
+      sibling: '#trash-button'
+    });
+    buttons.toolbar.trash.addStateHandler(function (state) {
+      palettes.trash.visible(state);
     });
   }
 

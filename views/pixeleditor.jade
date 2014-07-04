@@ -4,6 +4,7 @@ block sources
   link(rel='stylesheet', href='domkit/domkit/css/domkit.css')
   link(rel='stylesheet', href='pixel-editor-icons/styles.css')
   link(rel='stylesheet', href='css/pixeleditor.css')
+  link(rel='stylesheet', href='http://fonts.googleapis.com/css?family=Roboto', type='text/css')
 
 
 block content
@@ -139,3 +140,13 @@ block content
           .previous-color-spacer
           .previous-color
           .previous-color-spacer
+
+    #trash-confirmation-menu.confirmation-menu
+      .confirmation-message.dk-palette-no-transition Are you sure you want to clear the canvas?
+      .confirmation-menu-spacer
+      .confirmation-select-submenu
+        .confirmation-select-spacer
+        button#trash-confirm-yes.dk-button.confirmation-button Yes
+        .confirmation-select-spacer
+        button#trash-confirm-no.dk-button.confirmation-button No
+        .confirmation-select-spacer
