@@ -14,9 +14,8 @@ require.config({
 
 require(
     ['jquery', 'underscore', 'domkit/controllers/radiogroup',
-     'domkit/ui/button', 'domkit/ui/palette'],
-    function ($, _, RadioGroup, Button, Palette) {
-
+     'domkit/ui/button', 'domkit/ui/palette', 'core/graphics/pixelcanvas'],
+    function ($, _, RadioGroup, Button, Palette, PixelCanvas) {
   // initializeButtons initializes all domkit buttons and returns button
   // instances in an object with buttons namespaced to location in the view.
   function initializeButtons () {
@@ -48,6 +47,27 @@ require(
     buttons.trashMenu.no = Button.create('#trash-confirm-no');
 
     return buttons;
+  }
+
+
+  // initializeCanvas sets up the pixel canvas
+  // Arguments:
+  //   $canvas: jQuery object for the canvas.
+  // Returns an instance of a PixelCanvas.
+  function initializeCanvas ($canvas) {
+    sizeCanvas($canvas);
+    return new PixelCanvas(
+        { width: 130, height: 100 }, '#pixel-editor-canvas', '#000000');
+  }
+
+
+  // tmp_drawCanvas temporary function draws an image on the canvas.
+  function tmp_drawCanvas (pixelCanvas, image) {
+    _.each(image.pixels, function (p) {
+      pixelCanvas.setPixel(p.x, p.y, p.color);
+    });
+
+    pixelCanvas.paint();
   }
 
 
@@ -120,17 +140,49 @@ require(
   }
 
 
+  // Update the size of the canvas to match the size of the parent container.
+  // Arguments:
+  //   $canvas: The jQuery object for the canvas that must be sized
+  function sizeCanvas ($canvas) {
+    if ($canvas[0].width !== $canvas.parent().width() ||
+        $canvas[0].height !== $canvas.parent().height()){
+      $canvas[0].width = $canvas.parent().width();
+      $canvas[0].height = $canvas.parent().height();
+    }
+  }
+
+
   // onload -- main
   $(function () {
+    var $canvas = $('#pixel-editor-canvas');
+
     var buttons = initializeButtons();
     var radioGroups = initializeRadioGroups(buttons);
     initializePalettes(buttons);
+
+    var splashScreen;
+    var pixelCanvas;
+    $.ajax({
+      url: '/sprite/splash-screen',
+      type: 'GET',
+      dataType: 'text',
+      success: function (data) {
+        splashScreen = JSON.parse(data);
+        pixelCanvas = initializeCanvas($canvas);
+        tmp_drawCanvas(pixelCanvas, splashScreen);
+      }
+    });
 
     $(document).bind('keydown', function (e) {
       // If the escape key was pressed clear toolbar selection.
       if (e.which === 27) {
         radioGroups.toolbar.clear();
       }
+    });
+
+    $(window).bind('resize', function () {
+      sizeCanvas($canvas);
+      tmp_drawCanvas(pixelCanvas, splashScreen);
     });
   });
 });
