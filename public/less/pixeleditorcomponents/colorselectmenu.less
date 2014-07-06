@@ -1,0 +1,129 @@
+@import "constants";
+
+@color-radius: 8px;
+@color-border-width: 1px;
+@color-border-color: #9F9F9F;
+
+@color-select-preview-size: 100px;
+@color-select-spacer-size: 20px;
+@color-select-text-input-height: 30px;
+
+@color-select-submenu-width:
+    (@color-select-preview-size + 2 * @color-border-width);
+
+@color-menu-height:
+    (@color-select-preview-size + @color-select-spacer-size +
+     @color-select-text-input-height + 4 * @color-border-width);
+
+@color-palette-spacer-size: 10px;
+@color-palette-row-spacer-size: 10px;
+
+@color-palette-size:
+    ceil((@color-menu-height - 8 * @color-border-width -
+        3 * @color-palette-row-spacer-size) / 4);
+@color-palette-hover-shadow: 0px 1px 2px 0px rgba(0,0,0,0.50);
+
+@color-palette-row-height:
+    @color-palette-size + 2 * @color-border-width;
+
+@color-palette-submenu-width:
+    (@color-palette-size * 3 + @color-palette-spacer-size * 2 +
+     @color-border-width * 6);
+
+@color-menu-width:
+    (@color-select-submenu-width + @submenu-divider-width +
+     2 * @submenu-divider-horizontal-padding + @color-palette-submenu-width);
+
+
+.color-select-submenu {
+  display: inline-block;
+  vertical-align: top;
+  width: @color-select-submenu-width;
+  height: @color-menu-height;
+}
+
+
+.color-select-preview {
+  width: @color-select-preview-size;
+  height: @color-select-preview-size;
+  border: @color-border-width solid @color-border-color;
+  border-radius: @color-radius;
+  background-color: #FFFF00;
+}
+
+
+.color-select-spacer {
+  width: @color-select-spacer-size;
+  height: @color-select-spacer-size;
+}
+
+
+.color-select-text-input {
+  width: @color-select-preview-size;
+  height: @color-select-text-input-height;
+  border: @color-border-width solid @color-border-color;
+  border-radius: @color-radius;
+  background-color: #FF00FF;
+}
+
+
+.color-submenu-divider {
+  display: inline-block;
+  vertical-align: top;
+  height: @color-menu-height;
+  width: @submenu-divider-width;
+  background-clip: content-box;
+  background-color: @submenu-divider-color;
+  padding:
+      @submenu-divider-vertical-padding
+      @submenu-divider-horizontal-padding;
+}
+
+
+.color-palette-submenu {
+  display: inline-block;
+  vertical-align: top;
+  width: @color-palette-submenu-width;
+  height: @color-menu-height;
+}
+
+
+.color-palette-color {
+  display: inline-block;
+  width: @color-palette-size;
+  height: @color-palette-size;
+  border: @color-border-width solid @color-border-color;
+  border-radius: @color-radius;
+  background-color: #00FFFF;
+}
+
+
+.color-palette-color:hover {
+  box-shadow: @color-palette-hover-shadow;
+}
+
+
+.color-palette-row {
+  height: @color-palette-row-height;
+  // Pad width to ensure that hide/show transition is smooth.
+  width: (@color-palette-submenu-width + 1);
+}
+
+
+.color-palette-row-spacer {
+  width: @color-palette-row-spacer-size;
+  height: @color-palette-row-spacer-size;
+}
+
+
+.color-palette-spacer {
+  display: inline-block;
+  width: @color-palette-spacer-size;
+  height: @color-palette-spacer-size;
+}
+
+
+.color-menu {
+  width: @color-menu-width;
+  height: @color-menu-height;
+}

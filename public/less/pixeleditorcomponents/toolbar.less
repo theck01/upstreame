@@ -1,0 +1,63 @@
+@import "constants";
+
+
+@toolbar-button-height: 50px;
+@toolbar-button-width: 100px;
+@toolbar-icon-size: 36px;
+@toolbar-icon-offset: 5px;
+@toolbar-spacer-size: 5px;
+@toolbar-padding: @container-padding;
+@toolbar-width: @toolbar-button-width;
+@toolbar-height: @container-height;
+@toolbar-min-height: (@num-toolbar-buttons * @toolbar-button-height +
+    (@num-toolbar-buttons - 1) * @toolbar-spacer-size +
+    2 * @toolbar-padding);
+
+@num-toolbar-buttons: 11;
+
+
+.toolbar-button {
+  width: @toolbar-button-width;
+  height: @toolbar-button-height;
+}
+
+
+.toolbar-container {
+  padding: @toolbar-padding;
+  width: @toolbar-width;
+  height: @toolbar-height;
+  float: left;
+}
+
+
+.toolbar-icon {
+  font-size: @toolbar-icon-size;
+  color: @icon-color;
+}
+
+
+.toolbar-icon:before {
+  position: relative;
+  top: @toolbar-icon-offset;
+}
+
+
+.toolbar-spacer {
+  height: @toolbar-spacer-size;
+  width: @toolbar-spacer-size;
+}
+
+
+.toolbar-bottom-attached {
+  position: absolute;
+  bottom: 0px;
+  padding-bottom: @toolbar-padding;
+}
+
+
+@media (max-height: @toolbar-min-height) {
+  .toolbar-bottom-attached {
+    position: static;
+  }
+}
+

@@ -1,0 +1,10 @@
+@import "toolbar";
+
+@num-tool-select-buttons: 4;
+
+
+.tool-select-menu {
+  width: @toolbar-button-width;
+  height: (@num-tool-select-buttons * @toolbar-button-height +
+    (@num-tool-select-buttons - 1) * @toolbar-spacer-size);
+}

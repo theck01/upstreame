@@ -1,0 +1,55 @@
+@confirmation-button-height: 30px;
+@confirmation-button-width: 60px;
+@confirmation-message-height: 40px;
+@confirmation-message-width: 250px;
+@confirmation-menu-width: @confirmation-message-width;
+@confirmation-menu-spacer-size: 20px;
+@confirmation-select-spacer-size: 
+    ((@confirmation-menu-width - 2 * @confirmation-button-width) / 3);
+@confirmation-menu-height:
+    (@confirmation-message-height + @confirmation-menu-spacer-size +
+     @confirmation-button-height);
+
+
+.confirmation-menu {
+  width: @confirmation-menu-width;
+  height: @confirmation-menu-height;
+}
+
+
+.confirmation-message {
+  font-family: Roboto;
+  font-size: 18px;
+  width: @confirmation-menu-width;
+  height: @confirmation-message-height;
+}
+
+
+.confirmation-menu-spacer {
+  width: @confirmation-menu-spacer-size;
+  height: @confirmation-menu-spacer-size;
+}
+
+
+.confirmation-select-spacer {
+  display: inline-block;
+  vertical-align: top;
+  width: @confirmation-select-spacer-size;
+  height: @confirmation-button-height;
+}
+
+
+.confirmation-select-submenu {
+  width: @confirmation-menu-width;
+  height: @confirmation-button-width;
+}
+
+
+.confirmation-button {
+  display: inline-block;
+  vertical-align: top;
+  font-family: Roboto;
+  font-size: 14px;
+  width: @confirmation-button-width;
+  height: @confirmation-button-height;
+}

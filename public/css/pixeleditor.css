@@ -1,72 +1,21 @@
-html {
-  height: 100%;
-}
-body {
-  margin: 0px;
-  height: 100%;
-}
-.canvas-container {
-  height: calc(100% -  20px);
-  overflow: hidden;
-  padding: 10px;
-}
-.palette-menu-staging-area {
-  display: none;
-}
-.toolbar-button {
-  width: 100px;
-  height: 50px;
-}
-.toolbar-container {
-  padding: 10px;
-  width: 100px;
-  height: calc(100% -  20px);
-  float: left;
-}
-.toolbar-icon {
-  font-size: 36px;
-  color: #444444;
-}
-.toolbar-icon:before {
-  position: relative;
-  top: 5px;
-}
-.toolbar-spacer {
-  height: 5px;
-  width: 5px;
-}
-.toolbar-bottom-attached {
-  position: absolute;
-  bottom: 0px;
-  padding-bottom: 10px;
-}
-@media (max-height: 620px) {
-  .toolbar-bottom-attached {
-    position: static;
-  }
-}
-#tool-select-menu {
-  width: 100px;
-  height: 215px;
-}
-.select-color-submenu {
+.color-select-submenu {
   display: inline-block;
   vertical-align: top;
   width: 102px;
   height: 154px;
 }
-.select-color-preview {
+.color-select-preview {
   width: 100px;
   height: 100px;
   border: 1px solid #9f9f9f;
   border-radius: 8px;
   background-color: #FFFF00;
 }
-.select-color-spacer {
+.color-select-spacer {
   width: 20px;
   height: 20px;
 }
-.select-color-text-input {
+.color-select-text-input {
   width: 100px;
   height: 30px;
   border: 1px solid #9f9f9f;
@@ -82,13 +31,13 @@ body {
   background-color: #444444;
   padding: 0px 10px;
 }
-.previous-color-submenu {
+.color-palette-submenu {
   display: inline-block;
   vertical-align: top;
   width: 113px;
   height: 154px;
 }
-.previous-color {
+.color-palette-color {
   display: inline-block;
   width: 29px;
   height: 29px;
@@ -96,18 +45,18 @@ body {
   border-radius: 8px;
   background-color: #00FFFF;
 }
-.previous-color:hover {
+.color-palette-color:hover {
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5);
 }
-.previous-color-row {
+.color-palette-row {
   height: 31px;
   width: 114px;
 }
-.previous-color-row-spacer {
+.color-palette-row-spacer {
   width: 10px;
   height: 10px;
 }
-.previous-color-spacer {
+.color-palette-spacer {
   display: inline-block;
   width: 10px;
   height: 10px;
@@ -147,4 +96,55 @@ body {
   font-size: 14px;
   width: 60px;
   height: 30px;
+}
+.toolbar-button {
+  width: 100px;
+  height: 50px;
+}
+.toolbar-container {
+  padding: 10px;
+  width: 100px;
+  height: calc(100% -  20px);
+  float: left;
+}
+.toolbar-icon {
+  font-size: 36px;
+  color: #444444;
+}
+.toolbar-icon:before {
+  position: relative;
+  top: 5px;
+}
+.toolbar-spacer {
+  height: 5px;
+  width: 5px;
+}
+.toolbar-bottom-attached {
+  position: absolute;
+  bottom: 0px;
+  padding-bottom: 10px;
+}
+@media (max-height: 620px) {
+  .toolbar-bottom-attached {
+    position: static;
+  }
+}
+.tool-select-menu {
+  width: 100px;
+  height: 215px;
+}
+html {
+  height: 100%;
+}
+body {
+  margin: 0px;
+  height: 100%;
+}
+.canvas-container {
+  height: calc(100% -  20px);
+  overflow: hidden;
+  padding: 10px;
+}
+.palette-menu-staging-area {
+  display: none;
 }
