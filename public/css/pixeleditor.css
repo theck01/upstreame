@@ -28,7 +28,7 @@
   height: 154px;
   width: 1px;
   background-clip: content-box;
-  background-color: #444444;
+  background-color: #9f9f9f;
   padding: 0px 10px;
 }
 .color-palette-submenu {
@@ -66,27 +66,27 @@
   height: 154px;
 }
 .confirmation-menu {
-  width: 250px;
+  width: 260px;
   height: 90px;
 }
 .confirmation-message {
-  font-family: Roboto;
   font-size: 18px;
-  width: 250px;
-  height: 40px;
+  width: 260px;
+  height: 50px;
+  padding: 0px 5px;
 }
 .confirmation-menu-spacer {
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
 }
 .confirmation-select-spacer {
   display: inline-block;
   vertical-align: top;
-  width: 43.333333333333336px;
+  width: 46.666666666666664px;
   height: 30px;
 }
 .confirmation-select-submenu {
-  width: 250px;
+  width: 260px;
   height: 60px;
 }
 .confirmation-button {
@@ -139,6 +139,7 @@ html {
 body {
   margin: 0px;
   height: 100%;
+  font-family: Roboto;
 }
 .canvas-container {
   height: calc(100% -  20px);
