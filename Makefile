@@ -9,8 +9,9 @@ MOCHA_WATCH_OPTS = -R min -w --recursive $(SPEC_DIR)
 LESSC = node_modules/.bin/lessc
 LESS_DIR = public/less
 CSS_DIR = public/css
-LESS_FILES = $(wildcard $(LESS_DIR)/*.less)
-CSS_FILES = $(patsubst $(LESS_DIR)/%.less, $(CSS_DIR)/%.css, $(LESS_FILES))
+MAIN_LESS_FILES = $(wildcard $(LESS_DIR)/*.less)
+ALL_LESS_FILES  = $(shell find public/less -name "*.less")
+CSS_FILES = $(patsubst $(LESS_DIR)/%.less, $(CSS_DIR)/%.css, $(MAIN_LESS_FILES))
 
 # minify task variables
 RJS = node_modules/.bin/r.js
@@ -40,7 +41,7 @@ install:
 
 less: install $(CSS_FILES)
 
-$(CSS_DIR)/%.css: $(LESS_DIR)/%.less
+$(CSS_DIR)/%.css: $(LESS_DIR)/%.less $(ALL_LESS_FILES)
 	$(LESSC) $< > $@
 
 minify: install $(MINIFIED_FILES)
