@@ -46,6 +46,17 @@ require(
     buttons.trashMenu.yes = Button.create('#trash-confirm-yes');
     buttons.trashMenu.no = Button.create('#trash-confirm-no');
 
+    buttons.activeColorPaletteColors = _.map(
+        $('#active-color-select-menu').find('.color-palette-color'),
+        function (paletteColor) {
+      return Button.create($(paletteColor));
+    });
+    buttons.defaultColorPaletteColors = _.map(
+        $('#default-color-select-menu').find('.color-palette-color'),
+        function (paletteColor) {
+      return Button.create($(paletteColor));
+    });
+
     return buttons;
   }
 

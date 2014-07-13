@@ -1,5 +1,6 @@
 @import "constants";
 @import "../../../bower_components/domkit/domkit/less/common";
+@import "../../../bower_components/domkit/domkit/less/button";
 
 
 @color-radius: @domkit-border-radius;
@@ -7,7 +8,7 @@
 @color-border-color: @domkit-border-color;
 
 @color-select-preview-size: 100px;
-@color-select-spacer-size: 20px;
+@color-select-spacer-size: 5px;
 @color-select-text-input-height: 30px;
 
 @color-select-submenu-width:
@@ -23,6 +24,8 @@
 @color-palette-size:
     ceil((@color-menu-height - 8 * @color-border-width -
         3 * @color-palette-row-spacer-size) / 4);
+@color-palette-active-size:
+    @color-palette-size - @active-button-border-width;
 @color-palette-hover-shadow: 0px 1px 2px 0px rgba(0,0,0,0.50);
 
 @color-palette-row-height:
@@ -61,11 +64,22 @@
 
 
 .color-select-text-input {
+  text-align: center;
+  outline: none;
   width: @color-select-preview-size;
   height: @color-select-text-input-height;
   border: @color-border-width solid @color-border-color;
   border-radius: @color-radius;
-  background-color: #FF00FF;
+}
+
+
+.color-select-text-input:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+
+.color-select-text-input:focus::-moz-placeholder {
+  color: transparent;
 }
 
 
@@ -94,14 +108,14 @@
   display: inline-block;
   width: @color-palette-size;
   height: @color-palette-size;
-  border: @color-border-width solid @color-border-color;
-  border-radius: @color-radius;
+  background-image: none;
   background-color: #00FFFF;
 }
 
 
-.color-palette-color:hover {
-  box-shadow: @color-palette-hover-shadow;
+.color-palette-color.dk-toggleable-button-active {
+  width: @color-palette-active-size;
+  height: @color-palette-active-size;
 }
 
 

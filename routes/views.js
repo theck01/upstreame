@@ -58,7 +58,7 @@ exports.pixeleditor = function (req, res) {
   var opts = {
     title: 'Pixel Editor',
     loggedIn: auth.isLoggedIn(req),
-    main: 'scripts/core/pixeleditor.js'
+    main: 'scripts/pixeleditor/main.js'
   };
 
   res.render('pixeleditor', opts);
