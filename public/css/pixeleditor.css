@@ -183,10 +183,6 @@
   background-image: none;
   background-color: #00FFFF;
 }
-.color-palette-color.dk-toggleable-button-active {
-  width: 23px;
-  height: 23px;
-}
 .color-palette-row {
   height: 28px;
   width: 105px;
