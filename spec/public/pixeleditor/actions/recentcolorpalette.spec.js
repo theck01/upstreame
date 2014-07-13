@@ -115,5 +115,15 @@ describe('RecentColorPalette', function () {
       colorPalette.colorUsed('#00FFFF');
       spyHandler.called.should.be.false;
     });
+
+
+    it('should not call palette change handlers that have been removed.',
+        function () {
+      var spyHandler = sinon.spy();
+      colorPalette.addPaletteChangeHandler(spyHandler);
+      colorPalette.removePaletteChangeHandler(spyHandler);
+      colorPalette.colorUsed('#777777');
+      spyHandler.called.should.be.false;
+    });
   });
 });
