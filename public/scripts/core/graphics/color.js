@@ -15,6 +15,27 @@ define(['underscore'], function (_) {
   // fields.
   Color._DEFAULT_COLOR_COMPONENT = 255;
 
+
+  // isValid takes a color hexadecimal string and returns whether the string is
+  // in a valid format.
+  //
+  // Arguments:
+  //   color: A hexidecimal color string in the form '#RRGGBB'
+  //
+  // Returns:
+  //   A boolean, whether the color string is valid or not.
+  Color.isValid = function (color) {
+    if(color[0] !== '#'){
+      color = '#' + color;
+    }
+
+    // check for format '#RRGGBB' and '#RGB'
+    if (color.match(/^#[A-Fa-f0-9]{6}$/g)) return true;
+    else if (color.match(/^#[A-Fa-f0-9]{3}$/g)) return true;
+
+    return false;
+  };
+
   // sanitize takes a color hexadecimal string and returns a properly formatted
   // color hexadecimal string
   //

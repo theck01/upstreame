@@ -20,6 +20,13 @@ var Color = requirejs('core/graphics/color');
 describe('Color', function () {
   context('when functions are provided reasonably formed color strings',
     function () {
+      it('isValid should return true.', function () {
+        Color.isValid('#123456').should.be.true;
+        Color.isValid('123456').should.be.true;
+        Color.isValid('#123').should.be.true;
+        Color.isValid('123').should.be.true;
+      });
+
       it('sanitize should return equivalent strings in "#RRGGBB" form',
         function () {
           Color.sanitize('#123456').should.eql('#123456');
@@ -50,6 +57,13 @@ describe('Color', function () {
 
   context('when functions are provided poorly formed color strings',
     function () {
+      it('isValid should return false.', function () {
+        Color.isValid('').should.be.false;
+        Color.isValid('#00').should.be.false;
+        Color.isValid('#12345G').should.be.false;
+        Color.isValid('#1234567').should.be.false;
+      });
+
       it('sanitize should return a default color "#FFFFFF"', function () {
         Color.sanitize('').should.eql('#FFFFFF');
         Color.sanitize('#00').should.eql('#FFFFFF');
