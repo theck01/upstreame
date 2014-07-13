@@ -14,8 +14,143 @@ require.config({
 
 require(
     ['jquery', 'underscore', 'domkit/controllers/radiogroup',
-     'domkit/ui/button', 'domkit/ui/palette', 'core/graphics/pixelcanvas'],
-    function ($, _, RadioGroup, Button, Palette, PixelCanvas) {
+     'domkit/ui/button', 'domkit/ui/palette', 'core/graphics/color',
+     'core/graphics/pixelcanvas', 'pixeleditor/constants',
+     'pixeleditor/actions/actionhub'],
+    function (
+        $, _, RadioGroup, Button, Palette, Color, PixelCanvas, Constants,
+        ActionHub) {
+
+  // initalizeActiveColorSelectRouting connects all of the components of the 
+  // active color collect menu.
+  function initializeActiveColorSelectRouting (buttons, palettes) {
+    var $colorSelectPreview =
+        $('#active-color-select-menu').find('.color-select-preview');
+    var $colorSelectInput =
+        $('#active-color-select-menu').find('.color-select-text-input');
+    var $activeColorIcon = $('#active-color-button').find('.icon-active-color');
+    var $colorPaletteColors =
+        $('#active-color-select-menu').find('.color-palette-color');
+
+    $colorSelectInput.on('keyup', function () {
+      ActionHub.activeColor.setValue($colorSelectInput.val());
+    });
+
+    ActionHub.activeColor.addValueChangeHandler(function (newColor) {
+      $activeColorIcon.css('color', newColor);
+      $colorSelectPreview.css('background-color', newColor);
+
+      var inputVal = $colorSelectInput.val();
+      if (!Color.isValid(inputVal) || (Color.sanitize(inputVal) !== newColor)) {
+        $colorSelectInput.val(newColor);
+      }
+    });
+
+    buttons.toolbar.activeColor.addStateHandler(function (state) {
+      palettes.activeColorSelect.visible(state);
+    });
+
+    _.each(buttons.activeColorSelect.colorPalette, function (button, i) {
+      button.addClickHandler(function () {
+        var colors = ActionHub.recentColors.getPalette();
+        ActionHub.activeColor.setValue(colors[i]);
+      });
+    });
+
+    palettes.activeColorSelect.addVisibleStateHandler(
+        function (isVisible) {
+      if (!isVisible) {
+        ActionHub.recentColors.colorUsed(ActionHub.activeColor.getValue());
+      }
+      else {
+        var colors = ActionHub.recentColors.getPalette();
+        $colorPaletteColors.each(function (index) {
+          if (colors[index]) {
+            $(this).css({
+              'background-color': colors[index],
+              'display': ''
+            });
+          }
+          else $(this).css('display', 'none');
+        });
+      }
+    });
+
+    // Set initial values
+    ActionHub.activeColor.setValue(Constants.STARTING_VALUES.ACTIVE_COLOR);
+    ActionHub.recentColors.colorUsed(Constants.STARTING_VALUES.ACTIVE_COLOR);
+  }
+
+
+  // initalizeDefaultColorSelectRouting connects all of the components of the 
+  // default color select menu.
+  function initializeDefaultColorSelectRouting (buttons, palettes) {
+    var $colorSelectPreview =
+        $('#default-color-select-menu').find('.color-select-preview');
+    var $colorSelectInput =
+        $('#default-color-select-menu').find('.color-select-text-input');
+    var $defaultColorIcon =
+      $('#default-color-button').find('.icon-default-color');
+    var $colorPaletteColors =
+        $('#default-color-select-menu').find('.color-palette-color');
+
+    $colorSelectInput.on('keyup', function () {
+      ActionHub.defaultColor.setValue($colorSelectInput.val());
+    });
+
+    ActionHub.defaultColor.addValueChangeHandler(function (newColor) {
+      $defaultColorIcon.css('color', newColor);
+      $colorSelectPreview.css('background-color', newColor);
+
+      var inputVal = $colorSelectInput.val();
+      if (!Color.isValid(inputVal) || (Color.sanitize(inputVal) !== newColor)) {
+        $colorSelectInput.val(newColor);
+      }
+    });
+
+    buttons.toolbar.defaultColor.addStateHandler(function (state) {
+      palettes.defaultColorSelect.visible(state);
+    });
+
+    _.each(buttons.defaultColorSelect.colorPalette, function (button, i) {
+      button.addClickHandler(function () {
+        var colors = ActionHub.recentColors.getPalette();
+        ActionHub.defaultColor.setValue(colors[i]);
+      });
+    });
+
+    palettes.defaultColorSelect.addDelayedVisibleStateHandler(
+        function (isVisible) {
+      if (!isVisible) {
+        ActionHub.recentColors.colorUsed(ActionHub.defaultColor.getValue());
+      }
+    });
+
+    palettes.defaultColorSelect.addVisibleStateHandler(
+        function (isVisible) {
+      if (!isVisible) {
+        ActionHub.recentColors.colorUsed(ActionHub.defaultColor.getValue());
+      }
+      else {
+        var colors = ActionHub.recentColors.getPalette();
+        $colorPaletteColors.each(function (index) {
+          if (colors[index]) {
+            $(this).css({
+              'background-color': colors[index],
+              'display': ''
+            });
+          }
+          else $(this).css('display', 'none');
+        });
+      }
+    });
+
+    // Set initial values
+    ActionHub.defaultColor.setValue(Constants.STARTING_VALUES.DEFAULT_COLOR);
+    ActionHub.recentColors.colorUsed(Constants.STARTING_VALUES.DEFAULT_COLOR);
+  }
+
+
   // initializeButtons initializes all domkit buttons and returns button
   // instances in an object with buttons namespaced to location in the view.
   function initializeButtons () {
@@ -46,12 +181,15 @@ require(
     buttons.trashMenu.yes = Button.create('#trash-confirm-yes');
     buttons.trashMenu.no = Button.create('#trash-confirm-no');
 
-    buttons.activeColorPaletteColors = _.map(
+    buttons.activeColorSelect = Object.create(null);
+    buttons.activeColorSelect.colorPalette = _.map(
         $('#active-color-select-menu').find('.color-palette-color'),
         function (paletteColor) {
       return Button.create($(paletteColor));
     });
-    buttons.defaultColorPaletteColors = _.map(
+
+    buttons.defaultColorSelect = Object.create(null);
+    buttons.defaultColorSelect.colorPalette = _.map(
         $('#default-color-select-menu').find('.color-palette-color'),
         function (paletteColor) {
       return Button.create($(paletteColor));
@@ -125,9 +263,6 @@ require(
       menu: '#active-color-select-menu',
       sibling: '#active-color-button'
     });
-    buttons.toolbar.activeColor.addStateHandler(function (state) {
-      palettes.activeColorSelect.visible(state);
-    });
 
     palettes.defaultColorSelect = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
@@ -148,6 +283,8 @@ require(
     buttons.toolbar.trash.addStateHandler(function (state) {
       palettes.trash.visible(state);
     });
+
+    return palettes;
   }
 
 
@@ -169,7 +306,9 @@ require(
 
     var buttons = initializeButtons();
     var radioGroups = initializeRadioGroups(buttons);
-    initializePalettes(buttons);
+    var palettes = initializePalettes(buttons);
+    initializeActiveColorSelectRouting(buttons, palettes);
+    initializeDefaultColorSelectRouting(buttons, palettes);
 
     var splashScreen;
     var pixelCanvas;
