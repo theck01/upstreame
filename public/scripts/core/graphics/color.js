@@ -25,6 +25,8 @@ define(['underscore'], function (_) {
   // Returns:
   //   A boolean, whether the color string is valid or not.
   Color.isValid = function (color) {
+    if (!color) return false;
+
     if(color[0] !== '#'){
       color = '#' + color;
     }
@@ -47,6 +49,8 @@ define(['underscore'], function (_) {
   //   color is improperly formatted
   Color.sanitize = function (color) {
     var sanitizedColor = null;
+
+    if (!color) return Color._DEFAULT_COLOR;
 
     if(color[0] !== '#'){
       color = '#' + color;
