@@ -246,6 +246,9 @@
   font-size: 36px;
   color: #444444;
 }
+.toolbar-icon-outlined {
+  -webkit-text-stroke: 1px #9f9f9f;
+}
 .toolbar-icon:before {
   position: relative;
   top: 5px;

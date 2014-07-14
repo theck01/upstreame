@@ -1,4 +1,5 @@
 @import "constants";
+@import "../../../bower_components/domkit/domkit/less/common";
 
 
 @toolbar-button-height: 50px;
@@ -33,6 +34,11 @@
 .toolbar-icon {
   font-size: @toolbar-icon-size;
   color: @icon-color;
+}
+
+
+.toolbar-icon-outlined {
+  -webkit-text-stroke: @domkit-border-width @domkit-border-color;
 }
 
 
