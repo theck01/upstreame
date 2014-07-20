@@ -207,6 +207,13 @@ define(
       canvasTools.modelBuilder.setAction(Constants.TOOL_TO_ACTION_MAP[value]);
     });
 
+    this._buttons.toolbar.undo.addClickHandler(function () {
+      canvasTools.modelBuilder.undo();
+    });
+    this._buttons.toolbar.redo.addClickHandler(function () {
+      canvasTools.modelBuilder.redo();
+    });
+
     canvasTools.modelBuilder.afterCanvasAction(function () {
       if (app._actions.currentTool.getValue() ===
           Constants.AVAILABLE_TOOLS.DROPPER) {
