@@ -20,9 +20,11 @@ define(
     this._canvasTools = this._initializeCanvas();
     this._radioGroups = this._initializeRadioGroups();
     this._palettes = this._initializePalettes();
+
     this._initializeActiveColorSelectRouting();
     this._initializeDefaultColorSelectRouting();
     this._initializeToolSelectRouting();
+    this._initializeTrashRouting();
 
     this._initializePlaceholder();
   };
@@ -452,6 +454,20 @@ define(
       });
 
       $currentToolIcon.addClass(Constants.TOOL_ICON_CLASSES[value]);
+    });
+  };
+
+
+  // _initializeTrashRouting connects components of the trash submenu.
+  PixelEditor.prototype._initializeTrashRouting = function () {
+    var app = this;
+
+    this._buttons.trashMenu.yes.addClickHandler(function () {
+      app._radioGroups.toolbar.clear();
+      app._canvasTools.modelBuilder.clear();
+    });
+    this._buttons.trashMenu.no.addClickHandler(function () {
+      app._radioGroups.toolbar.clear();
     });
   };
 
