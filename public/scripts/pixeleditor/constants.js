@@ -27,5 +27,10 @@ define([], function () {
   Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.ERASER] =
       'icon-eraser';
 
+  Constants.KEYS = {
+    ENTER: 13,
+    ESCAPE: 27
+  };
+
   return Constants;
 });

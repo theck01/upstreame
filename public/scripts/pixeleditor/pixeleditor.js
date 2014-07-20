@@ -22,7 +22,8 @@ define(
   };
 
 
-  // _initializeActions
+  // _initializeActions initializes all of the actions in the application.
+  // Returns an object mapping action names to actions.
   PixelEditor.prototype._initializeActions = function () {
     var colorValidator = function (newColor) {
       if (Color.isValid(newColor)) return Color.sanitize(newColor);
@@ -63,8 +64,11 @@ define(
         $('#active-color-select-menu').find('.color-palette-color');
     var app = this;
 
-    $colorSelectInput.on('keyup', function () {
+    $colorSelectInput.on('keyup', function (e) {
       app._actions.activeColor.setValue($colorSelectInput.val());
+      if (e.which === Constants.KEYS.ENTER) {
+        app._palettes.activeColorSelect.visible(false);
+      }
     });
 
     this._actions.activeColor.addValueChangeHandler(function (newColor) {
@@ -187,8 +191,11 @@ define(
         $('#default-color-select-menu').find('.color-palette-color');
     var app = this;
 
-    $colorSelectInput.on('keyup', function () {
+    $colorSelectInput.on('keyup', function (e) {
       app._actions.defaultColor.setValue($colorSelectInput.val());
+      if (e.which === Constants.KEYS.ENTER) {
+        app._palettes.defaultColorSelect.visible(false);
+      }
     });
 
     this._actions.defaultColor.addValueChangeHandler(function (newColor) {
@@ -312,7 +319,7 @@ define(
 
     $(document).bind('keydown', function (e) {
       // If the escape key was pressed clear toolbar selection.
-      if (e.which === 27) {
+      if (e.which === Constants.KEYS.ESCAPE) {
         app._radioGroups.toolbar.clear();
       }
     });
