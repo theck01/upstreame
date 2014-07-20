@@ -17,6 +17,7 @@ define(
     this._palettes = this._initializePalettes();
     this._initializeActiveColorSelectRouting();
     this._initializeDefaultColorSelectRouting();
+    this._initializeToolSelectRouting();
 
     this._initializePlaceholder();
   };
@@ -247,16 +248,6 @@ define(
   };
 
 
-  // tmp_drawCanvas temporary function draws an image on the canvas.
-  function tmp_drawCanvas (pixelCanvas, image) {
-    _.each(image.pixels, function (p) {
-      pixelCanvas.setPixel(p.x, p.y, p.color);
-    });
-
-    pixelCanvas.paint();
-  }
-
-
   // initializePalettes sets up the Palette menus on the page.
   // Returns an object containing named palettes.
   PixelEditor.prototype._initializePalettes = function () {
@@ -306,14 +297,21 @@ define(
   // _initializePlaceholder behavior of the application.
   PixelEditor.prototype._initializePlaceholder = function () {
     var app = this;
+    var drawCanvas = function (pixelCanvas, image) {
+      _.each(image.pixels, function (p) {
+        pixelCanvas.setPixel(p.x, p.y, p.color);
+      });
+      pixelCanvas.paint();
+    };
     var splashScreen;
+
     $.ajax({
       url: '/sprite/splash-screen',
       type: 'GET',
       dataType: 'text',
       success: function (data) {
         splashScreen = JSON.parse(data);
-        tmp_drawCanvas(app._pixelCanvas, splashScreen);
+        drawCanvas(app._pixelCanvas, splashScreen);
       }
     });
 
@@ -326,7 +324,7 @@ define(
 
     $(window).bind('resize', function () {
       app._sizeCanvas();
-      tmp_drawCanvas(app._pixelCanvas, splashScreen);
+      drawCanvas(app._pixelCanvas, splashScreen);
     });
   };
 
@@ -362,6 +360,61 @@ define(
       this._$canvas[0].height = this._$canvas.parent().height();
     }
   };
+
+
+  // _initializeToolSelectRouting connects all components required for the
+  // tool select algorithm.
+  PixelEditor.prototype._initializeToolSelectRouting = function () {
+    var app = this;
+    var $currentToolIcon = $('#tool-select-button').find('.toolbar-icon');
+    var $selectPaintBrushButton = $('#select-paint-brush-button');
+    var $selectDropperButton = $('#select-dropper-button');
+    var $selectPaintBucketButton = $('#select-paint-bucket-button');
+    var $selectEraserButton = $('#select-eraser-button');
+
+    this._buttons.toolSelectMenu.paintBrush.addStateHandler(
+        function (toggled) {
+      $selectPaintBrushButton.removeClass('dk-palette-appear-transition');
+      $selectPaintBrushButton.removeClass('dk-palette-disappear-transition');
+      if (toggled) {
+        app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.PAINTBRUSH);
+      }
+    });
+    this._buttons.toolSelectMenu.dropper.addStateHandler(
+        function (toggled) {
+      $selectDropperButton.removeClass('dk-palette-appear-transition');
+      $selectDropperButton.removeClass('dk-palette-disappear-transition');
+      if (toggled) {
+        app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.DROPPER);
+      }
+    });
+    this._buttons.toolSelectMenu.paintBucket.addStateHandler(
+        function (toggled) {
+      $selectPaintBucketButton.removeClass('dk-palette-appear-transition');
+      $selectPaintBucketButton.removeClass('dk-palette-disappear-transition');
+      if (toggled) {
+        app._actions.currentTool.setValue(
+            Constants.AVAILABLE_TOOLS.PAINTBUCKET);
+      }
+    });
+    this._buttons.toolSelectMenu.eraser.addStateHandler(
+        function (toggled) {
+      $selectEraserButton.removeClass('dk-palette-appear-transition');
+      $selectEraserButton.removeClass('dk-palette-disappear-transition');
+      if (toggled) {
+        app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.ERASER);
+      }
+    });
+
+    this._actions.currentTool.addValueChangeHandler(function (value) {
+      _.each(_.values(Constants.TOOL_ICON_CLASSES), function (cls) {
+        $currentToolIcon.removeClass(cls);
+      });
+
+      $currentToolIcon.addClass(Constants.TOOL_ICON_CLASSES[value]);
+    });
+  };
+
 
   return PixelEditor;
 });
