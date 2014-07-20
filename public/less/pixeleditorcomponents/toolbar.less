@@ -6,6 +6,8 @@
 @toolbar-button-width: 100px;
 @toolbar-icon-size: 36px;
 @toolbar-icon-offset: 5px;
+@small-toolbar-icon-size: 31px;
+@small-toolbar-icon-offset: 3px;
 @toolbar-spacer-size: 5px;
 @toolbar-padding: @container-padding;
 @toolbar-width: @toolbar-button-width;
@@ -45,6 +47,17 @@
 .toolbar-icon:before {
   position: relative;
   top: @toolbar-icon-offset;
+}
+
+
+.small-toolbar-icon {
+  font-size: @small-toolbar-icon-size;
+  color: @icon-color;
+}
+
+.small-toolbar-icon:before {
+  position: relative;
+  top: @small-toolbar-icon-offset;
 }
 
 

@@ -253,6 +253,14 @@
   position: relative;
   top: 5px;
 }
+.small-toolbar-icon {
+  font-size: 31px;
+  color: #444444;
+}
+.small-toolbar-icon:before {
+  position: relative;
+  top: 3px;
+}
 .toolbar-spacer {
   height: 5px;
   width: 5px;
