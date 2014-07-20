@@ -1,18 +1,23 @@
 define(
     ['jquery', 'underscore', 'domkit/controllers/radiogroup',
-     'domkit/ui/button', 'domkit/ui/palette', 'core/graphics/color',
-     'core/graphics/pixelcanvas', 'pixeleditor/constants',
-     'pixeleditor/actions/recentcolorpalette', 'pixeleditor/actions/value'],
+     'domkit/ui/button', 'domkit/ui/palette',
+     'core/controller/eventhub', 'core/controller/gridmodelbuilder',
+     'core/graphics/color', 'core/graphics/pixelcanvas',
+     'core/interface/clickcanvasinterface',
+     'core/model/converters/spriteconverter', 'core/model/gridmodel',
+     'pixeleditor/constants', 'pixeleditor/actions/recentcolorpalette',
+     'pixeleditor/actions/value'],
     function (
-        $, _, RadioGroup, Button, Palette, Color, PixelCanvas, Constants,
-        RecentColorPalette, Value) {
+        $, _, RadioGroup, Button, Palette, EventHub, GridModelBuilder, Color,
+        PixelCanvas, ClickCanvasInterface, SpriteConverter, GridModel,
+        Constants, RecentColorPalette, Value) {
   // Base application initializer.
   var PixelEditor = function () {
     this._$canvas = $('#pixel-editor-canvas');
 
     this._actions = this._initializeActions();
     this._buttons = this._initializeButtons();
-    this._pixelCanvas = this._initializeCanvas();
+    this._canvasTools = this._initializeCanvas();
     this._radioGroups = this._initializeRadioGroups();
     this._palettes = this._initializePalettes();
     this._initializeActiveColorSelectRouting();
@@ -173,9 +178,50 @@ define(
   // _initializeCanvas sets up the pixel canvas
   // Returns an instance of a PixelCanvas.
   PixelEditor.prototype._initializeCanvas  = function () {
+    var app = this;
+    var canvasTools = Object.create(null);
+
+    canvasTools.pixelCanvas = new PixelCanvas(
+        Constants.STARTING_VALUES.CANVAS_DIMENSIONS, '#pixel-editor-canvas',
+        Constants.STARTING_VALUES.DEFAULT_COLOR);
+
+    canvasTools.clickInterface = new ClickCanvasInterface(
+        canvasTools.pixelCanvas);
+
+    canvasTools.model = new GridModel(
+        Constants.STARTING_VALUES.CANVAS_DIMENSIONS);
+
+    var defaultElement = { color: Constants.STARTING_VALUES.DEFAULT_COLOR };
+    var activeElement = { color: Constants.STARTING_VALUES.ACTIVE_COLOR };
+    canvasTools.modelBuilder = new GridModelBuilder(
+        canvasTools.model, canvasTools.pixelCanvas, defaultElement,
+        activeElement, SpriteConverter);
+
+    this._actions.activeColor.addValueChangeHandler(function (value) {
+      canvasTools.modelBuilder.setCurrentElement({ color: value });
+    });
+    this._actions.defaultColor.addValueChangeHandler(function (value) {
+      canvasTools.modelBuilder.setDefaultElement({ color: value });
+    });
+    this._actions.currentTool.addValueChangeHandler(function (value) {
+      canvasTools.modelBuilder.setAction(Constants.TOOL_TO_ACTION_MAP[value]);
+    });
+
+    canvasTools.modelBuilder.afterCanvasAction(function () {
+      if (app._actions.currentTool.getValue() ===
+          Constants.AVAILABLE_TOOLS.DROPPER) {
+        app._actions.activeColor.setValue(
+           canvasTools.modelBuilder.getCurrentElement().color);
+      }
+    });
+
+    EventHub.subscribe('modelbuilder.redraw', function () {
+      canvasTools.clickInterface.paintGrid();
+    });
+
     this._sizeCanvas();
-    return new PixelCanvas(
-        { width: 130, height: 100 }, '#pixel-editor-canvas', '#000000');
+
+    return canvasTools;
   };
 
 
@@ -297,23 +343,6 @@ define(
   // _initializePlaceholder behavior of the application.
   PixelEditor.prototype._initializePlaceholder = function () {
     var app = this;
-    var drawCanvas = function (pixelCanvas, image) {
-      _.each(image.pixels, function (p) {
-        pixelCanvas.setPixel(p.x, p.y, p.color);
-      });
-      pixelCanvas.paint();
-    };
-    var splashScreen;
-
-    $.ajax({
-      url: '/sprite/splash-screen',
-      type: 'GET',
-      dataType: 'text',
-      success: function (data) {
-        splashScreen = JSON.parse(data);
-        drawCanvas(app._pixelCanvas, splashScreen);
-      }
-    });
 
     $(document).bind('keydown', function (e) {
       // If the escape key was pressed clear toolbar selection.
@@ -324,7 +353,7 @@ define(
 
     $(window).bind('resize', function () {
       app._sizeCanvas();
-      drawCanvas(app._pixelCanvas, splashScreen);
+      app._canvasTools.modelBuilder.paint();
     });
   };
 
