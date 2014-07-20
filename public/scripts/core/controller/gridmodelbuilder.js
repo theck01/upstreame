@@ -248,20 +248,21 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
         });
         element = element || this.defaultElement;
         this.setCurrentElement(element);
-        return;
       }
       else if (this._action === GridModelBuilder.CONTROLLER_ACTIONS.SET ||
                this._action === GridModelBuilder.CONTROLLER_ACTIONS.CLEAR) {
         elements = _.map(params.positions, function (p) {
           return _.extend(_.clone(this.currentElement), p);
         }, this);
+        this._currentChange = { action: this._action, elements: elements };
+        this.paint();
       }
       else if (this._action === GridModelBuilder.CONTROLLER_ACTIONS.FILL) {
         elements = [_.extend(_.clone(this.currentElement), mousePos)];
+        this._currentChange = { action: this._action, elements: elements };
+        this.paint();
       }
       
-      this._currentChange = { action: this._action, elements: elements };
-      this.paint();
       this._userCanvasActionCallback();
     };
 
