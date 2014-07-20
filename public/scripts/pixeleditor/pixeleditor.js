@@ -344,6 +344,10 @@ define(
   PixelEditor.prototype._initializePlaceholder = function () {
     var app = this;
 
+    $('#pixel-editor-canvas').bind('mousedown', function() {
+      app._radioGroups.toolbar.clear();
+    });
+
     $(document).bind('keydown', function (e) {
       // If the escape key was pressed clear toolbar selection.
       if (e.which === Constants.KEYS.ESCAPE) {
