@@ -10,6 +10,7 @@
 @color-select-preview-size: 100px;
 @color-select-spacer-size: 5px;
 @color-select-text-input-height: 30px;
+@color-select-text-input-font-size: 16px;
 
 @color-select-submenu-width:
     (@color-select-preview-size + 2 * @color-border-width);
@@ -63,11 +64,14 @@
 
 .color-select-text-input {
   text-align: center;
+  font-family: 'Share Tech Mono';
+  font-size: @color-select-text-input-font-size;
   outline: none;
   width: @color-select-preview-size;
   height: @color-select-text-input-height;
   border: @color-border-width solid @color-border-color;
   border-radius: @color-radius;
+  padding: 0px;
 }
 
 
