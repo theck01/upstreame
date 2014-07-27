@@ -81,6 +81,10 @@
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
 }
+.dk-spacer {
+  width: 10px;
+  height: 10px;
+}
 .dk-button {
   outline: none;
   border-radius: 8px;
@@ -126,10 +130,6 @@
   border: 3px solid #6fb1ff;
   background: linear-gradient(to bottom, #e7e7e7 0%, #f0f0f0 100%);
 }
-.dk-spacer {
-  width: 10px;
-  height: 10px;
-}
 .color-select-submenu {
   display: inline-block;
   vertical-align: top;
@@ -140,7 +140,7 @@
   width: 100px;
   height: 100px;
   border: 1px solid #9f9f9f;
-  border-radius: 8px;
+  border-radius: 0px;
   background-color: #FFFF00;
 }
 .color-select-spacer {
@@ -149,11 +149,14 @@
 }
 .color-select-text-input {
   text-align: center;
+  font-family: 'Share Tech Mono';
+  font-size: 16px;
   outline: none;
   width: 100px;
   height: 30px;
   border: 1px solid #9f9f9f;
-  border-radius: 8px;
+  border-radius: 0px;
+  padding: 0px;
 }
 .color-select-text-input:focus::-webkit-input-placeholder {
   color: transparent;
@@ -182,6 +185,7 @@
   height: 26px;
   background-image: none;
   background-color: #00FFFF;
+  border-radius: 0px;
 }
 .color-palette-row {
   height: 28px;
@@ -224,17 +228,19 @@
   width: 260px;
   height: 60px;
 }
-.confirmation-button {
+button.confirmation-button {
   display: inline-block;
   vertical-align: top;
-  font-family: Roboto;
+  font-family: 'Share Tech Mono';
   font-size: 14px;
   width: 60px;
   height: 30px;
+  border-radius: 0px;
 }
-.toolbar-button {
+button.toolbar-button {
   width: 100px;
   height: 50px;
+  border-radius: 0px;
 }
 .toolbar-container {
   padding: 10px;
@@ -285,7 +291,7 @@ html {
 body {
   margin: 0px;
   height: 100%;
-  font-family: Roboto;
+  font-family: 'Share Tech Mono';
 }
 .canvas-container {
   height: calc(100% -  20px);
@@ -294,4 +300,7 @@ body {
 }
 .palette-menu-staging-area {
   display: none;
+}
+.dk-palette-menu-container {
+  border-radius: 0px;
 }
