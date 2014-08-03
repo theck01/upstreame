@@ -1,5 +1,4 @@
 @confirmation-button-height: 30px;
-@confirmation-button-width: 60px;
 @confirmation-button-border-radius: 0px;
 @confirmation-message-height: 50px;
 @confirmation-message-width: 250px;
@@ -8,8 +7,8 @@
     (@confirmation-message-width +
      2 * @confirmation-message-horizontal-padding);
 @confirmation-menu-spacer-size: 10px;
-@confirmation-select-spacer-size: 
-    ((@confirmation-menu-width - 2 * @confirmation-button-width) / 3);
+@confirmation-submenu-element-size: 
+    (@confirmation-menu-width / 3);
 @confirmation-menu-height:
     (@confirmation-message-height + @confirmation-menu-spacer-size +
      @confirmation-button-height);
@@ -38,14 +37,14 @@
 .confirmation-select-spacer {
   display: inline-block;
   vertical-align: top;
-  width: @confirmation-select-spacer-size;
+  width: @confirmation-submenu-element-size;
   height: @confirmation-button-height;
 }
 
 
 .confirmation-select-submenu {
   width: @confirmation-menu-width;
-  height: @confirmation-button-width;
+  height: @confirmation-button-height;
 }
 
 
@@ -54,7 +53,7 @@ button.confirmation-button {
   vertical-align: top;
   font-family: 'Share Tech Mono';
   font-size: 14px;
-  width: @confirmation-button-width;
+  width: @confirmation-submenu-element-size;
   height: @confirmation-button-height;
   border-radius: @confirmation-button-border-radius;
 }
