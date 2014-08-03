@@ -302,6 +302,18 @@ describe('GridModelBuilder', function () {
   );
 
 
+  it('should not call callback to on NONE actions',
+    function () {
+      var canvasActionSpy = sinon.spy();
+      modelBuilder.afterCanvasAction(canvasActionSpy);
+      modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.NONE);
+      EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
+
+      assert(!canvasActionSpy.called);
+    }
+  );
+
+
   it('should build the current change on "canvas.action" events', function () {
     var expectedElements = [
       { x: 0, y: 1, color: '#000000' },
@@ -467,6 +479,10 @@ describe('GridModelBuilder', function () {
            GridModelBuilder.CONTROLLER_ACTIONS.CLEAR);
 
     modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.GET);
+    EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
+    assert(modelBuilder.getCurrentChange() === null);
+
+    modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.NONE);
     EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
     assert(modelBuilder.getCurrentChange() === null);
   });

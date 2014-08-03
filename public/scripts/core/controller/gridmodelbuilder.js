@@ -96,6 +96,7 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
       CLEAR_ALL: "clear all",
       FILL: "fill",
       GET: "get",
+      NONE: "none",
       SET: GridModel.MODEL_ACTIONS.SET
     };
 
@@ -241,8 +242,11 @@ define(["underscore", "core/graphics/color", "core/model/gridmodel",
       this._currentChange = null;
       var mousePos = _.last(coords);
       var elements;
-
-      if (this._action === GridModelBuilder.CONTROLLER_ACTIONS.GET) {
+      
+      if (this._action === GridModelBuilder.CONTROLLER_ACTIONS.NONE) {
+        return;
+      }
+      else if (this._action === GridModelBuilder.CONTROLLER_ACTIONS.GET) {
         var element = _.find(this._model.getElements(this), function (e) {
           return e.x === mousePos.x && e.y === mousePos.y;
         });
