@@ -124,6 +124,7 @@ define(
     this._actions.activeColor.setValue(Constants.STARTING_VALUES.ACTIVE_COLOR);
     this._actions.recentColors.colorUsed(
         Constants.STARTING_VALUES.ACTIVE_COLOR);
+    $colorSelectInput.val('');
   };
 
 
@@ -301,6 +302,7 @@ define(
         Constants.STARTING_VALUES.DEFAULT_COLOR);
     this._actions.recentColors.colorUsed(
         Constants.STARTING_VALUES.DEFAULT_COLOR);
+    $colorSelectInput.val('');
   };
 
 
