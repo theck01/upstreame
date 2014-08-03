@@ -283,7 +283,18 @@ button.toolbar-button {
 }
 .tool-select-menu {
   width: 100px;
-  height: 215px;
+  height: 403px;
+}
+.large-tool-select-spacer {
+  width: 100px;
+  height: 1px;
+  background-clip: content-box;
+  background-color: #9f9f9f;
+  padding: 15px 0px;
+}
+.small-tool-select-spacer {
+  width: 100px;
+  height: 5px;
 }
 html {
   height: 100%;

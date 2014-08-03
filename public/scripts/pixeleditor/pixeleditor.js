@@ -140,7 +140,6 @@ define(
     buttons.toolbar.toolSelect = Button.create('#tool-select-button');
     buttons.toolbar.undo = Button.create('#undo-button');
     buttons.toolbar.redo = Button.create('#redo-button');
-    buttons.toolbar.zoom = Button.create('#zoom-button');
     buttons.toolbar.trash = Button.create('#trash-button');
     buttons.toolbar.load = Button.create('#load-button');
     buttons.toolbar.save = Button.create('#save-button');
@@ -154,6 +153,8 @@ define(
     buttons.toolSelectMenu.paintBucket =
         Button.create('#select-paint-bucket-button');
     buttons.toolSelectMenu.eraser = Button.create('#select-eraser-button');
+    buttons.toolSelectMenu.zoom = Button.create('#select-zoom-button');
+    buttons.toolSelectMenu.crop = Button.create('#select-crop-button');
 
     buttons.trashMenu = Object.create(null);
     buttons.trashMenu.yes = Button.create('#trash-confirm-yes');
@@ -384,6 +385,8 @@ define(
       this._buttons.toolSelectMenu.dropper,
       this._buttons.toolSelectMenu.paintBucket,
       this._buttons.toolSelectMenu.eraser,
+      this._buttons.toolSelectMenu.zoom,
+      this._buttons.toolSelectMenu.crop
     ];
     radioGroups.toolSelect = new RadioGroup(
       toolSelectButtons, 0 /* activeIndex */);
@@ -445,6 +448,22 @@ define(
       $selectEraserButton.removeClass('dk-palette-disappear-transition');
       if (toggled) {
         app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.ERASER);
+      }
+    });
+    this._buttons.toolSelectMenu.zoom.addStateHandler(
+        function (toggled) {
+      $selectEraserButton.removeClass('dk-palette-appear-transition');
+      $selectEraserButton.removeClass('dk-palette-disappear-transition');
+      if (toggled) {
+        app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.ZOOM);
+      }
+    });
+    this._buttons.toolSelectMenu.crop.addStateHandler(
+        function (toggled) {
+      $selectEraserButton.removeClass('dk-palette-appear-transition');
+      $selectEraserButton.removeClass('dk-palette-disappear-transition');
+      if (toggled) {
+        app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.CROP);
       }
     });
 

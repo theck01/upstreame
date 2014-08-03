@@ -6,7 +6,9 @@ define(['core/controller/gridmodelbuilder'], function (GridModelBuilder) {
     PAINTBRUSH: 'paintbrush-tool',
     DROPPER: 'dropper-tool',
     PAINTBUCKET: 'paintbucket-tool',
-    ERASER: 'eraser-tool'
+    ERASER: 'eraser-tool',
+    ZOOM: 'zoom-tool',
+    CROP: 'crop-tool'
   };
 
   Constants.COLOR_PALETTE_SIZE = 12;
@@ -27,6 +29,9 @@ define(['core/controller/gridmodelbuilder'], function (GridModelBuilder) {
       'icon-paint-bucket';
   Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.ERASER] =
       'icon-eraser';
+  Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.ZOOM] =
+      'icon-zoom-in';
+  Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.CROP] = '';
 
   Constants.TOOL_TO_ACTION_MAP = Object.create(null);
   Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.PAINTBRUSH] =
@@ -37,7 +42,10 @@ define(['core/controller/gridmodelbuilder'], function (GridModelBuilder) {
       GridModelBuilder.CONTROLLER_ACTIONS.FILL;
   Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.ERASER] =
       GridModelBuilder.CONTROLLER_ACTIONS.CLEAR;
-
+  Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.ZOOM] =
+      GridModelBuilder.CONTROLLER_ACTIONS.NONE;
+  Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.CROP] =
+      GridModelBuilder.CONTROLLER_ACTIONS.NONE;
 
   Constants.KEYS = {
     ENTER: 13,
