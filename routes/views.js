@@ -61,6 +61,10 @@ exports.pixeleditor = function (req, res) {
     main: 'scripts/pixeleditor/main.js'
   };
 
+  if (process.env.NODE_ENV === 'production') {
+    opts.main = 'scripts/dist/pixeleditor.min.js';
+  }
+
   res.render('pixeleditor', opts);
 };
 
