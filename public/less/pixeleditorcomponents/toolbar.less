@@ -4,17 +4,15 @@
 
 @toolbar-button-height: 50px;
 @toolbar-button-width: 100px;
-@toolbar-button-border-radius: 0px;
 @toolbar-icon-size: 36px;
 @toolbar-icon-offset: 5px;
 @small-toolbar-icon-size: 31px;
 @small-toolbar-icon-offset: 3px;
-@toolbar-spacer-size: 5px;
 @toolbar-padding: @container-padding;
 @toolbar-width: @toolbar-button-width;
 @toolbar-height: @container-height;
 @toolbar-min-height: (@num-toolbar-buttons * @toolbar-button-height +
-    (@num-toolbar-buttons - 1) * @toolbar-spacer-size +
+    (@num-toolbar-buttons - 1) * @small-spacer-size +
     2 * @toolbar-padding);
 
 @num-toolbar-buttons: 10;
@@ -23,7 +21,7 @@
 button.toolbar-button {
   width: @toolbar-button-width;
   height: @toolbar-button-height;
-  border-radius: @toolbar-button-border-radius;
+  border-radius: @border-radius;
 }
 
 
@@ -42,7 +40,7 @@ button.toolbar-button {
 
 
 .toolbar-icon-outlined {
-  -webkit-text-stroke: @domkit-border-width @domkit-border-color;
+  -webkit-text-stroke: @border-width @border-color;
 }
 
 
@@ -64,8 +62,8 @@ button.toolbar-button {
 
 
 .toolbar-spacer {
-  height: @toolbar-spacer-size;
-  width: @toolbar-spacer-size;
+  height: @small-spacer-size;
+  width: @small-spacer-size;
 }
 
 

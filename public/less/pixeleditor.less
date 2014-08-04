@@ -2,6 +2,7 @@
 @import "pixeleditorcomponents/constants";
 @import "pixeleditorcomponents/colorselectmenu";
 @import "pixeleditorcomponents/confirmationmenu";
+@import "pixeleditorcomponents/filemenu";
 @import "pixeleditorcomponents/toolbar";
 @import "pixeleditorcomponents/toolselectmenu";
 
@@ -13,7 +14,7 @@ html {
 body {
   margin: 0px;
   height: 100%;
-  font-family: 'Share Tech Mono';
+  font-family: @font;
 }
 
 
@@ -30,5 +31,5 @@ body {
 
 
 .dk-palette-menu-container {
-  border-radius: @toolbar-button-border-radius;
+  border-radius: @border-radius;
 }

@@ -1,18 +1,18 @@
+@import "constants";
 @import "toolbar";
 @import "../../../bower_components/domkit/domkit/less/common";
 
 @large-tool-select-divider-height: 1px;
-@large-tool-select-divider-vertical-padding: 15px;
+@large-tool-select-divider-vertical-padding: @medium-spacer-size;
 @large-tool-select-divider-horizontal-padding: 0px;
 @large-tool-select-divider-color: @domkit-border-color;
 @large-tool-select-spacer-height:
     (@large-tool-select-divider-height +
     2 * @large-tool-select-divider-vertical-padding);
-@small-tool-select-spacer-height: 5px;
 
 @tool-select-menu-height:
     6 * @toolbar-button-height + 3 * @large-tool-select-spacer-height +
-    2 * @small-tool-select-spacer-height;
+    2 * @small-spacer-size;
 
 
 .tool-select-menu {
@@ -34,5 +34,5 @@
 
 .small-tool-select-spacer {
   width: @toolbar-button-width;
-  height: @small-tool-select-spacer-height;
+  height: @small-spacer-size;
 }
