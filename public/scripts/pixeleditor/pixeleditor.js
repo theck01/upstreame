@@ -161,6 +161,12 @@ define(
     buttons.trashMenu.yes = Button.create('#trash-confirm-yes');
     buttons.trashMenu.no = Button.create('#trash-confirm-no');
 
+    buttons.loadMenu = Object.create(null);
+    buttons.loadMenu.load = Button.create('#load-sprite-button');
+
+    buttons.saveMenu = Object.create(null);
+    buttons.saveMenu.save = Button.create('#save-sprite-button');
+
     buttons.activeColorSelect = Object.create(null);
     buttons.activeColorSelect.colorPalette = _.map(
         $('#active-color-select-menu').find('.color-palette-color'),
@@ -347,6 +353,41 @@ define(
     this._buttons.toolbar.trash.addStateHandler(function (state) {
       palettes.trash.visible(state);
     });
+
+    var $bottomToolbar = $('#bottom-toolbar');
+    var bottomToolbarAnchorEdgeBounds = {
+      min: -$bottomToolbar.position().top,
+      max: $bottomToolbar.outerHeight()
+    };
+
+    palettes.load = new Palette({
+      anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
+      anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
+      menu: '#load-sprite-menu',
+      sibling: '#load-button'
+    });
+    this._buttons.toolbar.load.addStateHandler(function (state) {
+      palettes.load.visible(state);
+    });
+
+    palettes.save = new Palette({
+      anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
+      anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
+      menu: '#save-sprite-menu',
+      sibling: '#save-button'
+    });
+    this._buttons.toolbar.save.addStateHandler(function (state) {
+      palettes.save.visible(state);
+    });
+
+    return palettes;
+  };
+
+
+  // _initializePlaceholder behavior of the application.
+  PixelEditor.prototype._initializePlaceholder = function () {
+    var app = this;
+
 
     return palettes;
   };

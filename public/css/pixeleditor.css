@@ -206,17 +206,17 @@
 }
 .confirmation-menu {
   width: 260px;
-  height: 90px;
+  height: 85px;
 }
 .confirmation-message {
-  font-size: 18px;
+  font-size: 20px;
   width: 260px;
   height: 50px;
   padding: 0px 5px;
 }
 .confirmation-menu-spacer {
-  width: 10px;
-  height: 10px;
+  width: 5px;
+  height: 5px;
 }
 .confirmation-select-spacer {
   display: inline-block;
@@ -232,10 +232,73 @@ button.confirmation-button {
   display: inline-block;
   vertical-align: top;
   font-family: 'Share Tech Mono';
-  font-size: 14px;
+  font-size: 16px;
   width: 86.66666666666667px;
   height: 30px;
   border-radius: 0px;
+}
+.file-menu {
+  width: 300px;
+  height: 276px;
+}
+.file-action-submenu {
+  width: 300px;
+  height: 30px;
+}
+.file-action-spacer {
+  display: inline-block;
+  vertical-align: top;
+  width: 75px;
+  height: 30px;
+}
+.file-action-spacer {
+  display: inline-block;
+  vertical-align: top;
+  width: 75px;
+  height: 30px;
+}
+button.file-menu-button {
+  display: inline-block;
+  vertical-align: top;
+  font-family: 'Share Tech Mono';
+  font-size: 16px;
+  width: 147px;
+  height: 30px;
+  border-radius: 0px;
+}
+.file-menu-spacer {
+  width: 300px;
+  height: 5px;
+}
+.file-list {
+  width: 288px;
+  height: 200px;
+  background-color: #ffffff;
+  border: 1px solid #9f9f9f;
+  border-radius: 0px;
+  padding: 0px 5px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.file-list-entry {
+  font-family: 'Share Tech Mono';
+  font-size: 16px;
+  width: 288px;
+  height: 20px;
+  white-space: nowrap;
+}
+.selected-file-list-entry {
+  background-color: #aaaaff;
+}
+.file-name-input {
+  font-family: 'Share Tech Mono';
+  font-size: 16px;
+  outline: none;
+  width: 288px;
+  height: 30px;
+  border: 1px solid #9f9f9f;
+  border-radius: 0px;
+  padding: 0px 5px;
 }
 button.toolbar-button {
   width: 100px;
@@ -283,14 +346,14 @@ button.toolbar-button {
 }
 .tool-select-menu {
   width: 100px;
-  height: 403px;
+  height: 373px;
 }
 .large-tool-select-spacer {
   width: 100px;
   height: 1px;
   background-clip: content-box;
   background-color: #9f9f9f;
-  padding: 15px 0px;
+  padding: 10px 0px;
 }
 .small-tool-select-spacer {
   width: 100px;
