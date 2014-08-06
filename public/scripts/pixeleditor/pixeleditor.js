@@ -23,6 +23,7 @@ define(
 
     this._initializeActiveColorSelectRouting();
     this._initializeDefaultColorSelectRouting();
+    this._initializeSettingsRouting();
     this._initializeToolSelectRouting();
     this._initializeTrashRouting();
 
@@ -47,15 +48,26 @@ define(
       return null;
     };
 
+    var numberValidator = function (newNumber) {
+      if (!isNaN(newNumber)) return newNumber;
+      return null;
+    };
+
+
+    var booleanValidator = function (newLogicalValue) {
+      return !!newLogicalValue;
+    };
+
     var actions = Object.create(null);
     actions.activeColor = new Value(null, colorValidator);
     actions.defaultColor = new Value(null, colorValidator);
-
     actions.recentColors =
         new RecentColorPalette(Constants.COLOR_PALETTE_SIZE);
-
     actions.currentTool =
         new Value(Constants.AVAILABLE_TOOLS, toolValidator);
+    actions.canvasWidth = new Value(null, numberValidator);
+    actions.canvasHeight = new Value(null, numberValidator);
+    actions.canvasGridDisplay = new Value(null, booleanValidator);
 
     return actions;
   };
@@ -87,10 +99,6 @@ define(
       if (!Color.isValid(inputVal) || (Color.sanitize(inputVal) !== newColor)) {
         $colorSelectInput.val(newColor);
       }
-    });
-
-    this._buttons.toolbar.activeColor.addStateHandler(function (state) {
-      app._palettes.activeColorSelect.visible(state);
     });
 
     _.each(this._buttons.activeColorSelect.colorPalette, function (button, i) {
@@ -272,10 +280,6 @@ define(
       }
     });
 
-    this._buttons.toolbar.defaultColor.addStateHandler(function (state) {
-      app._palettes.defaultColorSelect.visible(state);
-    });
-
     _.each(this._buttons.defaultColorSelect.colorPalette, function (button, i) {
       button.addClickHandler(function () {
         var colors = app._actions.recentColors.getPalette();
@@ -439,6 +443,46 @@ define(
   };
 
 
+  // _initializeSettingsRouting connects all components required for the 
+  // settings menu.
+  PixelEditor.prototype._initializeSettingsRouting = function () {
+    var $canvasWidthInput = $('#canvas-width-input');
+    var $canvasHeightInput = $('#canvas-height-input');
+    var $gridDisplayInput = $('#grid-display-input');
+    var app = this;
+
+    $canvasWidthInput.on('keyup', function () {
+      app._actions.canvasWidth.setValue($canvasWidthInput.val());
+    });
+
+    $canvasHeightInput.on('keyup', function () {
+      app._actions.canvasHeight.setValue($canvasHeightInput.val());
+    });
+
+    var dimensionChangeHandler = function () {
+      app._canvasTools.modelBuilder.resize({
+        width: app._actions.canvasWidth.getValue(),
+        height: app._actions.canvasHeight.getValue()
+      });
+    };
+    this._actions.canvasWidth.addValueChangeHandler(dimensionChangeHandler);
+    this._actions.canvasHeight.addValueChangeHandler(dimensionChangeHandler);
+
+    $gridDisplayInput.on('change', function () {
+      app._actions.canvasGridDisplay.setValue(
+          $gridDisplayInput.prop('checked'));
+    });
+
+    // Set initial values
+    this._actions.canvasWidth.setValue(
+        Constants.STARTING_VALUES.CANVAS_DIMENSIONS.width);
+    this._actions.canvasHeight.setValue(
+        Constants.STARTING_VALUES.CANVAS_DIMENSIONS.height);
+    this._actions.canvasGridDisplay.setValue(
+        Constants.STARTING_VALUES.CANVAS_DIMENSIONS.GRID_VISIBLE);
+  };
+
+
   // Update the size of the canvas to match the size of the parent container.
   // Arguments:
   //   $canvas: The jQuery object for the canvas that must be sized
@@ -452,7 +496,7 @@ define(
 
 
   // _initializeToolSelectRouting connects all components required for the
-  // tool select algorithm.
+  // tool select menu.
   PixelEditor.prototype._initializeToolSelectRouting = function () {
     var app = this;
     var $currentToolIcon = $('#tool-select-button').find('.toolbar-icon');

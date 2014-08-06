@@ -17,7 +17,8 @@ define(['core/controller/gridmodelbuilder'], function (GridModelBuilder) {
     ACTIVE_COLOR: '#000000',
     DEFAULT_COLOR: '#FFFFFF',
     DEFAULT_TOOL: Constants.AVAILABLE_TOOLS.PAINTBRUSH,
-    CANVAS_DIMENSIONS: { width: 16, height: 16 }
+    CANVAS_DIMENSIONS: { width: 16, height: 16 },
+    GRID_VISIBLE: true
   };
 
   Constants.TOOL_ICON_CLASSES = Object.create(null);
