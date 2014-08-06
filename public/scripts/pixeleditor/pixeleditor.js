@@ -337,6 +337,9 @@ define(
       menu: '#active-color-select-menu',
       sibling: '#active-color-button'
     });
+    this._buttons.toolbar.activeColor.addStateHandler(function (state) {
+      palettes.activeColorSelect.visible(state);
+    });
 
     palettes.defaultColorSelect = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
