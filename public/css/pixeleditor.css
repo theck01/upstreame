@@ -300,6 +300,46 @@ button.file-menu-button {
   border-radius: 0px;
   padding: 0px 5px;
 }
+.settings-menu {
+  width: 212px;
+  height: 106px;
+}
+.settings-dimension-input {
+  display: inline-block;
+  font-family: 'Share Tech Mono';
+  font-size: 16px;
+  text-align: center;
+  outline: none;
+  width: 50px;
+  height: 30px;
+  border: 1px solid #9f9f9f;
+  border-radius: 0px;
+  padding: 0px 5px;
+}
+.settings-grid-display-input {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-left: 23px;
+  border: 1px solid #9f9f9f;
+  border-radius: 0px;
+}
+.settings-label {
+  display: inline-block;
+  font-family: 'Share Tech Mono';
+  font-size: 20px;
+  width: 150px;
+  height: 32px;
+  line-height: 32px;
+}
+.settings-row {
+  width: 212px;
+  height: 32px;
+}
+.settings-spacer {
+  width: 212px;
+  height: 5px;
+}
 button.toolbar-button {
   width: 100px;
   height: 50px;

@@ -1,0 +1,72 @@
+@import "constants";
+
+@settings-dimension-input-width: 50px;
+@settings-dimension-input-outer-width:
+    (@settings-dimension-input-width + 2 * @border-width +
+    2 * @small-spacer-size);
+
+@settings-grid-display-input-size: @small-font-size;
+@settings-grid-display-input-margin-left:
+    ((@settings-dimension-input-outer-width -
+        @settings-grid-display-input-size) / 2);
+
+@settings-label-width: 150px;
+@settings-label-height: (@small-input-height + 2 * @border-width);
+
+@settings-row-width:
+    (@settings-dimension-input-outer-width + @settings-label-width);
+
+@settings-menu-height:
+    (3 * @settings-label-height + 2 * @small-spacer-size);
+
+
+.settings-menu {
+  width: @settings-row-width;
+  height: @settings-menu-height;
+}
+
+
+.settings-dimension-input {
+  display: inline-block;
+  font-family: @font;
+  font-size: @small-font-size;
+  text-align: center;
+  outline: none;
+  width: @settings-dimension-input-width;
+  height: @small-input-height;
+  border: @border-width solid @border-color;
+  border-radius: @border-radius;
+  padding: 0px @small-spacer-size;
+}
+
+
+.settings-grid-display-input {
+  display: inline-block;
+  width: @settings-grid-display-input-size;
+  height: @settings-grid-display-input-size;
+  margin-left: @settings-grid-display-input-margin-left;
+  border: @border-width solid @border-color;
+  border-radius: @border-radius;
+}
+
+
+.settings-label {
+  display: inline-block;
+  font-family: @font;
+  font-size: @large-font-size;
+  width: @settings-label-width;
+  height: @settings-label-height;
+  line-height: @settings-label-height;
+}
+
+
+.settings-row {
+  width: @settings-row-width;
+  height: @settings-label-height;
+}
+
+
+.settings-spacer {
+  width: @settings-row-width;
+  height: @small-spacer-size;
+}

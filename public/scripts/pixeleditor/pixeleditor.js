@@ -380,14 +380,15 @@ define(
       palettes.save.visible(state);
     });
 
-    return palettes;
-  };
-
-
-  // _initializePlaceholder behavior of the application.
-  PixelEditor.prototype._initializePlaceholder = function () {
-    var app = this;
-
+    palettes.settings = new Palette({
+      anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
+      anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
+      menu: '#settings-menu',
+      sibling: '#settings-button'
+    });
+    this._buttons.toolbar.settings.addStateHandler(function (state) {
+      palettes.settings.visible(state);
+    });
 
     return palettes;
   };

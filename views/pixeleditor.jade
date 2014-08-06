@@ -201,8 +201,7 @@ block content
         .file-list-entry submersible-pitch-30-yaw-0
         .file-list-entry submersible-pitch-10-yaw-0
         .file-list-entry submersible-pitch-170-yaw-20
-        .file-list-entry submersible-pitch-150-yaw-20
-        .file-list-entry submersible-pitch-130-yaw-20
+        .file-list-entry submersible-pitch-150-yaw-20 .file-list-entry submersible-pitch-130-yaw-20
         .file-list-entry submersible-pitch-110-yaw-20
         .file-list-entry submersible-pitch-90-yaw-20
         .file-list-entry submersible-pitch-70-yaw-20
@@ -227,3 +226,23 @@ block content
         button#save-sprite-button.dk-button.file-menu-button Save Sprite
         .file-action-spacer
       
+    #settings-menu.settings-menu
+      .settings-row
+        .settings-label Canvas Width
+        input.settings-dimension-input(type="text")
+      .settings-spacer
+      .settings-row
+        .settings-label Canvas Height
+        input.settings-dimension-input(type="text")
+      .settings-spacer
+      .settings-row
+        .settings-label Show Grid
+        input.settings-grid-display-input(type="checkbox" checked)
+
+    #logout-confirmation-menu.confirmation-menu
+      .confirmation-message.dk-palette-no-transition Are you sure you want to logout?
+      .confirmation-menu-spacer
+      .confirmation-select-submenu
+        button#logout-confirm-yes.dk-button.confirmation-button Yes
+        .confirmation-select-spacer
+        button#logout-confirm-no.dk-button.confirmation-button No
