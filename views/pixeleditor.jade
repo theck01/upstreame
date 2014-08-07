@@ -10,36 +10,36 @@ block content
   .toolbar-container
     #top-toolbar
       button#active-color-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.toolbar-icon-outlined.icon-active-color
+        i.toolbar-icon.toolbar-icon-outlined.icon-active-color
       .toolbar-spacer
       button#default-color-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.toolbar-icon-outlined.icon-default-color
+        i.toolbar-icon.toolbar-icon-outlined.icon-default-color
       .toolbar-spacer
       button#tool-select-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.icon-paint-brush
+        i.toolbar-icon.icon-paint-brush
       .toolbar-spacer
       button#undo-button.dk-button.toolbar-button
-        .small-toolbar-icon.icon-undo
+        i.small-toolbar-icon.icon-undo
       .toolbar-spacer
       button#redo-button.dk-button.toolbar-button
-        .small-toolbar-icon.icon-redo
+        i.small-toolbar-icon.icon-redo
       .toolbar-spacer
       button#trash-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.icon-trash
+        i.toolbar-icon.icon-trash
       .toolbar-spacer
 
     #bottom-toolbar.toolbar-bottom-attached
       button#load-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.icon-open
+        i.toolbar-icon.icon-open
       .toolbar-spacer
       button#save-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.icon-save
+        i.toolbar-icon.icon-save
       .toolbar-spacer
       button#settings-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.icon-settings
+        i.toolbar-icon.icon-settings
       .toolbar-spacer
       button#session-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.icon-login
+        i.toolbar-icon.icon-login
 
   .canvas-container
     canvas#pixel-editor-canvas
@@ -48,22 +48,22 @@ block content
   .palette-menu-staging-area
     #tool-select-menu.tool-select-menu
       button#select-paint-brush-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.icon-paint-brush.dk-palette-no-transition
+        i.toolbar-icon.icon-paint-brush.dk-palette-no-transition
       .small-tool-select-spacer
       button#select-paint-bucket-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.icon-paint-bucket.dk-palette-no-transition
+        i.toolbar-icon.icon-paint-bucket.dk-palette-no-transition
       .large-tool-select-spacer
       button#select-dropper-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.icon-dropper.dk-palette-no-transition
+        i.toolbar-icon.icon-dropper.dk-palette-no-transition
       .large-tool-select-spacer
       button#select-eraser-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.icon-eraser.dk-palette-no-transition
+        i.toolbar-icon.icon-eraser.dk-palette-no-transition
       .large-tool-select-spacer
       button#select-zoom-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.icon-zoom-in.dk-palette-no-transition
+        i.toolbar-icon.icon-zoom-in.dk-palette-no-transition
       .small-tool-select-spacer
       button#select-crop-button.dk-toggleable-button.toolbar-button
-        .toolbar-icon.dk-palette-no-transition
+        i.toolbar-icon.dk-palette-no-transition
 
     #active-color-select-menu.color-menu
       .color-select-submenu
@@ -144,7 +144,7 @@ block content
           .color-palette-spacer
 
     #trash-confirmation-menu.confirmation-menu
-      .confirmation-message.dk-palette-no-transition Are you sure you want to clear the canvas?
+      .confirmation-message Are you sure you want to clear the canvas?
       .confirmation-menu-spacer
       .confirmation-select-submenu
         button#trash-confirm-yes.dk-button.confirmation-button Yes
@@ -242,11 +242,11 @@ block content
     #login-menu.login-menu
       .login-row
         .login-label Username
-        input#canvas-width-input.login-input(type="text")
+        input#username-input.login-input(type="text")
       .login-spacer
       .login-row
         .login-label Password
-        input#canvas-width-input.login-input(type="password")
+        input#password-input.login-input(type="password")
       .login-spacer
       .login-row
         .login-row-spacer
@@ -254,7 +254,7 @@ block content
         .login-row-spacer
 
     #logout-menu.confirmation-menu
-      .confirmation-message.dk-palette-no-transition Are you sure you want to sign out?
+      .confirmation-message Are you sure you want to sign out?
       .confirmation-menu-spacer
       .confirmation-select-submenu
         button#logout-confirm-yes.dk-button.confirmation-button Yes

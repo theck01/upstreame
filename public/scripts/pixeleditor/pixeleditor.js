@@ -23,6 +23,7 @@ define(
 
     this._initializeActiveColorSelectRouting();
     this._initializeDefaultColorSelectRouting();
+    this._initializeSessionsRouting();
     this._initializeSettingsRouting();
     this._initializeToolSelectRouting();
     this._initializeTrashRouting();
@@ -68,7 +69,7 @@ define(
     actions.canvasWidth = new Value(null, numberValidator);
     actions.canvasHeight = new Value(null, numberValidator);
     actions.canvasGridDisplay = new Value(null, booleanValidator);
-    actions.userLoggedIn = new Value(null, booleanValidator);
+    actions.userLoggedIn = new Value(false, booleanValidator);
 
     return actions;
   };
@@ -419,10 +420,12 @@ define(
     });
     this._buttons.toolbar.session.addStateHandler(function (state) {
       if (app._actions.userLoggedIn.getValue()) {
+        palettes.login.visible(false);
         palettes.logout.visible(state);
       }
       else {
         palettes.login.visible(state);
+        palettes.logout.visible(false);
       }
     });
 
@@ -472,6 +475,37 @@ define(
       toolSelectButtons, 0 /* activeIndex */);
 
     return radioGroups;
+  };
+
+
+  // _initializeSessionsRouting connects all components required for the 
+  // login and logout menus.
+  PixelEditor.prototype._initializeSessionsRouting = function () {
+    var $sessionButtonIcon = $('#session-button').find('.toolbar-icon');
+    var app = this;
+
+    this._buttons.loginMenu.login.addClickHandler(function () {
+      app._actions.userLoggedIn.setValue(true);
+      app._radioGroups.toolbar.clear();
+    });
+    this._buttons.logoutMenu.yes.addClickHandler(function () {
+      app._actions.userLoggedIn.setValue(false);
+      app._radioGroups.toolbar.clear();
+    });
+    this._buttons.logoutMenu.no.addClickHandler(function () {
+      app._radioGroups.toolbar.clear();
+    });
+
+    this._actions.userLoggedIn.addValueChangeHandler(function (isLoggedIn) {
+      if (isLoggedIn) {
+        $sessionButtonIcon.addClass('icon-logout');
+        $sessionButtonIcon.removeClass('icon-login');
+      }
+      else {
+        $sessionButtonIcon.addClass('icon-login');
+        $sessionButtonIcon.removeClass('icon-logout');
+      }
+    });
   };
 
 

@@ -43,7 +43,7 @@ define(
   //     newValue
   Value.prototype.setValue = function (newValue) {
     var validatedValue = this._validator(newValue);
-    if (validatedValue && !_.isEqual(this._value, validatedValue)) {
+    if (validatedValue !== null && !_.isEqual(this._value, validatedValue)) {
       this._value = validatedValue;
       this._callHandlers(this._value);
     }
