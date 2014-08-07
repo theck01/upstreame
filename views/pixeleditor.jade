@@ -239,8 +239,22 @@ block content
         .settings-label Show Grid
         input#grid-display-input.settings-grid-display-input(type="checkbox" checked)
 
-    #logout-confirmation-menu.confirmation-menu
-      .confirmation-message.dk-palette-no-transition Are you sure you want to logout?
+    #login-menu.login-menu
+      .login-row
+        .login-label Username
+        input#canvas-width-input.login-input(type="text")
+      .login-spacer
+      .login-row
+        .login-label Password
+        input#canvas-width-input.login-input(type="password")
+      .login-spacer
+      .login-row
+        .login-row-spacer
+        button#login-button.dk-button.login-button Sign In
+        .login-row-spacer
+
+    #logout-menu.confirmation-menu
+      .confirmation-message.dk-palette-no-transition Are you sure you want to sign out?
       .confirmation-menu-spacer
       .confirmation-select-submenu
         button#logout-confirm-yes.dk-button.confirmation-button Yes

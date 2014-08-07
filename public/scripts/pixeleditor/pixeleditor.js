@@ -68,6 +68,7 @@ define(
     actions.canvasWidth = new Value(null, numberValidator);
     actions.canvasHeight = new Value(null, numberValidator);
     actions.canvasGridDisplay = new Value(null, booleanValidator);
+    actions.userLoggedIn = new Value(null, booleanValidator);
 
     return actions;
   };
@@ -174,6 +175,12 @@ define(
 
     buttons.saveMenu = Object.create(null);
     buttons.saveMenu.save = Button.create('#save-sprite-button');
+
+    buttons.loginMenu = Object.create(null);
+    buttons.loginMenu.login = Button.create('#login-button');
+    buttons.logoutMenu = Object.create(null);
+    buttons.logoutMenu.yes = Button.create('#logout-confirm-yes');
+    buttons.logoutMenu.no = Button.create('#logout-confirm-no');
 
     buttons.activeColorSelect = Object.create(null);
     buttons.activeColorSelect.colorPalette = _.map(
@@ -320,6 +327,7 @@ define(
   // Returns an object containing named palettes.
   PixelEditor.prototype._initializePalettes = function () {
     var palettes = Object.create(null);
+    var app = this;
 
     palettes.toolSelect = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
@@ -395,6 +403,27 @@ define(
     });
     this._buttons.toolbar.settings.addStateHandler(function (state) {
       palettes.settings.visible(state);
+    });
+
+    palettes.login = new Palette({
+      anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
+      anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
+      menu: '#login-menu',
+      sibling: '#session-button'
+    });
+    palettes.logout = new Palette({
+      anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
+      anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
+      menu: '#logout-menu',
+      sibling: '#session-button'
+    });
+    this._buttons.toolbar.session.addStateHandler(function (state) {
+      if (app._actions.userLoggedIn.getValue()) {
+        palettes.logout.visible(state);
+      }
+      else {
+        palettes.login.visible(state);
+      }
     });
 
     return palettes;

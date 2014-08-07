@@ -300,6 +300,52 @@ button.file-menu-button {
   border-radius: 0px;
   padding: 0px 5px;
 }
+.login-menu {
+  width: 312px;
+  height: 106px;
+}
+.login-button {
+  display: inline-block;
+  vertical-align: top;
+  font-family: 'Share Tech Mono';
+  font-size: 16px;
+  width: 154px;
+  height: 30px;
+  border: 1px solid #9f9f9f;
+  border-radius: 0px;
+}
+.login-input {
+  display: inline-block;
+  font-family: 'Share Tech Mono';
+  font-size: 16px;
+  outline: none;
+  width: 200px;
+  height: 30px;
+  border: 1px solid #9f9f9f;
+  border-radius: 0px;
+  padding: 0px 5px;
+}
+.login-label {
+  display: inline-block;
+  font-family: 'Share Tech Mono';
+  font-size: 20px;
+  width: 100px;
+  height: 32px;
+}
+.login-row {
+  height: 32px;
+  width: 312px;
+}
+.login-row-spacer {
+  display: inline-block;
+  vertical-align: top;
+  height: 32px;
+  width: 78px;
+}
+.login-spacer {
+  height: 5px;
+  width: 312px;
+}
 .settings-menu {
   width: 212px;
   height: 106px;
