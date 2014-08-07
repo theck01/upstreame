@@ -14,6 +14,7 @@ define(
   // Base application initializer.
   var PixelEditor = function () {
     this._$canvas = $('#pixel-editor-canvas');
+    this._$bottomToolbar = $('#bottom-toolbar');
 
     this._actions = this._initializeActions();
     this._buttons = this._initializeButtons();
@@ -28,7 +29,7 @@ define(
     this._initializeToolSelectRouting();
     this._initializeTrashRouting();
 
-    this._initializePlaceholder();
+    this._initializeGlobal();
   };
 
 
@@ -89,7 +90,7 @@ define(
     $colorSelectInput.on('keyup', function (e) {
       app._actions.activeColor.setValue($colorSelectInput.val());
       if (e.which === Constants.KEYS.ENTER) {
-        app._palettes.activeColorSelect.visible(false);
+        app._palettes.topToolbar.activeColorSelect.visible(false);
       }
     });
 
@@ -110,7 +111,7 @@ define(
       });
     });
 
-    this._palettes.activeColorSelect.addVisibleStateHandler(
+    this._palettes.topToolbar.activeColorSelect.addVisibleStateHandler(
         function (isVisible) {
       if (!isVisible) {
         app._actions.recentColors.colorUsed(
@@ -274,7 +275,7 @@ define(
     $colorSelectInput.on('keyup', function (e) {
       app._actions.defaultColor.setValue($colorSelectInput.val());
       if (e.which === Constants.KEYS.ENTER) {
-        app._palettes.defaultColorSelect.visible(false);
+        app._palettes.topToolbar.defaultColorSelect.visible(false);
       }
     });
 
@@ -295,7 +296,7 @@ define(
       });
     });
 
-    this._palettes.defaultColorSelect.addVisibleStateHandler(
+    this._palettes.topToolbar.defaultColorSelect.addVisibleStateHandler(
         function (isVisible) {
       if (!isVisible) {
         app._actions.recentColors.colorUsed(
@@ -328,46 +329,48 @@ define(
   // Returns an object containing named palettes.
   PixelEditor.prototype._initializePalettes = function () {
     var palettes = Object.create(null);
+    palettes.topToolbar = Object.create(null);
+    palettes.bottomToolbar = Object.create(null);
     var app = this;
 
-    palettes.toolSelect = new Palette({
+    palettes.topToolbar.toolSelect = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
       anchorEdgeBounds: { min: 0, max: $(window).height() },
       menu: '#tool-select-menu',
       sibling: '#tool-select-button'
     });
     this._buttons.toolbar.toolSelect.addStateHandler(function (state) {
-      palettes.toolSelect.visible(state);
+      palettes.topToolbar.toolSelect.visible(state);
     });
 
-    palettes.activeColorSelect = new Palette({
+    palettes.topToolbar.activeColorSelect = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
       anchorEdgeBounds: { min: 0, max: $(window).height() },
       menu: '#active-color-select-menu',
       sibling: '#active-color-button'
     });
     this._buttons.toolbar.activeColor.addStateHandler(function (state) {
-      palettes.activeColorSelect.visible(state);
+      palettes.topToolbar.activeColorSelect.visible(state);
     });
 
-    palettes.defaultColorSelect = new Palette({
+    palettes.topToolbar.defaultColorSelect = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
       anchorEdgeBounds: { min: 0, max: $(window).height() },
       menu: '#default-color-select-menu',
       sibling: '#default-color-button'
     });
     this._buttons.toolbar.defaultColor.addStateHandler(function (state) {
-      palettes.defaultColorSelect.visible(state);
+      palettes.topToolbar.defaultColorSelect.visible(state);
     });
 
-    palettes.trash = new Palette({
+    palettes.topToolbar.trash = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
       anchorEdgeBounds: { min: 0, max: $(window).height() },
       menu: '#trash-confirmation-menu',
       sibling: '#trash-button'
     });
     this._buttons.toolbar.trash.addStateHandler(function (state) {
-      palettes.trash.visible(state);
+      palettes.topToolbar.trash.visible(state);
     });
 
     var $bottomToolbar = $('#bottom-toolbar');
@@ -376,43 +379,43 @@ define(
       max: $bottomToolbar.outerHeight()
     };
 
-    palettes.load = new Palette({
+    palettes.bottomToolbar.load = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
       anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
       menu: '#load-sprite-menu',
       sibling: '#load-button'
     });
     this._buttons.toolbar.load.addStateHandler(function (state) {
-      palettes.load.visible(state);
+      palettes.bottomToolbar.load.visible(state);
     });
 
-    palettes.save = new Palette({
+    palettes.bottomToolbar.save = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
       anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
       menu: '#save-sprite-menu',
       sibling: '#save-button'
     });
     this._buttons.toolbar.save.addStateHandler(function (state) {
-      palettes.save.visible(state);
+      palettes.bottomToolbar.save.visible(state);
     });
 
-    palettes.settings = new Palette({
+    palettes.bottomToolbar.settings = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
       anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
       menu: '#settings-menu',
       sibling: '#settings-button'
     });
     this._buttons.toolbar.settings.addStateHandler(function (state) {
-      palettes.settings.visible(state);
+      palettes.bottomToolbar.settings.visible(state);
     });
 
-    palettes.login = new Palette({
+    palettes.bottomToolbar.login = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
       anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
       menu: '#login-menu',
       sibling: '#session-button'
     });
-    palettes.logout = new Palette({
+    palettes.bottomToolbar.logout = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
       anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
       menu: '#logout-menu',
@@ -420,12 +423,12 @@ define(
     });
     this._buttons.toolbar.session.addStateHandler(function (state) {
       if (app._actions.userLoggedIn.getValue()) {
-        palettes.login.visible(false);
-        palettes.logout.visible(state);
+        palettes.bottomToolbar.login.visible(false);
+        palettes.bottomToolbar.logout.visible(state);
       }
       else {
-        palettes.login.visible(state);
-        palettes.logout.visible(false);
+        palettes.bottomToolbar.login.visible(state);
+        palettes.bottomToolbar.logout.visible(false);
       }
     });
 
@@ -433,8 +436,8 @@ define(
   };
 
 
-  // _initializePlaceholder behavior of the application.
-  PixelEditor.prototype._initializePlaceholder = function () {
+  // _initializeGlobal behavior of the application.
+  PixelEditor.prototype._initializeGlobal = function () {
     var app = this;
 
     $('#pixel-editor-canvas').bind('mousedown', function() {
@@ -450,6 +453,7 @@ define(
 
     $(window).bind('resize', function () {
       app._sizeCanvas();
+      app._recalculatePaletteBounds();
       app._canvasTools.modelBuilder.paint();
     });
   };
@@ -644,6 +648,23 @@ define(
     });
   };
 
+
+  // _recalculatePaletteBounds recalculates and sets the bounding range for the
+  // palette menus in the application.
+  PixelEditor.prototype._recalculatePaletteBounds = function () {
+    var topToolbarAnchorEdgeBounds = { min: 0, max: $(window).height() };
+    var bottomToolbarAnchorEdgeBounds = {
+      min: -this._$bottomToolbar.position().top,
+      max: this._$bottomToolbar.outerHeight()
+    };
+
+    _.each(_.values(this._palettes.topToolbar), function (p) {
+      p.bound(topToolbarAnchorEdgeBounds);
+    });
+    _.each(_.values(this._palettes.bottomToolbar), function (p) {
+      p.bound(bottomToolbarAnchorEdgeBounds);
+    });
+  };
 
   return PixelEditor;
 });
