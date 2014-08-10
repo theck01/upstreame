@@ -1,7 +1,7 @@
-define(["underscore", "core/graphics/color", "core/model/gridmodel",
-        "core/util/subscriber", "core/util/frame", "core/util/encoder",
-        "core/controller/eventhub"],
-  function(_, Color, GridModel, Subscriber, Frame, Encoder, EventHub){
+define(["underscore", "core/graphics/color", "core/util/subscriber",
+        "core/util/frame", "core/util/encoder", "core/controller/eventhub",
+        "pixeleditor/model/gridmodel"],
+  function(_, Color, Subscriber, Frame, Encoder, EventHub, GridModel){
 
 
     // fillArea performs a fill operation on a region of elements of the same

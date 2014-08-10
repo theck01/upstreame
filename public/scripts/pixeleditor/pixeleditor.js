@@ -1,15 +1,15 @@
 define(
     ['jquery', 'underscore', 'domkit/controllers/radiogroup',
      'domkit/ui/button', 'domkit/ui/palette',
-     'core/controller/eventhub', 'core/controller/gridmodelbuilder',
-     'core/graphics/color', 'core/graphics/pixelcanvas',
-     'core/interface/clickcanvasinterface',
-     'core/model/converters/spriteconverter', 'core/model/gridmodel',
-     'pixeleditor/constants', 'pixeleditor/actions/recentcolorpalette',
-     'pixeleditor/actions/value'],
+     'core/controller/eventhub', 'core/graphics/color',
+     'core/graphics/pixelcanvas', 'pixeleditor/controller/gridmodelbuilder',
+     'pixeleditor/interface/clickcanvasinterface',
+     'pixeleditor/model/converters/spriteconverter',
+     'pixeleditor/model/gridmodel', 'pixeleditor/constants',
+     'pixeleditor/actions/recentcolorpalette', 'pixeleditor/actions/value'],
     function (
-        $, _, RadioGroup, Button, Palette, EventHub, GridModelBuilder, Color,
-        PixelCanvas, ClickCanvasInterface, SpriteConverter, GridModel,
+        $, _, RadioGroup, Button, Palette, EventHub, Color, PixelCanvas,
+        GridModelBuilder, ClickCanvasInterface, SpriteConverter, GridModel,
         Constants, RecentColorPalette, Value) {
   // Base application initializer.
   var PixelEditor = function () {

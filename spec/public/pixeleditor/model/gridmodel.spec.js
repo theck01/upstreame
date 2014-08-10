@@ -10,7 +10,7 @@ requirejs.config({
   }
 });
 
-var GridModel = requirejs('core/model/gridmodel');
+var GridModel = requirejs('pixeleditor/model/gridmodel');
 var Encoder = requirejs('core/util/encoder');
 var Frame = requirejs('core/util/frame');
 

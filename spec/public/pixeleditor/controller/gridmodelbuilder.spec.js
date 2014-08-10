@@ -1,5 +1,5 @@
 var assert = require('assert');
-var MockPixelCanvas = require('../graphics/mockpixelcanvas');
+var MockPixelCanvas = require('../../core/graphics/mockpixelcanvas');
 var requirejs = require('requirejs');
 var sinon = require('sinon');
 var _ = require('underscore');
@@ -13,9 +13,10 @@ requirejs.config({
 });
 
 var EventHub = requirejs('core/controller/eventhub');
-var GridModelBuilder = requirejs('core/controller/gridmodelbuilder');
-var GridModel = requirejs('core/model/gridmodel');
-var IdentityConverter = requirejs('core/model/converters/identityconverter');
+var GridModelBuilder = requirejs('pixeleditor/controller/gridmodelbuilder');
+var GridModel = requirejs('pixeleditor/model/gridmodel');
+var IdentityConverter =
+    requirejs('pixeleditor/model/converters/identityconverter');
 var Encoder = requirejs('core/util/encoder');
 
 // Helper function makes multiple edits to given modelBuilder
