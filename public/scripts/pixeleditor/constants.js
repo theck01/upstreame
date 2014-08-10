@@ -1,4 +1,6 @@
-define(['core/controller/gridmodelbuilder'], function (GridModelBuilder) {
+define(
+    ['pixeleditor/controller/gridmodelbuilder'],
+    function (GridModelBuilder) {
   // Centralized access points to constants in the pixel editor applications.
   var Constants = Object.create(null);
 
