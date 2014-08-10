@@ -1,20 +1,6 @@
 var auth = require('../lib/auth.js');
 
-exports.animator = function (req, res) {
-  var opts = {
-    title: 'Animator',
-    loggedIn: auth.isLoggedIn(req),
-    main: 'scripts/core/animator.js'
-  };
-
-  if (process.env.NODE_ENV === 'production') {
-    opts.main = 'scripts/dist/animator.min.js';
-  }
-
-  res.render('animator', opts);
-};
-
-exports.index = function (req, res) {
+exports.home = function (req, res) {
   var opts = {
     title: 'upstrea.me',
     main: 'scripts/core/main.js'
@@ -38,20 +24,6 @@ exports.invaders = function (req, res) {
   }
 
   res.render('invaders', opts);
-};
-
-exports.pixelart = function (req, res) {
-  var opts = {
-    title: 'Pixel Art',
-    loggedIn: auth.isLoggedIn(req),
-    main: 'scripts/core/pixelart.js'
-  };
-
-  if (process.env.NODE_ENV === 'production') {
-    opts.main = 'scripts/dist/pixelart.min.js';
-  }
-
-  res.render('pixelart', opts);
 };
 
 exports.pixeleditor = function (req, res) {
@@ -79,18 +51,4 @@ exports.submersion = function (req, res) {
   }
 
   res.render('submersion', opts);
-};
-
-exports.worldbuilder = function (req, res) {
-  var opts = {
-    title: 'World Builder',
-    loggedIn: auth.isLoggedIn(req),
-    main: 'scripts/core/worldbuilder.js'
-  };
-
-  if (process.env.NODE_ENV === 'production') {
-    opts.main = 'scripts/dist/worldbuilder.min.js';
-  }
-
-  res.render('worldbuilder', opts);
 };
