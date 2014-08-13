@@ -232,13 +232,14 @@ describe('GridModel', function () {
         });
       }
     );
-  });
 
-
-  describe('clear', function () {
-    it('should remove all elements from the GridModel', function () {
+    it('should clear all elements on CLEAR_ALL actions', function () {
       makeEdits(gridModel);
-      gridModel.clear();
+
+      gridModel.applyChanges([
+        { action: GridModel.MODEL_ACTIONS.CLEAR_ALL }
+      ]);
+
       assert(gridModel.getElements(frame).length === 0);
     });
   });

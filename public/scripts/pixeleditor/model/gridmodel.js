@@ -15,6 +15,7 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
 
   // actions available when applying changes to a GridModel
   GridModel.MODEL_ACTIONS = {
+    CLEAR_ALL: 'clear all',
     CLEAR: 'clear',
     SET: 'set'
   };
@@ -29,12 +30,6 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
   //     elements: An object with at least 'x', 'y' and 'color' fields.
   GridModel.prototype.applyChanges = function (changes) {
     this._elements = this._elementsWithChanges(changes);
-  };
-
-
-  // clear drops all elements within the model.
-  GridModel.prototype.clear = function () {
-    this._elements = [];
   };
 
 
@@ -64,6 +59,11 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
     var existingElementMap = this._createElementMap();
 
     _.each(changes, function (change) {
+      if (change.action === GridModel.MODEL_ACTIONS.CLEAR_ALL) {
+        existingElementMap = Object.create(null);
+        return;
+      }
+
       _.each(change.elements, function (e) {
         var offsetCoord = this._offsetElement(e);
 
