@@ -12,196 +12,211 @@ requirejs.config({
   }
 });
 
-var EventHub = requirejs('core/controller/eventhub');
+var Color = requirejs('core/graphics/color');
+var Value = requirejs('pixeleditor/actions/value');
 var GridModelBuilder = requirejs('pixeleditor/controller/gridmodelbuilder');
 var GridModel = requirejs('pixeleditor/model/gridmodel');
 var IdentityConverter =
     requirejs('pixeleditor/model/converters/identityconverter');
 var Encoder = requirejs('core/util/encoder');
 
+
+var colorObjectValidator = function (newColorObject) {
+  if (newColorObject && Color.isValid(newColorObject.color)) {
+    return { color: Color.sanitize(newColorObject.color) };
+  }
+  return null;
+};
+var dimensionValidator = function (newDimensions) {
+  var sanitizedDimensions = _.pick(newDimensions, 'width', 'height');
+  if (isNaN(sanitizedDimensions.width) ||
+      isNaN(sanitizedDimensions.height)) {
+    return null;
+  }
+  return sanitizedDimensions;
+};
+
+
 // Helper function makes multiple edits to given modelBuilder
-function makeEdits(modelBuilder) {
-  modelBuilder.commitChanges([{
-    action: GridModel.MODEL_ACTIONS.SET,
-    elements: [
-      { x: 0, y: 1, color: '#000000' },
-      { x: 1, y: 0, color: '#000000' },
-      { x: 1, y: 1, color: '#000000' }
-    ]
-  }]);
-  modelBuilder.commitChanges([{
-    action: GridModel.MODEL_ACTIONS.SET,
-    elements: [
-      { x: 0, y: 0, color: '#FF0000' }
-    ]
-  }]);
-  modelBuilder.commitChanges([{
-    action: GridModel.MODEL_ACTIONS.CLEAR,
-    elements: [
-      { x: 1, y: 1, color: '#000000' }
-    ]
-  }]);
+function makeEdits(modelBuilder, activeColorValue) {
+  activeColorValue.setValue({ color: '#000000' });
+  modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.SET);
+  modelBuilder.addLocationToCurrentChange({ x: 0, y: 1 });
+  modelBuilder.addLocationToCurrentChange({ x: 1, y: 0 });
+  modelBuilder.addLocationToCurrentChange({ x: 1, y: 1 });
+  modelBuilder.commitCurrentChange();
+
+  activeColorValue.setValue({ color: '#FF0000' });
+  modelBuilder.addLocationToCurrentChange({ x: 0, y: 0 });
+  modelBuilder.commitCurrentChange();
+
+  modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.CLEAR);
+  modelBuilder.addLocationToCurrentChange({ x: 1, y: 1 });
+  modelBuilder.commitCurrentChange();
 }
 
 
-function assertElementArraysEqual(ea1, ea2, dimensions, opt_orderMatters) {
-  if (ea1.length !== ea2.length) {
-    throw new Error('Pixel arrays not equivalent lengths');
+function assertElementArraysEqual(
+    expectedElements, actualElements, dimensions) {
+  if (expectedElements.length !== actualElements.length) {
+    throw new Error('Element arrays not equivalent lengths');
   }
 
-  if (!opt_orderMatters) {
-    ea1 = _.sortBy(ea1, function (p) {
-      return Encoder.coordToScalar(p, dimensions);
-    });
-    ea2 = _.sortBy(ea2, function (p) {
-      return Encoder.coordToScalar(p, dimensions);
-    });
-  }
+  expectedElements = _.sortBy(expectedElements, function (e) {
+    return Encoder.coordToScalar(e, dimensions);
+  });
+  actualElements = _.sortBy(actualElements, function (e) {
+    return Encoder.coordToScalar(e, dimensions);
+  });
 
-  var zipped = _.zip(ea1, ea2);
+  var zipped = _.zip(expectedElements, actualElements);
 
   _.each(zipped, function (pair) {
     if (!_.isEqual(pair[0], pair[1])) {
-      throw new Error('Element arrays not equal:\n' + JSON.stringify(ea1) +
-                      '\n' + JSON.stringify(ea2));
+      throw new Error(
+        'Element arrays not equal:\nExpected: ' +
+        JSON.stringify(expectedElements) + '\nActual:' +
+        JSON.stringify(actualElements));
     }
   });
 }
 
 
-function assertModelBuilderHasElements(modelBuilder, elements,
-                                       opt_orderMatters) {
-  assertElementArraysEqual(modelBuilder.getModelElements(), elements,
-                           modelBuilder.getDimensions(), opt_orderMatters);
+function assertModelForBuilderHasElements(gridModel, modelBuilder, elements) {
+  var modelElements = gridModel.getElements(modelBuilder, []);
+  assertElementArraysEqual(
+      elements, modelElements, modelBuilder.getDimensions());
 }
 
 
 describe('GridModelBuilder', function () {
-  var dimensions;
-  var mockCanvas;
   var gridModel;
+  var mockCanvas;
+  var activeColorValue;
+  var defaultColorValue;
+  var dimensionsValue;
   var modelBuilder;
 
   beforeEach(function () {
-    dimensions = { width: 3, height: 3 };
-    mockCanvas = new MockPixelCanvas(dimensions, '#FFFFFF');
+    var dimensions = { width: 3, height: 3 };
     gridModel = new GridModel();
-    modelBuilder = new GridModelBuilder(gridModel, mockCanvas,
-                                        { color: '#FFFFFF' },
-                                        { color: '#000000'}, IdentityConverter);
+    mockCanvas = new MockPixelCanvas(dimensions, '#FFFFFF');
+    activeColorValue = new Value({ color: '#000000' }, colorObjectValidator);
+    defaultColorValue = new Value({ color: '#FFFFFF' }, colorObjectValidator);
+    dimensionsValue = new Value(dimensions, dimensionValidator);
+    modelBuilder = new GridModelBuilder(
+      gridModel, mockCanvas, defaultColorValue, activeColorValue,
+      dimensionsValue, IdentityConverter);
   });
 
 
   it('should clear model on GridModelBuilder#clear', function () {
-    makeEdits(modelBuilder);
+    makeEdits(modelBuilder, activeColorValue);
     modelBuilder.clear();
-
-    assert(modelBuilder.getModelElements().length === 0);
+    assertModelForBuilderHasElements(gridModel, modelBuilder, []);
   });
 
 
-  describe('commitChanges', function () {
+  describe('commitCurrentChange', function () {
     context('when a current change is present', function () {
-      it('should use current change when no arguments are provided',
-        function () {
-          var applyChangesSpy = sinon.spy(gridModel, 'applyChanges');
-          var elements = [{ x: 0, y: 0, color: '#000000' }];
+      it('should apply the current change to the grid model', function () {
+        var applyChangesSpy = sinon.spy(gridModel, 'applyChanges');
+        var elements = [
+          { x: 0, y: 1, color: '#000000' },
+          { x: 1, y: 0, color: '#000000' },
+          { x: 1, y: 1, color: '#000000' },
+        ];
 
-          var expectedChange = {
-            action: GridModelBuilder.CONTROLLER_ACTIONS.SET,
-            elements: elements
-          };
+        activeColorValue.setValue({ color: '#000000' });
+        modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.SET);
+        modelBuilder.addLocationToCurrentChange({ x: 0, y: 1 });
+        modelBuilder.addLocationToCurrentChange({ x: 1, y: 0 });
+        modelBuilder.addLocationToCurrentChange({ x: 1, y: 1 });
 
-          EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
-          modelBuilder.commitChanges();
+        modelBuilder.commitCurrentChange();
 
-          assert(applyChangesSpy.calledOnce);
-          assert(applyChangesSpy.calledWith([expectedChange]));
-        }
-      );
+        var expectedChange = {
+          action: GridModelBuilder.CONTROLLER_ACTIONS.SET,
+          elements: elements
+        };
 
-      it('should use argument current change when provided',
-        function () {
-          var applyChangesSpy = sinon.spy(gridModel, 'applyChanges');
-          var elements = [{ x: 0, y: 0, color: '#000000' }];
+        assert(applyChangesSpy.calledOnce);
+        assert(applyChangesSpy.calledWith([expectedChange]));
+      });
 
-          modelBuilder.currentChange = {
-            action: GridModelBuilder.CONTROLLER_ACTIONS.SET,
-            elements: [{ x: 1, y: 1, color: '#FFFFFF' }]
-          };
-          var expectedChange = {
-            action: GridModelBuilder.CONTROLLER_ACTIONS.SET,
-            elements: elements
-          };
-          modelBuilder.commitChanges([expectedChange]);
+      it('should do nothing when the current change does not exist',
+          function () {
+        var applyChangesSpy = sinon.spy(gridModel, 'applyChanges');
 
-          assert(applyChangesSpy.calledOnce);
-          assert(applyChangesSpy.calledWith([expectedChange]));
-        }
-      );
+        modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.NONE);
+        modelBuilder.addLocationToCurrentChange({ x: 0, y: 1 });
+
+        modelBuilder.commitCurrentChange();
+
+        assert(!applyChangesSpy.called);
+      });
     });
 
 
     context('when applying different edits', function () {
-      it('should add elements with "set"', function () {
-        var applyChangesSpy = sinon.spy(gridModel, 'applyChanges');
-        var elements = [{ x: 0, y: 0, color: '#000000' }];
+      it('should add elements with "set" action', function () {
+        activeColorValue.setValue({ color: '#000000' });
+        modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.SET);
+        modelBuilder.addLocationToCurrentChange({ x: 0, y: 1 });
+        modelBuilder.commitCurrentChange();
+        modelBuilder.addLocationToCurrentChange({ x: 1, y: 0 });
+        modelBuilder.commitCurrentChange();
+        modelBuilder.addLocationToCurrentChange({ x: 1, y: 1 });
+        modelBuilder.commitCurrentChange();
 
-        modelBuilder.commitChanges([{
-          action: GridModelBuilder.CONTROLLER_ACTIONS.SET,
-          elements: elements
-        }]);
-
-        assertModelBuilderHasElements(modelBuilder, elements);
-
-        var expectedChange = {
-          action: GridModel.MODEL_ACTIONS.SET,
-          elements: elements
-        };
-        assert(applyChangesSpy.calledOnce);
-        assert(applyChangesSpy.calledWith([expectedChange]));
+        var elements = [
+          { x: 1, y: 0, color: '#000000' },
+          { x: 0, y: 1, color: '#000000' },
+          { x: 1, y: 1, color: '#000000' },
+        ];
+        assertModelForBuilderHasElements(gridModel, modelBuilder, elements);
       });
 
-      it('should remove elements with "clear"', function () {
-        var elements = [{ x: 0, y: 0, color: '#000000' }];
+      it('should remove elements with "clear" action', function () {
+        activeColorValue.setValue({ color: '#000000' });
+        modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.SET);
+        modelBuilder.addLocationToCurrentChange({ x: 0, y: 1 });
+        modelBuilder.addLocationToCurrentChange({ x: 1, y: 0 });
+        modelBuilder.addLocationToCurrentChange({ x: 1, y: 1 });
+        modelBuilder.commitCurrentChange();
 
-        modelBuilder.commitChanges([{
-          action: GridModelBuilder.CONTROLLER_ACTIONS.SET,
-          elements: elements
-        }]);
+        modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.CLEAR);
+        modelBuilder.addLocationToCurrentChange({ x: 1, y: 1 });
+        modelBuilder.commitCurrentChange();
 
-        var applyChangesSpy = sinon.spy(gridModel, 'applyChanges');
-
-        modelBuilder.commitChanges([{
-          action: GridModelBuilder.CONTROLLER_ACTIONS.CLEAR,
-          elements: elements
-        }]);
-
-        assert(modelBuilder.getModelElements().length === 0);
-
-        var expectedChange = {
-          action: GridModel.MODEL_ACTIONS.CLEAR,
-          elements: elements
-        };
-        assert(applyChangesSpy.calledOnce);
-        assert(applyChangesSpy.calledWith([expectedChange]));
+        var elements = [
+          { x: 0, y: 1, color: '#000000' },
+          { x: 1, y: 0, color: '#000000' }
+        ];
+        assertModelForBuilderHasElements(gridModel, modelBuilder, elements);
       });
-    });
 
+      it('should fill elements with "fill" action', function () {
+        activeColorValue.setValue({ color: '#000000' });
+        modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.SET);
+        modelBuilder.addLocationToCurrentChange({ x: 0, y: 2 });
+        modelBuilder.addLocationToCurrentChange({ x: 1, y: 2 });
+        modelBuilder.addLocationToCurrentChange({ x: 2, y: 0 });
+        modelBuilder.addLocationToCurrentChange({ x: 2, y: 1 });
+        modelBuilder.commitCurrentChange();
 
-    context('when redos are present', function () {
-      it('should clear redos', function () {
-        makeEdits(modelBuilder);
-        modelBuilder.undo();
+        activeColorValue.setValue({ color: '#FF0000' });
+        modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.FILL);
+        modelBuilder.addLocationToCurrentChange({ x: 0, y: 0 });
+        modelBuilder.commitCurrentChange();
 
-        assert(modelBuilder.hasRedos());
-
-        modelBuilder.commitChanges([{
-          action: GridModelBuilder.CONTROLLER_ACTIONS.SET,
-          elements: [{ x: 2, y: 2, color: '#0000FF' }]
-        }]);
-
-        assert(!modelBuilder.hasRedos());
+        var elements = [
+          { x: 0, y: 0, color: '#FF0000' }, { x: 0, y: 1, color: '#FF0000' },
+          { x: 0, y: 2, color: '#000000' }, { x: 1, y: 0, color: '#FF0000' },
+          { x: 1, y: 1, color: '#FF0000' }, { x: 1, y: 2, color: '#000000' },
+          { x: 2, y: 0, color: '#000000' }, { x: 2, y: 1, color: '#000000' }
+        ];
+        assertModelForBuilderHasElements(gridModel, modelBuilder, elements);
       });
     });
   });
@@ -213,20 +228,17 @@ describe('GridModelBuilder', function () {
     });
 
     it('should run model through converter and convert to JSON', function () {
-      makeEdits(modelBuilder);
+      makeEdits(modelBuilder, activeColorValue);
       var exportedModelJSON = modelBuilder.exportModel();
       var exportedModel = JSON.parse(exportedModelJSON);
 
-      assertModelBuilderHasElements(modelBuilder, [
-        { x: 0, y: 1, color: '#000000' },
-        { x: 1, y: 0, color: '#000000' },
-        { x: 0, y: 0, color: '#FF0000' }
-      ]);
-      assert(_.isEqual(exportedModel.defaultElement,
-                       modelBuilder.getDefaultElement()));
-      assert(_.isEqual(exportedModel.currentElement,
-                       modelBuilder.getCurrentElement()));
-      assert(_.isEqual(exportedModel.dimensions, modelBuilder.getDimensions()));
+      assertModelForBuilderHasElements(
+          gridModel, modelBuilder, exportedModel.elements);
+      assert(_.isEqual(
+          exportedModel.defaultElement, defaultColorValue.getValue()));
+      assert(_.isEqual(
+          exportedModel.currentElement, activeColorValue.getValue()));
+      assert(_.isEqual(exportedModel.dimensions, dimensionsValue.getValue()));
       assert(IdentityConverter.fromCommonModelFormat.calledOnce);
     });
 
@@ -236,40 +248,9 @@ describe('GridModelBuilder', function () {
   });
 
 
-  it('should retrieve the active element on getCurrentElement', function () {
-    assert(_.isEqual(modelBuilder.getCurrentElement(), { color: '#000000' }));
-  });
 
-
-  it('should retrieve the active element on getDefaultElement', function () {
-    assert(_.isEqual(modelBuilder.getDefaultElement(), { color: '#FFFFFF' }));
-  });
-
-
-  it('should retrieve elements within builder frame relative to the frame on ' +
-    'getModelElements', function () {
-      makeEdits(modelBuilder);
-
-      var elements = [
-        { x: 0, y: 1, color: '#000000' },
-        { x: 1, y: 0, color: '#000000' },
-        { x: 0, y: 0, color: '#FF0000' }
-      ];
-      assertModelBuilderHasElements(modelBuilder, elements);
-      
-      modelBuilder.move({ x: -1, y: -1 });
-      modelBuilder.resize({ width: 2, height: 2 });
-
-      elements = [
-        { x: 1, y: 1, color: '#FF0000' }
-      ];
-      assertModelBuilderHasElements(modelBuilder, elements);
-    }
-  );
-
-
-  it('should import a model encoded as a JSON string on importModel',
-    function () {
+  describe('importModel', function () {
+    it('should import the model object into the builder', function () {
       var modelObj = {
         defaultElement: { color: '#777777' },
         currentElement: { color: '#AAAAAA' },
@@ -282,145 +263,58 @@ describe('GridModelBuilder', function () {
       };
 
       modelBuilder.importModel(JSON.stringify(modelObj));
-      assert(_.isEqual(modelBuilder.getCurrentElement(),
-                       modelObj.currentElement));
-      assert(_.isEqual(modelBuilder.getDefaultElement(),
-                       modelObj.defaultElement));
-      assert(_.isEqual(modelBuilder.getDimensions(), modelObj.dimensions));
-      assertModelBuilderHasElements(modelBuilder, modelObj.elements);
-    }
-  );
 
+      assertModelForBuilderHasElements(
+          gridModel, modelBuilder, modelObj.elements);
+      assert(_.isEqual(
+          modelObj.defaultElement, defaultColorValue.getValue()));
+      assert(_.isEqual(
+          modelObj.currentElement, activeColorValue.getValue()));
+      assert(_.isEqual(modelObj.dimensions, dimensionsValue.getValue()));
+    });
 
-  it('should set callback to be called on mouse move actions on mousemove',
-    function () {
-      var canvasActionSpy = sinon.spy();
-      modelBuilder.afterCanvasAction(canvasActionSpy);
-      EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
+    it(
+        'should gracefully handle bad fields for non-element fields in the ' +
+        'model object', function () {
+      var modelObj = {
+        defaultElement: undefined,
+        currentElement: { color: '#this is not a color' },
+        dimensions: { width: null, height: 'hi!' },
+        elements: [
+          { x: 0, y: 0, color: '#FFFFFF' },
+          { x: 1, y: 1, color: '#00FF00' },
+          { x: 2, y: 2, color: '#0000FF' }
+        ]
+      };
 
-      assert(canvasActionSpy.calledOnce);
-    }
-  );
+      modelBuilder.importModel(JSON.stringify(modelObj));
 
+      assertModelForBuilderHasElements(
+          gridModel, modelBuilder, modelObj.elements);
+      assert(_.isEqual(
+          { color: '#FFFFFF' }, defaultColorValue.getValue()));
+      assert(_.isEqual(
+          { color: '#000000' }, activeColorValue.getValue()));
+      assert(_.isEqual({ width: 3, height: 3 }, dimensionsValue.getValue()));
 
-  it('should not call callback to on NONE actions',
-    function () {
-      var canvasActionSpy = sinon.spy();
-      modelBuilder.afterCanvasAction(canvasActionSpy);
-      modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.NONE);
-      EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
-
-      assert(!canvasActionSpy.called);
-    }
-  );
-
-
-  it('should build the current change on "canvas.action" events', function () {
-    var expectedElements = [
-      { x: 0, y: 1, color: '#000000' },
-      { x: 1, y: 0, color: '#000000' },
-      { x: 0, y: 0, color: '#000000' }
-    ];
-
-    makeEdits(modelBuilder);
-
-    EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
-    assert(_.isEqual(modelBuilder.getCurrentChange(), {
-      action: GridModel.MODEL_ACTIONS.SET,
-      elements: [{ x: 0, y: 0, color: '#000000' }]
-    }));
-    assertModelBuilderHasElements(modelBuilder, expectedElements);
-
-    modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.CLEAR);
-    EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
-    assert(_.isEqual(modelBuilder.getCurrentChange(), {
-      action: GridModel.MODEL_ACTIONS.CLEAR,
-      elements: [{ x: 0, y: 0, color: '#000000' }]
-    }));
-
-    expectedElements.splice(2, 1);
-    assertModelBuilderHasElements(modelBuilder, expectedElements);
+    });
   });
 
 
-  it('should fill areas on "canvas.action" with FILL as active change',
-    function () {
-      makeEdits(modelBuilder);
-
-      modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.FILL);
-      modelBuilder.setCurrentElement({ color: '#0000FF' });
-      EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
-
-      var expectedElements = [
-        { x: 0, y: 0, color: '#0000FF' },
-        { x: 1, y: 0, color: '#000000' },
-        { x: 0, y: 1, color: '#000000' }
-      ];
-      assertElementArraysEqual(expectedElements,
-                               modelBuilder.getModelElements(),
-                               modelBuilder.getDimensions());
-    }
-  );
-
-
-  it('should build and commit the current change on "canvas.release" events',
-    function () {
-      makeEdits(modelBuilder);
-      modelBuilder.resize({ width: 5, height: 5 });
-
-      EventHub.trigger('canvas.release', { positions: [{ x: 3, y: 3 }] });
-
-      var expectedElements = [
-        { x: 0, y: 1, color: '#000000' },
-        { x: 1, y: 0, color: '#000000' },
-        { x: 0, y: 0, color: '#FF0000' },
-        { x: 3, y: 3, color: '#000000' }
-      ];
-      assert(modelBuilder.getCurrentChange() === null);
-      assertModelBuilderHasElements(modelBuilder, expectedElements);
-
-      modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.CLEAR);
-      EventHub.trigger('canvas.release', { positions: [{ x: 0, y: 0 }] });
-      expectedElements.splice(2, 1);
-      assert(modelBuilder.getCurrentChange() === null);
-      assertModelBuilderHasElements(modelBuilder, expectedElements);
-    }
-  );
-
-
-  describe('paint', function () {
-    var stub;
-    beforeEach(function () {
-      stub = sinon.stub();
-    });
-
-    it('should paint all elements within builder frame to the canvas',
+  it('should paint all elements within builder frame to the canvas',
       function () {
-        makeEdits(modelBuilder);
-        modelBuilder.resize({ width: 5, height: 5 });
+    makeEdits(modelBuilder, activeColorValue);
+    modelBuilder.paint();
 
-        EventHub.trigger('canvas.action', { positions: [{ x: 3, y: 3 }] });
+    var expectedElements = [
+      { x: 0, y: 1, color: '#000000' },
+      { x: 1, y: 0, color: '#000000' },
+      { x: 0, y: 0, color: '#FF0000' },
+    ];
 
-        EventHub.subscribe('modelbuilder.redraw', stub);
-        modelBuilder.paint();
-
-        var expectedElements = [
-          { x: 0, y: 1, color: '#000000' },
-          { x: 1, y: 0, color: '#000000' },
-          { x: 0, y: 0, color: '#FF0000' },
-          { x: 3, y: 3, color: '#000000' }
-        ];
-
-        assertElementArraysEqual(mockCanvas.getRenderedPixels(),
-                                 expectedElements,
-                                 modelBuilder.getDimensions());
-        assert(stub.calledOnce);
-      }
-    );
-
-    afterEach(function () {
-      EventHub.unsubscribe('modelbuilder.redraw', stub);
-    });
+    assertElementArraysEqual(
+        mockCanvas.getRenderedPixels(), expectedElements,
+        dimensionsValue.getValue());
   });
 
 
@@ -428,14 +322,14 @@ describe('GridModelBuilder', function () {
     context('when there are no redos in the redo stack', function () {
       it('should do nothing', function () {
         modelBuilder.redo();
-        assert(modelBuilder.getModelElements().length === 0);
+        assertModelForBuilderHasElements(gridModel, modelBuilder, []);
       });
     });
 
 
     context('when there are redos in the redo stack', function () {
       it('should process redos on the stack in order', function () {
-        makeEdits(modelBuilder);
+        makeEdits(modelBuilder, activeColorValue);
         modelBuilder.undo();
         modelBuilder.undo();
 
@@ -447,78 +341,27 @@ describe('GridModelBuilder', function () {
         ];
 
         modelBuilder.redo();
-        assertModelBuilderHasElements(modelBuilder, expectedElements);
-        assert(modelBuilder.hasRedos());
+        assertModelForBuilderHasElements(
+            gridModel, modelBuilder, expectedElements);
 
         expectedElements.splice(3, 1);
         modelBuilder.redo();
-        assertModelBuilderHasElements(modelBuilder, expectedElements);
-        assert(!modelBuilder.hasRedos());
+        assertModelForBuilderHasElements(
+            gridModel, modelBuilder, expectedElements);
       });
     });
   });
 
 
-  it('should update dimensions on resize', function () {
-    modelBuilder.resize({ width: 100, height: 100 });
-    assert(_.isEqual({ width: 100, height: 100 },
-                     modelBuilder.getDimensions()));
-    assert(_.isEqual({ width: 100, height: 100 },
-                     mockCanvas.getDimensions()));
-  });
-
-
-  it('should set the action for currentChanges on setAction', function () {
-    modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.FILL);
-    EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
-    assert(modelBuilder.getCurrentChange().action ===
-           GridModelBuilder.CONTROLLER_ACTIONS.FILL);
-
-    modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.CLEAR);
-    EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
-    assert(modelBuilder.getCurrentChange().action ===
-           GridModelBuilder.CONTROLLER_ACTIONS.CLEAR);
-
-    modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.GET);
-    EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
-    assert(modelBuilder.getCurrentChange() === null);
-
-    modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.NONE);
-    EventHub.trigger('canvas.action', { positions: [{ x: 0, y: 0 }] });
-    assert(modelBuilder.getCurrentChange() === null);
-  });
-
-
-  it('should set the current element on setCurrentElement', function () {
-    modelBuilder.setCurrentElement({ x: 10, y: 1000, color: '#00FF00' });
-    assert(_.isEqual(modelBuilder.getCurrentElement(), { color: '#00FF00' }));
-  });
-
-
-  describe('setDefaultElement', function () {
-    var stub;
-    beforeEach(function () {
-      stub = sinon.stub();
-    });
-
-    it('should paint all elements within builder frame to the canvas',
-      function () {
-        EventHub.subscribe('modelbuilder.redraw', stub);
-        modelBuilder.setDefaultElement({ x: 10, y: 1000, color: '#00FF00' });
-        assert(_.isEqual(modelBuilder.getDefaultElement(),
-               { color: '#00FF00' }));
-        assert(stub.calledOnce);
-      }
-    );
-
-    afterEach(function () {
-      EventHub.unsubscribe('modelbuilder.redraw', stub);
-    });
+  it('should update dimensions on dimensions value change', function () {
+    dimensionsValue.setValue({ width: 100, height: 100 });
+    assert(_.isEqual(dimensionsValue.getValue(), modelBuilder.getDimensions()));
+    assert(_.isEqual(dimensionsValue.getValue(), mockCanvas.getDimensions()));
   });
 
   
   it('should undo last committed change on undo', function () {
-    makeEdits(modelBuilder);
+    makeEdits(modelBuilder, activeColorValue);
 
     modelBuilder.undo();
 
@@ -529,7 +372,6 @@ describe('GridModelBuilder', function () {
       { x: 1, y: 1, color: '#000000' }
     ];
 
-    assertModelBuilderHasElements(modelBuilder, expectedElements);
-    assert(modelBuilder.hasRedos());
+    assertModelForBuilderHasElements(gridModel, modelBuilder, expectedElements);
   });
 });

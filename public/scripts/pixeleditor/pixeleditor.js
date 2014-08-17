@@ -50,8 +50,12 @@ define(
       return null;
     };
 
-    var numberValidator = function (newNumber) {
-      if (!isNaN(newNumber)) return newNumber;
+    var dimensionValidator = function (newDimensions) {
+      var sanitizedDimensions = _.pick(newDimensions, 'width', 'height');
+      if (!isNaN(sanitizedDimensions.width) &&
+          !isNaN(sanitizedDimensions.height)) {
+        return sanitizedDimensions;
+      }
       return null;
     };
 
@@ -67,8 +71,7 @@ define(
         new RecentColorPalette(Constants.COLOR_PALETTE_SIZE);
     actions.currentTool =
         new Value(Constants.AVAILABLE_TOOLS, toolValidator);
-    actions.canvasWidth = new Value(null, numberValidator);
-    actions.canvasHeight = new Value(null, numberValidator);
+    actions.canvasDimensions = new Value(null, dimensionsValidator);
     actions.canvasGridDisplay = new Value(null, booleanValidator);
     actions.userLoggedIn = new Value(false, booleanValidator);
 
@@ -205,31 +208,23 @@ define(
   // _initializeCanvas sets up the pixel canvas
   // Returns an instance of a PixelCanvas.
   PixelEditor.prototype._initializeCanvas  = function () {
-    var app = this;
     var canvasTools = Object.create(null);
 
     canvasTools.pixelCanvas = new PixelCanvas(
         Constants.STARTING_VALUES.CANVAS_DIMENSIONS, '#pixel-editor-canvas',
         Constants.STARTING_VALUES.DEFAULT_COLOR);
 
-    canvasTools.clickInterface = new ClickCanvasInterface(
-        canvasTools.pixelCanvas);
-
     canvasTools.model = new GridModel(
         Constants.STARTING_VALUES.CANVAS_DIMENSIONS);
 
-    var defaultElement = { color: Constants.STARTING_VALUES.DEFAULT_COLOR };
-    var activeElement = { color: Constants.STARTING_VALUES.ACTIVE_COLOR };
     canvasTools.modelBuilder = new GridModelBuilder(
-        canvasTools.model, canvasTools.pixelCanvas, defaultElement,
-        activeElement, SpriteConverter);
+        canvasTools.model, canvasTools.pixelCanvas, this._actions.defaultColor,
+        this._actions.activeColor, this._actions.canvasDimensions,
+        SpriteConverter);
 
-    this._actions.activeColor.addValueChangeHandler(function (value) {
-      canvasTools.modelBuilder.setCurrentElement({ color: value });
-    });
-    this._actions.defaultColor.addValueChangeHandler(function (value) {
-      canvasTools.modelBuilder.setDefaultElement({ color: value });
-    });
+    canvasTools.clickInterface = new ClickCanvasInterface(
+        canvasTools.pixelCanvas);
+
     this._actions.currentTool.addValueChangeHandler(function (value) {
       canvasTools.modelBuilder.setAction(Constants.TOOL_TO_ACTION_MAP[value]);
     });
@@ -239,18 +234,6 @@ define(
     });
     this._buttons.toolbar.redo.addClickHandler(function () {
       canvasTools.modelBuilder.redo();
-    });
-
-    canvasTools.modelBuilder.afterCanvasAction(function () {
-      if (app._actions.currentTool.getValue() ===
-          Constants.AVAILABLE_TOOLS.DROPPER) {
-        app._actions.activeColor.setValue(
-           canvasTools.modelBuilder.getCurrentElement().color);
-      }
-    });
-
-    EventHub.subscribe('modelbuilder.redraw', function () {
-      canvasTools.clickInterface.paintGrid();
     });
 
     this._sizeCanvas();
@@ -522,21 +505,27 @@ define(
     var app = this;
 
     $canvasWidthInput.on('keyup', function () {
-      app._actions.canvasWidth.setValue($canvasWidthInput.val());
+      var dimensions = app._actions.canvasDimensions.getValue();
+      app._actions.canvasDimensions.setValue({
+        width: $canvasWidthInput.val(),
+        height: dimensions.height
+      });
     });
 
     $canvasHeightInput.on('keyup', function () {
-      app._actions.canvasHeight.setValue($canvasHeightInput.val());
+      var dimensions = app._actions.canvasDimensions.getValue();
+      app._actions.canvasDimensions.setValue({
+        width: dimensions.width,
+        height: $canvasHeightInput.val()
+      });
     });
 
     var dimensionChangeHandler = function () {
-      app._canvasTools.modelBuilder.resize({
-        width: app._actions.canvasWidth.getValue(),
-        height: app._actions.canvasHeight.getValue()
-      });
+      app._canvasTools.modelBuilder.resize(
+          app._actions.canvasDimensions.getValue());
     };
-    this._actions.canvasWidth.addValueChangeHandler(dimensionChangeHandler);
-    this._actions.canvasHeight.addValueChangeHandler(dimensionChangeHandler);
+    this._actions.canvasDimensions.addValueChangeHandler(
+        dimensionChangeHandler);
 
     $gridDisplayInput.on('change', function () {
       app._actions.canvasGridDisplay.setValue(
@@ -544,10 +533,10 @@ define(
     });
 
     // Set initial values
-    this._actions.canvasWidth.setValue(
-        Constants.STARTING_VALUES.CANVAS_DIMENSIONS.width);
-    this._actions.canvasHeight.setValue(
-        Constants.STARTING_VALUES.CANVAS_DIMENSIONS.height);
+    this._actions.canvasDimensions.setValue({
+      width: Constants.STARTING_VALUES.CANVAS_DIMENSIONS.width,
+      height: Constants.STARTING_VALUES.CANVAS_DIMENSIONS.height
+    });
     this._actions.canvasGridDisplay.setValue(
         Constants.STARTING_VALUES.CANVAS_DIMENSIONS.GRID_VISIBLE);
   };
