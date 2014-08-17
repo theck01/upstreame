@@ -3,13 +3,13 @@ define(
      'domkit/ui/button', 'domkit/ui/palette',
      'core/controller/eventhub', 'core/graphics/color',
      'core/graphics/pixelcanvas', 'pixeleditor/controller/gridmodelbuilder',
-     'pixeleditor/interface/clickcanvasinterface',
+     'pixeleditor/interface/metapixelclickinterface',
      'pixeleditor/model/converters/spriteconverter',
      'pixeleditor/model/gridmodel', 'pixeleditor/constants',
      'pixeleditor/actions/recentcolorpalette', 'pixeleditor/actions/value'],
     function (
         $, _, RadioGroup, Button, Palette, EventHub, Color, PixelCanvas,
-        GridModelBuilder, ClickCanvasInterface, SpriteConverter, GridModel,
+        GridModelBuilder, MetaPixelClickInterface, SpriteConverter, GridModel,
         Constants, RecentColorPalette, Value) {
   // Base application initializer.
   var PixelEditor = function () {
@@ -36,8 +36,10 @@ define(
   // _initializeActions initializes all of the actions in the application.
   // Returns an object mapping action names to actions.
   PixelEditor.prototype._initializeActions = function () {
-    var colorValidator = function (newColor) {
-      if (Color.isValid(newColor)) return Color.sanitize(newColor);
+    var colorValidator = function (newColorObj) {
+      if (newColorObj && Color.isValid(newColorObj.color)) {
+        return { color: Color.sanitize(newColorObj.color) };
+      }
       return null;
     };
 
@@ -51,6 +53,7 @@ define(
     };
 
     var dimensionValidator = function (newDimensions) {
+      if (!newDimensions) return null;
       var sanitizedDimensions = _.pick(newDimensions, 'width', 'height');
       if (!isNaN(sanitizedDimensions.width) &&
           !isNaN(sanitizedDimensions.height)) {
@@ -71,7 +74,7 @@ define(
         new RecentColorPalette(Constants.COLOR_PALETTE_SIZE);
     actions.currentTool =
         new Value(Constants.AVAILABLE_TOOLS, toolValidator);
-    actions.canvasDimensions = new Value(null, dimensionsValidator);
+    actions.canvasDimensions = new Value(null, dimensionValidator);
     actions.canvasGridDisplay = new Value(null, booleanValidator);
     actions.userLoggedIn = new Value(false, booleanValidator);
 
@@ -91,26 +94,27 @@ define(
     var app = this;
 
     $colorSelectInput.on('keyup', function (e) {
-      app._actions.activeColor.setValue($colorSelectInput.val());
+      app._actions.activeColor.setValue({ color: $colorSelectInput.val() });
       if (e.which === Constants.KEYS.ENTER) {
         app._palettes.topToolbar.activeColorSelect.visible(false);
       }
     });
 
-    this._actions.activeColor.addValueChangeHandler(function (newColor) {
-      $activeColorIcon.css('color', newColor);
-      $colorSelectPreview.css('background-color', newColor);
+    this._actions.activeColor.addValueChangeHandler(function (newColorObj) {
+      $activeColorIcon.css('color', newColorObj.color);
+      $colorSelectPreview.css('background-color', newColorObj.color);
 
       var inputVal = $colorSelectInput.val();
-      if (!Color.isValid(inputVal) || (Color.sanitize(inputVal) !== newColor)) {
-        $colorSelectInput.val(newColor);
+      if (!Color.isValid(inputVal) ||
+          (Color.sanitize(inputVal) !== newColorObj.color)) {
+        $colorSelectInput.val(newColorObj.color);
       }
     });
 
     _.each(this._buttons.activeColorSelect.colorPalette, function (button, i) {
       button.addClickHandler(function () {
         var colors = app._actions.recentColors.getPalette();
-        app._actions.activeColor.setValue(colors[i]);
+        app._actions.activeColor.setValue({ color: colors[i] });
       });
     });
 
@@ -118,7 +122,7 @@ define(
         function (isVisible) {
       if (!isVisible) {
         app._actions.recentColors.colorUsed(
-            app._actions.activeColor.getValue());
+            app._actions.activeColor.getValue().color);
       }
       else {
         var colors = app._actions.recentColors.getPalette();
@@ -135,7 +139,8 @@ define(
     });
 
     // Set initial values
-    this._actions.activeColor.setValue(Constants.STARTING_VALUES.ACTIVE_COLOR);
+    this._actions.activeColor.setValue(
+        { color: Constants.STARTING_VALUES.ACTIVE_COLOR });
     this._actions.recentColors.colorUsed(
         Constants.STARTING_VALUES.ACTIVE_COLOR);
     $colorSelectInput.val('');
@@ -222,8 +227,8 @@ define(
         this._actions.activeColor, this._actions.canvasDimensions,
         SpriteConverter);
 
-    canvasTools.clickInterface = new ClickCanvasInterface(
-        canvasTools.pixelCanvas);
+    canvasTools.clickInterface = new MetaPixelClickInterface(
+        canvasTools.pixelCanvas, canvasTools.modelBuilder);
 
     this._actions.currentTool.addValueChangeHandler(function (value) {
       canvasTools.modelBuilder.setAction(Constants.TOOL_TO_ACTION_MAP[value]);
@@ -256,26 +261,27 @@ define(
     var app = this;
 
     $colorSelectInput.on('keyup', function (e) {
-      app._actions.defaultColor.setValue($colorSelectInput.val());
+      app._actions.defaultColor.setValue({ color: $colorSelectInput.val() });
       if (e.which === Constants.KEYS.ENTER) {
         app._palettes.topToolbar.defaultColorSelect.visible(false);
       }
     });
 
-    this._actions.defaultColor.addValueChangeHandler(function (newColor) {
-      $defaultColorIcon.css('color', newColor);
-      $colorSelectPreview.css('background-color', newColor);
+    this._actions.defaultColor.addValueChangeHandler(function (newColorObj) {
+      $defaultColorIcon.css('color', newColorObj.color);
+      $colorSelectPreview.css('background-color', newColorObj.color);
 
       var inputVal = $colorSelectInput.val();
-      if (!Color.isValid(inputVal) || (Color.sanitize(inputVal) !== newColor)) {
-        $colorSelectInput.val(newColor);
+      if (!Color.isValid(inputVal) ||
+          (Color.sanitize(inputVal) !== newColorObj.color)) {
+        $colorSelectInput.val(newColorObj.color);
       }
     });
 
     _.each(this._buttons.defaultColorSelect.colorPalette, function (button, i) {
       button.addClickHandler(function () {
         var colors = app._actions.recentColors.getPalette();
-        app._actions.defaultColor.setValue(colors[i]);
+        app._actions.defaultColor.setValue({ color: colors[i] });
       });
     });
 
@@ -283,7 +289,7 @@ define(
         function (isVisible) {
       if (!isVisible) {
         app._actions.recentColors.colorUsed(
-            app._actions.defaultColor.getValue());
+            app._actions.defaultColor.getValue().color);
       }
       else {
         var colors = app._actions.recentColors.getPalette();
@@ -301,7 +307,7 @@ define(
 
     // Set initial values
     this._actions.defaultColor.setValue(
-        Constants.STARTING_VALUES.DEFAULT_COLOR);
+        { color: Constants.STARTING_VALUES.DEFAULT_COLOR });
     this._actions.recentColors.colorUsed(
         Constants.STARTING_VALUES.DEFAULT_COLOR);
     $colorSelectInput.val('');
