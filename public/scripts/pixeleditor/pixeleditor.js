@@ -513,7 +513,7 @@ define(
     $canvasWidthInput.on('keyup', function () {
       var dimensions = app._actions.canvasDimensions.getValue();
       app._actions.canvasDimensions.setValue({
-        width: $canvasWidthInput.val(),
+        width: parseInt($canvasWidthInput.val(), 10),
         height: dimensions.height
       });
     });
@@ -522,7 +522,7 @@ define(
       var dimensions = app._actions.canvasDimensions.getValue();
       app._actions.canvasDimensions.setValue({
         width: dimensions.width,
-        height: $canvasHeightInput.val()
+        height: parseInt($canvasHeightInput.val(), 10)
       });
     });
 
@@ -543,6 +543,8 @@ define(
       width: Constants.STARTING_VALUES.CANVAS_DIMENSIONS.width,
       height: Constants.STARTING_VALUES.CANVAS_DIMENSIONS.height
     });
+    $canvasWidthInput.val(Constants.STARTING_VALUES.CANVAS_DIMENSIONS.width);
+    $canvasHeightInput.val(Constants.STARTING_VALUES.CANVAS_DIMENSIONS.height);
     this._actions.canvasGridDisplay.setValue(
         Constants.STARTING_VALUES.CANVAS_DIMENSIONS.GRID_VISIBLE);
   };

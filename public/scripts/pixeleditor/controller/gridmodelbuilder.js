@@ -34,6 +34,7 @@ define(
       var gridModelBuilder = this;
       this._dimensionsValue.addValueChangeHandler(function (dim) {
         gridModelBuilder._resize(dim);
+        gridModelBuilder.paint();
       });
     };
     GridModelBuilder.prototype = Object.create(Frame.prototype);

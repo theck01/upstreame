@@ -16,16 +16,16 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
         this.backgroundColor = Color.sanitize(backgroundColor);
       }
       else this.backgroundColor = undefined;
-      this.resize(dimensions);
-      this.htmlCanvas = $(canvasID)[0];
+      this._htmlCanvas = $(canvasID)[0];
       
-      var context = this.htmlCanvas.getContext("2d");
+      var context = this._htmlCanvas.getContext("2d");
 
-      this._cachedCanvasDim = { width: this.htmlCanvas.width,
-                                height: this.htmlCanvas.height };
+      this._cachedCanvasDim = { width: this._htmlCanvas.width,
+                                height: this._htmlCanvas.height };
       this._cachedImageData = context.createImageData(
-          this.htmlCanvas.width, this.htmlCanvas.height);
+          this._htmlCanvas.width, this._htmlCanvas.height);
       this._cachedScreenParams = null;
+      this.resize(dimensions);
     };
     PixelCanvas.prototype = Object.create(Frame.prototype);
     PixelCanvas.prototype.constructor = PixelCanvas;
@@ -34,7 +34,7 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     // clear the canvas
     PixelCanvas.prototype.clear = function () {
       var dim = this.getDimensions();
-      var context = this.htmlCanvas.getContext("2d");
+      var context = this._htmlCanvas.getContext("2d");
       this._cachedImageData = context.createImageData(
           this._cachedCanvasDim.width, this._cachedCanvasDim.height);
       this.pastBuffer = PixelCanvas._makePixelGrid(dim.width, dim.height,
@@ -144,13 +144,13 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     // paint draws the pixel buffer to the HTML canvas and resets the buffer
     // to contain all white pixels
     PixelCanvas.prototype.paint = function () {
-      var context = this.htmlCanvas.getContext("2d");
+      var context = this._htmlCanvas.getContext("2d");
 
       // if the canvas has been resized, clear it as everthing must be redrawn
-      if (this.htmlCanvas.width !== this._cachedCanvasDim.width ||
-          this.htmlCanvas.height !== this._cachedCanvasDim.height) {
-        this._cachedCanvasDim = { width: this.htmlCanvas.width,
-                                  height: this.htmlCanvas.height };
+      if (this._htmlCanvas.width !== this._cachedCanvasDim.width ||
+          this._htmlCanvas.height !== this._cachedCanvasDim.height) {
+        this._cachedCanvasDim = { width: this._htmlCanvas.width,
+                                  height: this._htmlCanvas.height };
         this.clear();
         this._cachedScreenParams = null;
       }
@@ -234,6 +234,9 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
                                                    undefined);
       this.pixelBuffer = PixelCanvas._makePixelGrid(dim.width, dim.height,
                                                     this.backgroundColor);
+      this._cachedImageData = this._htmlCanvas.getContext("2d").getImageData(
+          0, 0, this._htmlCanvas.width, this._htmlCanvas.height);
+      this._cachedScreenParams = null;
     };
 
 
@@ -250,8 +253,8 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
       if (this._cachedScreenParams) return this._cachedScreenParams;
 
       var dim = this.getDimensions();
-      var height = this.htmlCanvas.height;
-      var width = this.htmlCanvas.width;
+      var height = this._htmlCanvas.height;
+      var width = this._htmlCanvas.width;
 
       var xfactor = Math.floor(width/dim.width);
       var yfactor = Math.floor(height/dim.height);
