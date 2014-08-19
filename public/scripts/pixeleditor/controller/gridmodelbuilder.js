@@ -26,7 +26,7 @@ define(
       this._defaultElementValue = defaultElementValue;
       this._dimensionsValue = dimensionsValue;
       this._model = model;
-      this._pCanvas = pixelCanvas;
+      this._canvas = pixelCanvas;
       this._redoStack = [];
       this._undoStack = [];
 
@@ -34,6 +34,11 @@ define(
       var gridModelBuilder = this;
       this._dimensionsValue.addValueChangeHandler(function (dim) {
         gridModelBuilder._resize(dim);
+        gridModelBuilder._canvas.clear();
+        gridModelBuilder.paint();
+      });
+      this._defaultElementValue.addValueChangeHandler(function (e) {
+        gridModelBuilder._canvas.setBackgroundColor(e.color);
         gridModelBuilder.paint();
       });
     };
@@ -243,11 +248,10 @@ define(
     GridModelBuilder.prototype.paint = function () {
       var elements = this._getModelElements();
       _.each(elements, function(e) {
-        this._pCanvas.setPixel(e.x, e.y, e.color);
+        this._canvas.setPixel(e.x, e.y, e.color);
       }, this);
 
-      this._pCanvas.clear();
-      this._pCanvas.paint();
+      this._canvas.markForRedraw();
     };
 
 
@@ -311,7 +315,7 @@ define(
         y: origin.y < 0 ? -origin.y : 0
       };
       this._model.updateCoverage(this._dimensionsValue.getValue(), offset);
-      this._pCanvas.resize(dimensions);
+      this._canvas.resize(dimensions);
       this.paint();
     };
 
@@ -341,11 +345,14 @@ define(
     GridModelBuilder.prototype.undo = function () {
       if (this._undoStack.length === 0) return;
       this._redoStack.push(this._undoStack.pop());
+
       this._model.applyChanges([{ action: GridModel.MODEL_ACTIONS.CLEAR_ALL }]);
       _.each(this._undoStack, function (changes) {
         changes = this._preprocessChanges(changes);
         this._model.applyChanges(changes);
       }, this);
+
+      this._canvas.clear();
       this.paint();
     };
 

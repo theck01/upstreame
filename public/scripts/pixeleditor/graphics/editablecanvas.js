@@ -105,7 +105,7 @@ define(
     var lowerWidthRange = origin[widthAxis] - Math.floor(width / 2);
     var upperWidthRange = origin[widthAxis] + Math.ceil(width / 2);
     var imageData = this._getImageData();
-    for (var i = origin[lengthAxis]; i < terminator[lengthAxis]; i++) {
+    for (var i = origin[lengthAxis]; i <= terminator[lengthAxis]; i++) {
       for (var j = lowerWidthRange; j < upperWidthRange; j++) {
         var imageIndex = lengthAxis === 'y' ?
             (i * imageData.width + j) * 4 :

@@ -442,10 +442,20 @@ define(
     });
 
     $(window).bind('resize', function () {
-      app._sizeCanvas();
       app._recalculatePaletteBounds();
+      app._sizeCanvas();
       app._canvasTools.modelBuilder.paint();
     });
+
+
+    var onAnimationFrameCallback = function () {
+      if (app._canvasTools.canvas.doesRequireRedraw()) {
+        app._canvasTools.canvas.paint();
+      }
+
+      requestAnimationFrame(onAnimationFrameCallback);
+    };
+    requestAnimationFrame(onAnimationFrameCallback);
   };
 
 

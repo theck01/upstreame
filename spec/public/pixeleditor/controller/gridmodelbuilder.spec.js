@@ -1,5 +1,5 @@
 var assert = require('assert');
-var MockPixelCanvas = require('../../core/graphics/mockpixelcanvas');
+var MockEditableCanvas = require('../graphics/mockeditablecanvas');
 var requirejs = require('requirejs');
 var sinon = require('sinon');
 var _ = require('underscore');
@@ -100,7 +100,7 @@ describe('GridModelBuilder', function () {
   beforeEach(function () {
     var dimensions = { width: 3, height: 3 };
     gridModel = new GridModel();
-    mockCanvas = new MockPixelCanvas(dimensions, '#FFFFFF');
+    mockCanvas = new MockEditableCanvas(dimensions, '#FFFFFF');
     activeColorValue = new Value({ color: '#000000' }, colorObjectValidator);
     defaultColorValue = new Value({ color: '#FFFFFF' }, colorObjectValidator);
     dimensionsValue = new Value(dimensions, dimensionValidator);
