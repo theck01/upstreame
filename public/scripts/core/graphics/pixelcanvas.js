@@ -119,6 +119,16 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     };
 
 
+    // _getImageData is a protected method that allows PixelCanvas subclasses
+    // to access the PixelCanvas image data.
+    //
+    // Returns:
+    //     An image data object for the canvas.
+    PixelCanvas.prototype._getImageData = function () {
+      return this._cachedImageData;
+    };
+
+
     // makePixelGrid creates a 2D array with given dimensions containin an RGB
     // string at each location in the array
     //
@@ -144,8 +154,21 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     // paint draws the pixel buffer to the HTML canvas and resets the buffer
     // to contain all white pixels
     PixelCanvas.prototype.paint = function () {
-      var context = this._htmlCanvas.getContext("2d");
+      this._paintToImageData();
+      this._paintImageDataToScreen();
+    };
 
+
+    // _paintImageDataToScreen paints the cached image data to the screen.
+    PixelCanvas.prototype._paintImageDataToScreen = function () {
+      this._htmlCanvas.getContext("2d").putImageData(
+          this._cachedImageData, 0, 0);
+    };
+
+
+    // _paintImageData paints the current buffer to the cached image data
+    // but not to the screen.
+    PixelCanvas.prototype._paintToImageData = function () {
       // if the canvas has been resized, clear it as everthing must be redrawn
       if (this._htmlCanvas.width !== this._cachedCanvasDim.width ||
           this._htmlCanvas.height !== this._cachedCanvasDim.height) {
@@ -168,8 +191,6 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
           this._paintPixel(pixels[j], colorObj, sparams);
         }
       }
-
-      context.putImageData(this._cachedImageData, 0, 0);
 
       // reset grid to background color
       var tmp = this.pastBuffer;

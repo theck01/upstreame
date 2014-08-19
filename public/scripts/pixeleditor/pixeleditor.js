@@ -2,14 +2,15 @@ define(
     ['jquery', 'underscore', 'domkit/controllers/radiogroup',
      'domkit/ui/button', 'domkit/ui/palette',
      'core/controller/eventhub', 'core/graphics/color',
-     'core/graphics/pixelcanvas', 'pixeleditor/controller/gridmodelbuilder',
+     'pixeleditor/controller/gridmodelbuilder',
+     'pixeleditor/graphics/editablecanvas',
      'pixeleditor/interface/metapixelclickinterface',
      'pixeleditor/model/converters/spriteconverter',
      'pixeleditor/model/gridmodel', 'pixeleditor/constants',
      'pixeleditor/actions/recentcolorpalette', 'pixeleditor/actions/value'],
     function (
-        $, _, RadioGroup, Button, Palette, EventHub, Color, PixelCanvas,
-        GridModelBuilder, MetaPixelClickInterface, SpriteConverter, GridModel,
+        $, _, RadioGroup, Button, Palette, EventHub, Color, GridModelBuilder,
+        EditableCanvas, MetaPixelClickInterface, SpriteConverter, GridModel,
         Constants, RecentColorPalette, Value) {
   // Base application initializer.
   var PixelEditor = function () {
@@ -215,7 +216,7 @@ define(
   PixelEditor.prototype._initializeCanvas  = function () {
     var canvasTools = Object.create(null);
 
-    canvasTools.pixelCanvas = new PixelCanvas(
+    canvasTools.canvas = new EditableCanvas(
         Constants.STARTING_VALUES.CANVAS_DIMENSIONS, '#pixel-editor-canvas',
         Constants.STARTING_VALUES.DEFAULT_COLOR);
 
@@ -223,12 +224,12 @@ define(
         Constants.STARTING_VALUES.CANVAS_DIMENSIONS);
 
     canvasTools.modelBuilder = new GridModelBuilder(
-        canvasTools.model, canvasTools.pixelCanvas, this._actions.defaultColor,
+        canvasTools.model, canvasTools.canvas, this._actions.defaultColor,
         this._actions.activeColor, this._actions.canvasDimensions,
         SpriteConverter);
 
     canvasTools.clickInterface = new MetaPixelClickInterface(
-        canvasTools.pixelCanvas, canvasTools.modelBuilder);
+        canvasTools.canvas, canvasTools.modelBuilder);
 
     this._actions.currentTool.addValueChangeHandler(function (value) {
       canvasTools.modelBuilder.setAction(Constants.TOOL_TO_ACTION_MAP[value]);
