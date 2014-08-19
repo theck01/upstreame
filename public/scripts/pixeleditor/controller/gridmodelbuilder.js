@@ -168,20 +168,20 @@ define(
     //
     // Arguments:
     //   elements: The elements existing in the current state of the model.
-    //   loc: location of initial fill operation
+    //   fillElement: The element to fill the open space.
     // Returns an array of elements that are added by the fill operation
-    GridModelBuilder.prototype._fillArea  = function (elements, loc) {
+    GridModelBuilder.prototype._fillArea  = function (elements, fillElement) {
       var dim = this._dimensionsValue.getValue();
-      var fillElement = this._currentElementValue.getValue();
       var filledElements = Object.create(null);
-      var locationStack = [loc];
+      var locationStack = [fillElement];
 
       var existingElementMap = _.reduce(elements, function (map, e) {
         map[Encoder.coordToScalar(e, dim)] = e;
         return map;
       }, Object.create(null));
 
-      var replacedElement = existingElementMap[Encoder.coordToScalar(loc, dim)];
+      var replacedElement = existingElementMap[Encoder.coordToScalar(
+          fillElement, dim)];
       replacedElement = replacedElement || { color: undefined };
 
       while (locationStack.length > 0) {
