@@ -537,16 +537,14 @@ define(
       });
     });
 
-    var dimensionChangeHandler = function () {
-      app._canvasTools.modelBuilder.resize(
-          app._actions.canvasDimensions.getValue());
-    };
-    this._actions.canvasDimensions.addValueChangeHandler(
-        dimensionChangeHandler);
-
     $gridDisplayInput.on('change', function () {
       app._actions.canvasGridDisplay.setValue(
           $gridDisplayInput.prop('checked'));
+    });
+
+    this._actions.canvasGridDisplay.addValueChangeHandler(function (drawGrid) {
+      app._canvasTools.canvas.setShouldDrawGrid(drawGrid);
+      app._canvasTools.modelBuilder.paint();
     });
 
     // Set initial values
@@ -557,7 +555,7 @@ define(
     $canvasWidthInput.val(Constants.STARTING_VALUES.CANVAS_DIMENSIONS.width);
     $canvasHeightInput.val(Constants.STARTING_VALUES.CANVAS_DIMENSIONS.height);
     this._actions.canvasGridDisplay.setValue(
-        Constants.STARTING_VALUES.CANVAS_DIMENSIONS.GRID_VISIBLE);
+        Constants.STARTING_VALUES.GRID_VISIBLE);
   };
 
 

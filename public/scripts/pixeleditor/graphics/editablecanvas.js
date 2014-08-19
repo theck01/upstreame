@@ -14,7 +14,7 @@ define(
 
     this._gridColor = Color.toObject(EditableCanvas.DEFAULT_GRID_COLOR);
     this._requiresRedraw = false;
-    this._shouldPaintGrid = true;
+    this._shouldDrawGrid = true;
     this._selectionBox = { origin: null, terminator: null };
     this._selectionColor = Color.toObject(
         EditableCanvas.DEFAULT_SELECTION_COLOR);
@@ -58,7 +58,7 @@ define(
   EditableCanvas.prototype.paint = function () {
     this._paintToImageData();
 
-    if (this._shouldPaintGrid) this._paintGridToImageData();
+    if (this._shouldDrawGrid) this._paintGridToImageData();
     if (this._selectionBox.origin && this._selectionBox.terminator) {
       this._paintSelectionToImageData();
     }
