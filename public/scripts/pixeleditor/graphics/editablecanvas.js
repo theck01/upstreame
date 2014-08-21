@@ -24,9 +24,10 @@ define(
 
 
   EditableCanvas.DEFAULT_GRID_COLOR = '#777777';
-  EditableCanvas.DEFAULT_SELECTION_COLOR = '#FF00FF';
-  EditableCanvas.LINE_WIDTH = 1;
+  EditableCanvas.GRID_LINE_WIDTH = 1;
 
+  EditableCanvas.DEFAULT_SELECTION_COLOR = '#FF00FF';
+  EditableCanvas.SELECTION_LINE_WIDTH = 3;
 
   // clearSelection clears the selection on the canvas and forces the canvas to
   // be redrawn.
@@ -43,6 +44,12 @@ define(
   // since last being painted.
   EditableCanvas.prototype.doesRequireRedraw = function () {
     return this._requiresRedraw;
+  };
+
+
+  // getSelection returns the current selection object.
+  EditableCanvas.prototype.getSelection = function () {
+    return this._selectionBox;
   };
 
 
@@ -131,7 +138,7 @@ define(
           {
             x: i * sparams.pixelSize + sparams.xoffset,
             y: sparams.yoffset + dimensions.height * sparams.pixelSize
-          }, EditableCanvas.LINE_WIDTH, this._gridColor);
+          }, EditableCanvas.GRID_LINE_WIDTH, this._gridColor);
     }
 
     for (var i = 0; i <= dimensions.height; i++) {
@@ -140,7 +147,7 @@ define(
           {
             x: sparams.xoffset + dimensions.width * sparams.pixelSize,
             y: i * sparams.pixelSize + sparams.yoffset
-          }, EditableCanvas.LINE_WIDTH, this._gridColor);
+          }, EditableCanvas.GRID_LINE_WIDTH, this._gridColor);
     }
   };
 
@@ -153,23 +160,23 @@ define(
     this._paintLineToImageData(
         { x: this._selectionBox.origin.x, y: this._selectionBox.origin.y },
         { x: this._selectionBox.terminator.x, y: this._selectionBox.origin.y },
-        EditableCanvas.LINE_WIDTH, this._selectionColor);
+        EditableCanvas.SELECTION_LINE_WIDTH, this._selectionColor);
     this._paintLineToImageData(
         { x: this._selectionBox.origin.x, y: this._selectionBox.origin.y },
         { x: this._selectionBox.origin.x, y: this._selectionBox.terminator.y },
-        EditableCanvas.LINE_WIDTH, this._selectionColor);
+        EditableCanvas.SELECTION_LINE_WIDTH, this._selectionColor);
     this._paintLineToImageData(
         { x: this._selectionBox.terminator.x, y: this._selectionBox.origin.y },
         {
           x: this._selectionBox.terminator.x,
           y: this._selectionBox.terminator.y
-        }, EditableCanvas.LINE_WIDTH, this._selectionColor);
+        }, EditableCanvas.SELECTION_LINE_WIDTH, this._selectionColor);
     this._paintLineToImageData(
         { x: this._selectionBox.origin.x, y: this._selectionBox.terminator.y },
         {
           x: this._selectionBox.terminator.x,
           y: this._selectionBox.terminator.y
-        }, EditableCanvas.LINE_WIDTH, this._selectionColor);
+        }, EditableCanvas.SELECTION_LINE_WIDTH, this._selectionColor);
   };
 
 
@@ -178,7 +185,13 @@ define(
   // Arguments:
   //     coord: object with 'x' and 'y' fields.
   EditableCanvas.prototype.setSelectionOrigin = function (coord) {
-    this._selectionBox.origin = coord;
+    if (!this._selectionBox.origin ||
+        this._selectionBox.origin.x !== coord.x ||
+        this._selectionBox.origin.y !== coord.y) {
+      this._selectionBox.origin = coord;
+      this.clear();
+      this.markForRedraw();
+    }
   };
 
 
@@ -188,7 +201,13 @@ define(
   // Arguments:
   //     coord: object with 'x' and 'y' fields.
   EditableCanvas.prototype.setSelectionTerminator = function (coord) {
-    this._selectionBox.terminator = coord;
+    if (!this._selectionBox.terminator ||
+        this._selectionBox.terminator.x !== coord.x ||
+        this._selectionBox.terminator.y !== coord.y) {
+      this._selectionBox.terminator = coord;
+      this.clear();
+      this.markForRedraw();
+    }
   };
 
 

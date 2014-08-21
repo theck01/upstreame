@@ -50,6 +50,25 @@ define(
   Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.CROP] =
       GridModelBuilder.CONTROLLER_ACTIONS.NONE;
 
+  Constants.TOOL_TYPES = Object.create(null);
+  Constants.TOOL_TYPES.SINGLE_PIXEL = 'single-pixel';
+  Constants.TOOL_TYPES.SELECTION = 'selection';
+  Constants.TOOL_TYPES.DRAG = 'drag';
+
+  Constants.TOOL_TO_TYPE_MAP = Object.create(null);
+  Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.PAINTBRUSH] =
+      Constants.TOOL_TYPES.SINGLE_PIXEL;
+  Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.DROPPER] =
+      Constants.TOOL_TYPES.SINGLE_PIXEL;
+  Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.PAINTBUCKET] =
+      Constants.TOOL_TYPES.SINGLE_PIXEL;
+  Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.ERASER] =
+      Constants.TOOL_TYPES.SINGLE_PIXEL;
+  Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.ZOOM] =
+      Constants.TOOL_TYPES.SELECTION;
+  Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.CROP] =
+      Constants.TOOL_TYPES.SELECTION;
+
   Constants.KEYS = {
     ENTER: 13,
     ESCAPE: 27

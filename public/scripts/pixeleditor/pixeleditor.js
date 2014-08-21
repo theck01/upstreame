@@ -229,7 +229,8 @@ define(
         SpriteConverter);
 
     canvasTools.clickInterface = new MetaPixelClickInterface(
-        canvasTools.canvas, canvasTools.modelBuilder);
+        canvasTools.canvas, canvasTools.modelBuilder,
+        this._actions.currentTool);
 
     this._actions.currentTool.addValueChangeHandler(function (value) {
       canvasTools.modelBuilder.setAction(Constants.TOOL_TO_ACTION_MAP[value]);
@@ -638,6 +639,8 @@ define(
 
       $currentToolIcon.addClass(Constants.TOOL_ICON_CLASSES[value]);
     });
+
+    this._actions.currentTool.setValue(Constants.STARTING_VALUES.DEFAULT_TOOL);
   };
 
 
