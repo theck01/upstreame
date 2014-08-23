@@ -33,24 +33,54 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
     return { x: e.pageX - canvasOffset.left, y: e.pageY - canvasOffset.top };
   };
   
-
   
-  // _getClickedPixel returns the corresponding pixel on the EditableCanvas that
-  // was clicked, or null if the click is outside of pixel bounds
+  // _getMetaPixelCoord returns the corresponding pixel on the EditableCanvas
+  // that was clicked, or null if the click is outside of pixel bounds and the
+  // method is searching for exact matches.
   //
   // Arguments:
-  //   coord: object with 'x' and 'y' fields
-  // Returns
-  //   Object with 'x' and 'y' fields
-  MetaPixelClickInterface.prototype._getClickedPixel = function (coord) {
-    var sparams = this._pCanvas.screenParams();
+  //   coord: object with 'x' and 'y' fields, canvas relative pixel coordinate.
+  //   opt_getNearest: Whether to retrieve the nearest pixel if the coord does
+  //     not exactly match a pixel. Defaults to false.
+  // Returns:
+  //   Object with 'x' and 'y' fields, or null if a meta pixel at the location
+  //   does not exist and the method is searching for exact matches.
+  MetaPixelClickInterface.prototype._getMetaPixelCoord = function (
+      coord, opt_getNearest) {
     var pixelPos = {
-      x: Math.floor((coord.x - sparams.xoffset)/sparams.pixelSize),
-      y: Math.floor((coord.y - sparams.yoffset)/sparams.pixelSize)
+      x: this._getMetaPixelComponent(coord, "x", opt_getNearest),
+      y: this._getMetaPixelComponent(coord, "y", opt_getNearest)
     };
 
     if(this._pCanvas.containsCoord(pixelPos)) return pixelPos;
     return null;
+  };
+
+
+  // _getMetaPixelComponent returns the location of the pixel on the given axis
+  // of the EditableCanvas that was clicked, which may be outsize of the 
+  // EditableCanvas bounds if opt_getNearest is not specified as true.
+  //
+  // Arguments:
+  //   coord: object with 'x' and 'y' fields, canvas relative pixel coordinate.
+  //   axis: Either 'x' or 'y'.
+  //   opt_getNearest: Whether to retrieve the nearest location on the axis if
+  //     the coord appears beyond the canvas bounds. Defaults to false.
+  // Returns:
+  //   Number, location on the given axis where the pixel appears.
+  MetaPixelClickInterface.prototype._getMetaPixelComponent = function (
+      coord, axis, opt_getNearest) {
+    var sparams = this._pCanvas.screenParams();
+    var offset = axis === "x" ? "xoffset" : "yoffset";
+    var loc = Math.floor((coord[axis] - sparams[offset])/sparams.pixelSize);
+
+    if (opt_getNearest) {
+      var canvasDimensions = this._pCanvas.getDimensions();
+      var dimension = axis === "x" ? "width" : "height";
+      loc = Math.max(Math.min(loc, canvasDimensions[dimension] - 1), 0);
+    }
+
+    return loc;
   };
 
   
@@ -63,8 +93,10 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
 
     switch (Constants.TOOL_TO_TYPE_MAP[this._toolValue.getValue()]) {
       case Constants.TOOL_TYPES.SINGLE_PIXEL:
-        var pixelPos = this._getClickedPixel(coord);
-        this._modelBuilder.addLocationToCurrentChange(pixelPos);
+        var pixelPos = this._getMetaPixelCoord(coord);
+        if (pixelPos) {
+          this._modelBuilder.addLocationToCurrentChange(pixelPos);
+        }
         break;
 
       case Constants.TOOL_TYPES.SELECTION:
