@@ -31,12 +31,11 @@ define(
       this._undoStack = [];
 
       Frame.call(this, dimensionsValue.getValue(), { x: 0, y: 0 });
+
+      this._dimensionsValue.addValueChangeHandler(
+          this._onDimensionChange.bind(this));
+      
       var gridModelBuilder = this;
-      this._dimensionsValue.addValueChangeHandler(function (dim) {
-        gridModelBuilder._resize(dim);
-        gridModelBuilder._canvas.clear();
-        gridModelBuilder.paint();
-      });
       this._defaultElementValue.addValueChangeHandler(function (e) {
         gridModelBuilder._canvas.setBackgroundColor(e.color);
         gridModelBuilder.paint();
@@ -243,6 +242,22 @@ define(
     };
 
 
+    // Dimension change handler updates model builder dimensions when the
+    // dimension value changes.
+    //
+    // Argument:
+    //     dimensions: Object with 'width' and 'height' fields.
+    GridModelBuilder.prototype._onDimensionChange = function (dimensions) {
+      var offset = { x: 0, y: 0 };
+
+      this._model.updateCoverage(this._dimensionsValue.getValue(), offset);
+      this.move(offset, "absolute");
+      this.resize(dimensions);
+      this._canvas.clear();
+      this.paint();
+    };
+
+
     // paint writes all stored pixels to the PixelCanvas and calls the
     // PixelCanvas" paint method
     GridModelBuilder.prototype.paint = function () {
@@ -307,14 +322,8 @@ define(
     //
     // Arguments:
     //   dimensions: object with 'width' and 'height' fields.
-    GridModelBuilder.prototype._resize = function (dimensions){
+    GridModelBuilder.prototype.resize = function (dimensions){
       Frame.prototype.resize.call(this, dimensions);
-      var origin = this.getOrigin();
-      var offset = {
-        x: origin.x < 0 ? -origin.x : 0,
-        y: origin.y < 0 ? -origin.y : 0
-      };
-      this._model.updateCoverage(this._dimensionsValue.getValue(), offset);
       this._canvas.resize(dimensions);
       this.paint();
     };

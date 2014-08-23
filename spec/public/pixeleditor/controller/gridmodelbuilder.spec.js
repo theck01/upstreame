@@ -273,8 +273,7 @@ describe('GridModelBuilder', function () {
       assert(_.isEqual(modelObj.dimensions, dimensionsValue.getValue()));
     });
 
-    it(
-        'should gracefully handle bad fields for non-element fields in the ' +
+    it('should gracefully handle bad fields for non-element fields in the ' +
         'model object', function () {
       var modelObj = {
         defaultElement: undefined,
@@ -353,10 +352,23 @@ describe('GridModelBuilder', function () {
   });
 
 
-  it('should update dimensions on dimensions value change', function () {
+  it('should update dimensions and reset builder frame origin on dimensions ' +
+      'value change', function () {
+    modelBuilder.move({ x: 1000, y: 1000 }, 'absolute');
     dimensionsValue.setValue({ width: 100, height: 100 });
     assert(_.isEqual(dimensionsValue.getValue(), modelBuilder.getDimensions()));
     assert(_.isEqual(dimensionsValue.getValue(), mockCanvas.getDimensions()));
+    assert(_.isEqual({ x: 0, y: 0 }, modelBuilder.getOrigin()));
+  });
+
+
+  it('should update frame and canvas dimensions but not dimensions value on ' +
+      'resize', function () {
+    var dimensions = { width: 200, height: 100 };
+    modelBuilder.resize(dimensions);
+    assert(_.isEqual(dimensions, modelBuilder.getDimensions()));
+    assert(_.isEqual(dimensions, mockCanvas.getDimensions()));
+    assert(!_.isEqual(dimensions, dimensionsValue.getValue()));
   });
 
   
