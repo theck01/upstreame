@@ -4,14 +4,20 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
   // Constructor Arguments;
   //   pixelCanvas: instance of Pixel Canvas
   //   modelBuilder: instance of GridModelBuilder
-  //   value: instance of a Value containing the current tool selection.
+  //   dimensionsValue: instance of a Value containing the current canvas
+  //       dimensions.
+  //   toolValue: instance of a Value containing the current tool selection.
+  //   zoomValue: instance of a Value containing whether the canvas is zoomed
+  //       in.
   var MetaPixelClickInterface = function (
-      pixelCanvas, modelBuilder, toolValue) {
+      pixelCanvas, modelBuilder, dimensionsValue, toolValue, zoomValue) {
     this._$htmlCanvas = $(pixelCanvas.getCanvasID());
     this._mouseDown = false;
     this._modelBuilder = modelBuilder;
     this._pCanvas = pixelCanvas;
+    this._dimensionsValue = dimensionsValue;
     this._toolValue = toolValue;
+    this._zoomValue = zoomValue;
 
     this._$htmlCanvas.on("mouseup mouseleave",
                         this._onMouseRelease.bind(this));
@@ -126,7 +132,7 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
 
       case Constants.TOOL_TYPES.SELECTION:
         var selection = this._pCanvas.getSelection();
-        if (this._toolValue.getValue() === Constants.AVAILABLE_TOOLS.ZOOM &&
+        if (this._toolValue.getValue() === Constants.AVAILABLE_TOOLS.ZOOM_IN &&
             selection.origin && selection.terminator) {
           var originMetaPixel = this._getMetaPixelCoord(selection.origin, true);
           var terminatorMetaPixel = this._getMetaPixelCoord(
@@ -142,6 +148,8 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
 
           this._modelBuilder.resize(dimensions);
           this._modelBuilder.move(origin, "absolute");
+          this._zoomValue.setValue(true);
+          this._toolValue.setValue(Constants.AVAILABLE_TOOLS.ZOOM_OUT);
 
           // Clear the canvas as well as the current painted buffer, to ensure
           // that no artifacts remain after zoom.
@@ -150,6 +158,20 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
 
         this._pCanvas.clearSelection();
         this._modelBuilder.paint();
+        break;
+
+      case Constants.TOOL_TYPES.CANVAS_CLICK:
+        if (this._toolValue.getValue() === Constants.AVAILABLE_TOOLS.ZOOM_OUT) {
+          this._modelBuilder.resize(this._dimensionsValue.getValue());
+          this._modelBuilder.move({ x: 0, y: 0 }, "absolute");
+          this._zoomValue.setValue(false);
+          this._toolValue.setValue(Constants.AVAILABLE_TOOLS.ZOOM_IN);
+
+          // Clear the canvas as well as the current painted buffer, to ensure
+          // that no artifacts remain after zoom.
+          this._pCanvas.clear(true /* opt_clearBuffer */);
+          this._modelBuilder.paint();
+        }
         break;
     }
   };

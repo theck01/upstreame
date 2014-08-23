@@ -29,6 +29,7 @@ define(
     this._initializeSettingsRouting();
     this._initializeToolSelectRouting();
     this._initializeTrashRouting();
+    this._initializeZoomRouting();
 
     this._initializeGlobal();
   };
@@ -78,6 +79,7 @@ define(
     actions.canvasDimensions = new Value(null, dimensionValidator);
     actions.canvasGridDisplay = new Value(null, booleanValidator);
     actions.userLoggedIn = new Value(false, booleanValidator);
+    actions.zoomState = new Value(false, booleanValidator);
 
     return actions;
   };
@@ -230,7 +232,8 @@ define(
 
     canvasTools.clickInterface = new MetaPixelClickInterface(
         canvasTools.canvas, canvasTools.modelBuilder,
-        this._actions.currentTool);
+        this._actions.canvasDimensions, this._actions.currentTool,
+        this._actions.zoomState);
 
     this._actions.currentTool.addValueChangeHandler(function (value) {
       canvasTools.modelBuilder.setAction(Constants.TOOL_TO_ACTION_MAP[value]);
@@ -620,7 +623,12 @@ define(
       $selectEraserButton.removeClass('dk-palette-appear-transition');
       $selectEraserButton.removeClass('dk-palette-disappear-transition');
       if (toggled) {
-        app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.ZOOM);
+        if (app._actions.zoomState.getValue()) {
+          app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.ZOOM_OUT);
+        }
+        else {
+          app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.ZOOM_IN);
+        }
       }
     });
     this._buttons.toolSelectMenu.crop.addStateHandler(
@@ -654,6 +662,20 @@ define(
     });
     this._buttons.trashMenu.no.addClickHandler(function () {
       app._radioGroups.toolbar.clear();
+    });
+  };
+
+
+  // _initializeZoomRouting connects zoom action to zoom controls.
+  PixelEditor.prototype._initializeZoomRouting = function () {
+    var $zoomIcon = $('#select-zoom-button').find('.toolbar-icon');
+    this._actions.zoomState.addValueChangeHandler(function (zoomState) {
+      if (zoomState) {
+        $zoomIcon.removeClass('icon-zoom-in').addClass('icon-zoom-out');
+      }
+      else {
+        $zoomIcon.removeClass('icon-zoom-out').addClass('icon-zoom-in');
+      }
     });
   };
 

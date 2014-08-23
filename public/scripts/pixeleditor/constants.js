@@ -9,7 +9,8 @@ define(
     DROPPER: 'dropper-tool',
     PAINTBUCKET: 'paintbucket-tool',
     ERASER: 'eraser-tool',
-    ZOOM: 'zoom-tool',
+    ZOOM_IN: 'zoom-in-tool',
+    ZOOM_OUT: 'zoom-out-tool',
     CROP: 'crop-tool'
   };
 
@@ -32,8 +33,10 @@ define(
       'icon-paint-bucket';
   Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.ERASER] =
       'icon-eraser';
-  Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.ZOOM] =
+  Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.ZOOM_IN] =
       'icon-zoom-in';
+  Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.ZOOM_OUT] =
+      'icon-zoom-out';
   Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.CROP] = '';
 
   Constants.TOOL_TO_ACTION_MAP = Object.create(null);
@@ -45,7 +48,9 @@ define(
       GridModelBuilder.CONTROLLER_ACTIONS.FILL;
   Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.ERASER] =
       GridModelBuilder.CONTROLLER_ACTIONS.CLEAR;
-  Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.ZOOM] =
+  Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.ZOOM_IN] =
+      GridModelBuilder.CONTROLLER_ACTIONS.NONE;
+  Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.ZOOM_OUT] =
       GridModelBuilder.CONTROLLER_ACTIONS.NONE;
   Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.CROP] =
       GridModelBuilder.CONTROLLER_ACTIONS.NONE;
@@ -54,6 +59,7 @@ define(
   Constants.TOOL_TYPES.SINGLE_PIXEL = 'single-pixel';
   Constants.TOOL_TYPES.SELECTION = 'selection';
   Constants.TOOL_TYPES.DRAG = 'drag';
+  Constants.TOOL_TYPES.CANVAS_CLICK = 'canvas-click';
 
   Constants.TOOL_TO_TYPE_MAP = Object.create(null);
   Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.PAINTBRUSH] =
@@ -64,8 +70,10 @@ define(
       Constants.TOOL_TYPES.SINGLE_PIXEL;
   Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.ERASER] =
       Constants.TOOL_TYPES.SINGLE_PIXEL;
-  Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.ZOOM] =
+  Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.ZOOM_IN] =
       Constants.TOOL_TYPES.SELECTION;
+  Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.ZOOM_OUT] =
+      Constants.TOOL_TYPES.CANVAS_CLICK;
   Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.CROP] =
       Constants.TOOL_TYPES.SELECTION;
 
