@@ -668,14 +668,28 @@ define(
 
   // _initializeZoomRouting connects zoom action to zoom controls.
   PixelEditor.prototype._initializeZoomRouting = function () {
+    var app = this;
     var $zoomIcon = $('#select-zoom-button').find('.toolbar-icon');
     this._actions.zoomState.addValueChangeHandler(function (zoomState) {
       if (zoomState) {
         $zoomIcon.removeClass('icon-zoom-in').addClass('icon-zoom-out');
+        if (app._actions.currentTool.getValue() ===
+            Constants.AVAILABLE_TOOLS.ZOOM_IN) {
+          app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.ZOOM_OUT);
+        }
       }
       else {
         $zoomIcon.removeClass('icon-zoom-out').addClass('icon-zoom-in');
+        if (app._actions.currentTool.getValue() ===
+            Constants.AVAILABLE_TOOLS.ZOOM_OUT) {
+          app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.ZOOM_IN);
+        }
       }
+    });
+
+    // Changing the canvas dimensions always resets the zoom state.
+    this._actions.canvasDimensions.addValueChangeHandler(function () {
+      app._actions.zoomState.setValue(false);
     });
   };
 

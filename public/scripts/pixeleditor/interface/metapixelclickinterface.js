@@ -149,7 +149,6 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
           this._modelBuilder.resize(dimensions);
           this._modelBuilder.move(origin, "absolute");
           this._zoomValue.setValue(true);
-          this._toolValue.setValue(Constants.AVAILABLE_TOOLS.ZOOM_OUT);
 
           // Clear the canvas as well as the current painted buffer, to ensure
           // that no artifacts remain after zoom.
@@ -165,7 +164,6 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
           this._modelBuilder.resize(this._dimensionsValue.getValue());
           this._modelBuilder.move({ x: 0, y: 0 }, "absolute");
           this._zoomValue.setValue(false);
-          this._toolValue.setValue(Constants.AVAILABLE_TOOLS.ZOOM_IN);
 
           // Clear the canvas as well as the current painted buffer, to ensure
           // that no artifacts remain after zoom.
