@@ -116,6 +116,7 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
   // _onMouseRelease is a private function that handles mouseup and
   // mouseleave events
   MetaPixelClickInterface.prototype._onMouseRelease = function () {
+    if (!this._mouseDown) return;
     this._mouseDown = false;
 
     switch (Constants.TOOL_TO_TYPE_MAP[this._toolValue.getValue()]) {
@@ -124,6 +125,29 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
         break;
 
       case Constants.TOOL_TYPES.SELECTION:
+        var selection = this._pCanvas.getSelection();
+        if (this._toolValue.getValue() === Constants.AVAILABLE_TOOLS.ZOOM &&
+            selection.origin && selection.terminator) {
+          var originMetaPixel = this._getMetaPixelCoord(selection.origin, true);
+          var terminatorMetaPixel = this._getMetaPixelCoord(
+              selection.terminator, true);
+          var dimensions = {
+            width: Math.abs(originMetaPixel.x - terminatorMetaPixel.x) + 1,
+            height: Math.abs(originMetaPixel.y - terminatorMetaPixel.y) + 1
+          };
+          var origin = {
+            x: Math.min(originMetaPixel.x, terminatorMetaPixel.x),
+            y: Math.min(originMetaPixel.y, terminatorMetaPixel.y)
+          };
+
+          this._modelBuilder.resize(dimensions);
+          this._modelBuilder.move(origin, "absolute");
+
+          // Clear the canvas as well as the current painted buffer, to ensure
+          // that no artifacts remain after zoom.
+          this._pCanvas.clear(true /* opt_clearBuffer */);
+        }
+
         this._pCanvas.clearSelection();
         this._modelBuilder.paint();
         break;

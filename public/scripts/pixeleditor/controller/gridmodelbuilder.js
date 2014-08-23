@@ -62,6 +62,11 @@ define(
     // Arguments:
     //     loc: An object with 'x' and 'y' fields.
     GridModelBuilder.prototype.addLocationToCurrentChange = function (loc) {
+      // Offset location by the shift applied to the model builder.
+      var origin = this.getOrigin();
+      loc.x += origin.x;
+      loc.y += origin.y;
+
       switch (this._action) {
         case GridModelBuilder.CONTROLLER_ACTIONS.NONE:
           this._currentChange = null;
