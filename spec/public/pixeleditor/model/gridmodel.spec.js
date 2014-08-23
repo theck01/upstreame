@@ -290,4 +290,19 @@ describe('GridModel', function () {
       });
     });
   });
+
+
+  describe('shiftElements', function () {
+    it('should update element positions within the model', function () {
+      var offset = { x: 2, y: 3 };
+      var expectedElements = makeEdits(gridModel);
+      for (var i = 0; i < expectedElements.length; i++) {
+        expectedElements[i].x += offset.x;
+        expectedElements[i].y += offset.y;
+      }
+
+      gridModel.shiftElements(offset);
+      assertModelHasElements(gridModel, frame, expectedElements);
+    });
+  });
 });

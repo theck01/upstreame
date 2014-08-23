@@ -137,6 +137,18 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
   };
 
 
+  // shiftElements shifts all elements in the model by the given offset.
+  // 
+  // Arguments:
+  //     offset: An object with 'x' and 'y' fields.
+  GridModel.prototype.shiftElements = function (offset) {
+    for (var i = 0; i < this._elements.length; i++) {
+      this._elements[i].x += offset.x;
+      this._elements[i].y += offset.y;
+    }
+  };
+
+
   // updateCoverage ensures that the model covers at least the area given by the
   // offset and dimensions, or more if elements already exist beyond the resize
   // area.
