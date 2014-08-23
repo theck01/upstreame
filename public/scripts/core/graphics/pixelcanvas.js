@@ -32,13 +32,19 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
 
 
     // clear the canvas
-    PixelCanvas.prototype.clear = function () {
-      var dim = this.getDimensions();
+    //
+    // Arguments:
+    //     opt_clearBuffer: Optionally clear the current buffer of painted
+    //         pixels. False by default.
+    PixelCanvas.prototype.clear = function (opt_clearBuffer) {
       var context = this._htmlCanvas.getContext("2d");
       this._cachedImageData = context.createImageData(
           this._cachedCanvasDim.width, this._cachedCanvasDim.height);
-      this.pastBuffer = PixelCanvas._makePixelGrid(dim.width, dim.height,
-                                                   undefined);
+
+      PixelCanvas._clearPixelGrid(this.pastBuffer, undefined);
+      if (opt_clearBuffer) {
+        PixelCanvas._clearPixelGrid(this.pixelBuffer, this.backgroundColor);
+      }
     };
 
 
