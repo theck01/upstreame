@@ -20,7 +20,9 @@ var IdentityConverter =
     requirejs('pixeleditor/model/converters/identityconverter');
 var Encoder = requirejs('core/util/encoder');
 
-
+var booleanValidator = function (newBoolean) {
+  return !!newBoolean;
+};
 var colorObjectValidator = function (newColorObject) {
   if (newColorObject && Color.isValid(newColorObject.color)) {
     return { color: Color.sanitize(newColorObject.color) };
@@ -95,6 +97,7 @@ describe('GridModelBuilder', function () {
   var activeColorValue;
   var defaultColorValue;
   var dimensionsValue;
+  var zoomValue;
   var modelBuilder;
 
   beforeEach(function () {
@@ -104,9 +107,10 @@ describe('GridModelBuilder', function () {
     activeColorValue = new Value({ color: '#000000' }, colorObjectValidator);
     defaultColorValue = new Value({ color: '#FFFFFF' }, colorObjectValidator);
     dimensionsValue = new Value(dimensions, dimensionValidator);
+    zoomValue = new Value(false, booleanValidator);
     modelBuilder = new GridModelBuilder(
       gridModel, mockCanvas, defaultColorValue, activeColorValue,
-      dimensionsValue, IdentityConverter);
+      dimensionsValue, zoomValue, IdentityConverter);
   });
 
 
@@ -385,5 +389,71 @@ describe('GridModelBuilder', function () {
     ];
 
     assertModelForBuilderHasElements(gridModel, modelBuilder, expectedElements);
+  });
+
+
+  describe('zoomIn', function () {
+    it('should change the builders dimensions and origin but not the ' +
+        'dimensions value on zoomIn', function () {
+      var offset = { x: 1, y: 2 };
+      var dimensions = { width: 2, height: 1 };
+
+      modelBuilder.zoomIn(offset, dimensions);
+
+      assert(_.isEqual(offset, modelBuilder.getOrigin()));
+      assert(_.isEqual(dimensions, modelBuilder.getDimensions()));
+      assert(_.isEqual(dimensions, mockCanvas.getDimensions()));
+      assert(!_.isEqual(dimensions, dimensionsValue.getValue()));
+    });
+
+
+    it('should be reversable by "undo"', function () {
+      var offset = { x: 1, y: 2 };
+      var dimensions = { width: 2, height: 1 };
+
+      modelBuilder.zoomIn(offset, dimensions);
+      modelBuilder.undo();
+
+      assert(_.isEqual({ x: 0, y: 0 }, modelBuilder.getOrigin()));
+      assert(_.isEqual(
+          dimensionsValue.getValue(), modelBuilder.getDimensions()));
+      assert(_.isEqual(dimensionsValue.getValue(), mockCanvas.getDimensions()));
+      assert(!_.isEqual(dimensions, dimensionsValue.getValue()));
+    });
+  });
+
+
+  describe('zoomOut', function () {
+    it('should reset the builders dimensions to the dimensions value and ' +
+        'origin to the absolute origin on zoomOut', function () {
+      var offset = { x: 1, y: 2 };
+      var dimensions = { width: 2, height: 1 };
+
+      modelBuilder.zoomIn(offset, dimensions);
+
+      modelBuilder.zoomOut();
+
+      assert(_.isEqual({ x: 0, y: 0 }, modelBuilder.getOrigin()));
+      assert(_.isEqual(
+          dimensionsValue.getValue(), modelBuilder.getDimensions()));
+      assert(_.isEqual(dimensionsValue.getValue(), mockCanvas.getDimensions()));
+      assert(!_.isEqual(dimensions, dimensionsValue.getValue()));
+    });
+
+
+    it('should be reversable by "undo"', function () {
+      var offset = { x: 1, y: 2 };
+      var dimensions = { width: 2, height: 1 };
+
+      modelBuilder.zoomIn(offset, dimensions);
+
+      modelBuilder.zoomOut();
+      modelBuilder.undo();
+
+      assert(_.isEqual(offset, modelBuilder.getOrigin()));
+      assert(_.isEqual(dimensions, modelBuilder.getDimensions()));
+      assert(_.isEqual(dimensions, mockCanvas.getDimensions()));
+      assert(!_.isEqual(dimensions, dimensionsValue.getValue()));
+    });
   });
 });

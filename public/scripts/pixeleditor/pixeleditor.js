@@ -228,12 +228,11 @@ define(
     canvasTools.modelBuilder = new GridModelBuilder(
         canvasTools.model, canvasTools.canvas, this._actions.defaultColor,
         this._actions.activeColor, this._actions.canvasDimensions,
-        SpriteConverter);
+        this._actions.zoomState, SpriteConverter);
 
     canvasTools.clickInterface = new MetaPixelClickInterface(
         canvasTools.canvas, canvasTools.modelBuilder,
-        this._actions.canvasDimensions, this._actions.currentTool,
-        this._actions.zoomState);
+        this._actions.canvasDimensions, this._actions.currentTool);
 
     this._actions.currentTool.addValueChangeHandler(function (value) {
       canvasTools.modelBuilder.setAction(Constants.TOOL_TO_ACTION_MAP[value]);

@@ -7,17 +7,14 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
   //   dimensionsValue: instance of a Value containing the current canvas
   //       dimensions.
   //   toolValue: instance of a Value containing the current tool selection.
-  //   zoomValue: instance of a Value containing whether the canvas is zoomed
-  //       in.
   var MetaPixelClickInterface = function (
-      pixelCanvas, modelBuilder, dimensionsValue, toolValue, zoomValue) {
+      pixelCanvas, modelBuilder, dimensionsValue, toolValue) {
     this._$htmlCanvas = $(pixelCanvas.getCanvasID());
     this._mouseDown = false;
     this._modelBuilder = modelBuilder;
     this._pCanvas = pixelCanvas;
     this._dimensionsValue = dimensionsValue;
     this._toolValue = toolValue;
-    this._zoomValue = zoomValue;
 
     this._$htmlCanvas.on("mouseup mouseleave",
                         this._onMouseRelease.bind(this));
@@ -132,27 +129,30 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
 
       case Constants.TOOL_TYPES.SELECTION:
         var selection = this._pCanvas.getSelection();
-        if (this._toolValue.getValue() === Constants.AVAILABLE_TOOLS.ZOOM_IN &&
-            selection.origin && selection.terminator) {
-          var originMetaPixel = this._getMetaPixelCoord(selection.origin, true);
-          var terminatorMetaPixel = this._getMetaPixelCoord(
-              selection.terminator, true);
-          var dimensions = {
-            width: Math.abs(originMetaPixel.x - terminatorMetaPixel.x) + 1,
-            height: Math.abs(originMetaPixel.y - terminatorMetaPixel.y) + 1
-          };
-          var origin = {
-            x: Math.min(originMetaPixel.x, terminatorMetaPixel.x),
-            y: Math.min(originMetaPixel.y, terminatorMetaPixel.y)
-          };
+        if (!selection.origin || !selection.terminator) break;
 
-          this._modelBuilder.resize(dimensions);
-          this._modelBuilder.move(origin, "absolute");
-          this._zoomValue.setValue(true);
+        var originMetaPixel = this._getMetaPixelCoord(selection.origin, true);
+        var terminatorMetaPixel = this._getMetaPixelCoord(
+            selection.terminator, true);
+        var dimensions = {
+          width: Math.abs(originMetaPixel.x - terminatorMetaPixel.x) + 1,
+          height: Math.abs(originMetaPixel.y - terminatorMetaPixel.y) + 1
+        };
+        var origin = {
+          x: Math.min(originMetaPixel.x, terminatorMetaPixel.x),
+          y: Math.min(originMetaPixel.y, terminatorMetaPixel.y)
+        };
+
+        if (this._toolValue.getValue() === Constants.AVAILABLE_TOOLS.ZOOM_IN) {
+          this._modelBuilder.zoomIn(origin, dimensions);
 
           // Clear the canvas as well as the current painted buffer, to ensure
           // that no artifacts remain after zoom.
           this._pCanvas.clear(true /* opt_clearBuffer */);
+        }
+        else if (this._toolValue.getValue() ===
+            Constants.AVAILABLE_TOOLS.CROP) {
+
         }
 
         this._pCanvas.clearSelection();
@@ -161,9 +161,7 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
 
       case Constants.TOOL_TYPES.CANVAS_CLICK:
         if (this._toolValue.getValue() === Constants.AVAILABLE_TOOLS.ZOOM_OUT) {
-          this._modelBuilder.resize(this._dimensionsValue.getValue());
-          this._modelBuilder.move({ x: 0, y: 0 }, "absolute");
-          this._zoomValue.setValue(false);
+          this._modelBuilder.zoomOut();
 
           // Clear the canvas as well as the current painted buffer, to ensure
           // that no artifacts remain after zoom.

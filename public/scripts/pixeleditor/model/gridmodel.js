@@ -145,22 +145,15 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
     for (var i = 0; i < this._elements.length; i++) {
       this._elements[i].x += offset.x;
       this._elements[i].y += offset.y;
+
+      // If shifting the element causes an element to appear beyond the model's
+      // expected range then update the models sizing.
+      var offsetCoord = this._offsetElement(this._elements[i]);
+      if (offsetCoord.x >= this._dim.width || offsetCoord.x < 0 ||
+          offsetCoord.y >= this._dim.height || offsetCoord.y < 0) {
+        this._updateSizing(offsetCoord);
+      }
     }
-  };
-
-
-  // updateCoverage ensures that the model covers at least the area given by the
-  // offset and dimensions, or more if elements already exist beyond the resize
-  // area.
-  //
-  // Arguments:
-  //    dimensions: Object with 'width' and 'height' fields
-  //    offset: Object with positive integer 'x' and 'y' fields
-  GridModel.prototype.updateCoverage = function (dimensions, offset) {
-    this._offset.x = Math.max(this._offset.x, offset.x);
-    this._offset.y = Math.max(this._offset.y, offset.y);
-    this._dim.width = Math.max(this._dim.width, dimensions.width);
-    this._dim.height = Math.max(this._dim.height, dimensions.height);
   };
 
 

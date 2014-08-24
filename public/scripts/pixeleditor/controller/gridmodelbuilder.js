@@ -18,13 +18,14 @@ define(
     //       fromGridModelFormat methods
     var GridModelBuilder = function (
         model, pixelCanvas, defaultElementValue, currentElementValue,
-        dimensionsValue, converter) {
+        dimensionsValue, zoomValue, converter) {
       this._action = GridModelBuilder.CONTROLLER_ACTIONS.SET;
       this._converter = converter;
       this._currentChange = null; // always null unless mouse is down in canvas
       this._currentElementValue = currentElementValue;
       this._defaultElementValue = defaultElementValue;
       this._dimensionsValue = dimensionsValue;
+      this._zoomValue = zoomValue;
       this._model = model;
       this._canvas = pixelCanvas;
       this._redoStack = [];
@@ -52,12 +53,13 @@ define(
       FILL: "fill",
       GET: "get",
       NONE: "none",
-      SET: GridModel.MODEL_ACTIONS.SET
+      POSITION: "position",
+      SET: GridModel.MODEL_ACTIONS.SET,
     };
 
 
     // addLoctionToCurrentChange adds the location to the current change, which
-    // affect the model based upon the current action.
+    // will affect the model based upon the current action.
     //
     // Arguments:
     //     loc: An object with 'x' and 'y' fields.
@@ -255,10 +257,9 @@ define(
     GridModelBuilder.prototype._onDimensionChange = function (dimensions) {
       var offset = { x: 0, y: 0 };
 
-      this._model.updateCoverage(this._dimensionsValue.getValue(), offset);
       this.move(offset, "absolute");
       this.resize(dimensions);
-      this._canvas.clear();
+      this._canvas.clear(true /* opt_clearBuffer */);
       this.paint();
     };
 
@@ -302,6 +303,13 @@ define(
             modelChange.action = GridModel.MODEL_ACTIONS.SET;
             break;
 
+          case GridModelBuilder.CONTROLLER_ACTIONS.ZOOM:
+            this.resize(c.dimensions);
+            this.move(c.offset, "absolute");
+            this._zoomValue.setValue(c.zoomed);
+            // Return the memo early, zooming should not affect model.
+            return memo;
+
           default:
             throw Error("Bad controller action, cannot process change");
         }
@@ -318,6 +326,7 @@ define(
       if (this._redoStack.length === 0) return;
       var changes = this._redoStack.pop();
       this._commitChanges(changes, true);
+      this._canvas.clear(true /* opt_clearBuffer */);
       this.paint();
     };
 
@@ -360,15 +369,49 @@ define(
       if (this._undoStack.length === 0) return;
       this._redoStack.push(this._undoStack.pop());
 
+      // The default state of the application has no zoom.
+      this.resize(this._dimensionsValue.getValue());
+      this.move({ x: 0, y: 0 }, "absolute");
+      this._zoomValue.setValue(false);
+
       this._model.applyChanges([{ action: GridModel.MODEL_ACTIONS.CLEAR_ALL }]);
       _.each(this._undoStack, function (changes) {
         changes = this._preprocessChanges(changes);
         this._model.applyChanges(changes);
       }, this);
 
-      this._canvas.clear();
+      this._canvas.clear(true /* opt_clearBuffer */);
       this.paint();
     };
+
+
+    // zoomIn sets the model builders frame to the given dimensions and offset,
+    // preserving the action in the undo stack.
+    //
+    // Arguments:
+    //     origin: The origin that the builder should occupy.
+    //     dimensions: The dimensions that the builder should occupy.
+    GridModelBuilder.prototype.zoomIn = function (origin, dimensions) {
+      this._commitChanges([{
+        action: GridModelBuilder.CONTROLLER_ACTIONS.ZOOM,
+        offset: origin,
+        dimensions: dimensions,
+        zoomed: true
+      }]);
+    };
+
+
+    // zoomOut sets the model builder's frame to the full canvas dimensions and
+    // no offset.
+    GridModelBuilder.prototype.zoomOut = function () {
+      this._commitChanges([{
+        action: GridModelBuilder.CONTROLLER_ACTIONS.ZOOM,
+        offset: { x: 0, y: 0 },
+        dimensions: this._dimensionsValue.getValue(),
+        zoomed: false
+      }]);
+    };
+
 
     return GridModelBuilder;
   }
