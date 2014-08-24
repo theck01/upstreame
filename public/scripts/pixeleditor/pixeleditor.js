@@ -579,48 +579,42 @@ define(
   PixelEditor.prototype._initializeToolSelectRouting = function () {
     var app = this;
     var $currentToolIcon = $('#tool-select-button').find('.toolbar-icon');
-    var $selectPaintBrushButton = $('#select-paint-brush-button');
-    var $selectDropperButton = $('#select-dropper-button');
-    var $selectPaintBucketButton = $('#select-paint-bucket-button');
-    var $selectEraserButton = $('#select-eraser-button');
 
     this._buttons.toolSelectMenu.paintBrush.addStateHandler(
         function (toggled) {
-      $selectPaintBrushButton.removeClass('dk-palette-appear-transition');
-      $selectPaintBrushButton.removeClass('dk-palette-disappear-transition');
       if (toggled) {
         app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.PAINTBRUSH);
       }
+      // Close all select palettes on state change.
+      app._radioGroups.toolbar.clear();
     });
     this._buttons.toolSelectMenu.dropper.addStateHandler(
         function (toggled) {
-      $selectDropperButton.removeClass('dk-palette-appear-transition');
-      $selectDropperButton.removeClass('dk-palette-disappear-transition');
       if (toggled) {
         app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.DROPPER);
       }
+      // Close all palettes on state change.
+      app._radioGroups.toolbar.clear();
     });
     this._buttons.toolSelectMenu.paintBucket.addStateHandler(
         function (toggled) {
-      $selectPaintBucketButton.removeClass('dk-palette-appear-transition');
-      $selectPaintBucketButton.removeClass('dk-palette-disappear-transition');
       if (toggled) {
         app._actions.currentTool.setValue(
             Constants.AVAILABLE_TOOLS.PAINTBUCKET);
       }
+      // Close all palettes on state change.
+      app._radioGroups.toolbar.clear();
     });
     this._buttons.toolSelectMenu.eraser.addStateHandler(
         function (toggled) {
-      $selectEraserButton.removeClass('dk-palette-appear-transition');
-      $selectEraserButton.removeClass('dk-palette-disappear-transition');
       if (toggled) {
         app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.ERASER);
       }
+      // Close all palettes on state change.
+      app._radioGroups.toolbar.clear();
     });
     this._buttons.toolSelectMenu.zoom.addStateHandler(
         function (toggled) {
-      $selectEraserButton.removeClass('dk-palette-appear-transition');
-      $selectEraserButton.removeClass('dk-palette-disappear-transition');
       if (toggled) {
         if (app._actions.zoomState.getValue()) {
           app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.ZOOM_OUT);
@@ -629,14 +623,16 @@ define(
           app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.ZOOM_IN);
         }
       }
+      // Close all palettes on state change.
+      app._radioGroups.toolbar.clear();
     });
     this._buttons.toolSelectMenu.crop.addStateHandler(
         function (toggled) {
-      $selectEraserButton.removeClass('dk-palette-appear-transition');
-      $selectEraserButton.removeClass('dk-palette-disappear-transition');
       if (toggled) {
         app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.CROP);
       }
+      // Close all palettes on state change.
+      app._radioGroups.toolbar.clear();
     });
 
     this._actions.currentTool.addValueChangeHandler(function (value) {
