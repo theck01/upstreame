@@ -1,15 +1,14 @@
 define(
     ['jquery', 'underscore', 'domkit/controllers/radiogroup',
      'domkit/ui/button', 'domkit/ui/palette',
-     'core/controller/eventhub', 'core/graphics/color',
-     'pixeleditor/controller/gridmodelbuilder',
+     'core/graphics/color','pixeleditor/controller/gridmodelbuilder',
      'pixeleditor/graphics/editablecanvas',
      'pixeleditor/interface/metapixelclickinterface',
      'pixeleditor/model/converters/spriteconverter',
      'pixeleditor/model/gridmodel', 'pixeleditor/constants',
      'pixeleditor/actions/recentcolorpalette', 'pixeleditor/actions/value'],
     function (
-        $, _, RadioGroup, Button, Palette, EventHub, Color, GridModelBuilder,
+        $, _, RadioGroup, Button, Palette, Color, GridModelBuilder,
         EditableCanvas, MetaPixelClickInterface, SpriteConverter, GridModel,
         Constants, RecentColorPalette, Value) {
   // Base application initializer.
