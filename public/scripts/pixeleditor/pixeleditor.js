@@ -479,7 +479,8 @@ define(
       this._buttons.toolSelectMenu.crop
     ];
     radioGroups.toolSelect = new RadioGroup(
-      toolSelectButtons, 0 /* activeIndex */);
+      toolSelectButtons, 0 /* activeIndex */,
+      true /* opt_forceActiveElement */);
 
     return radioGroups;
   };
