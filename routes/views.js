@@ -1,5 +1,18 @@
 var auth = require('../lib/auth.js');
 
+exports.blog = function (req, res) {
+  var opts = {
+    title: 'upstrea.me',
+    main: 'scripts/blog/main.js'
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    opts.main = 'scripts/dist/blog.min.js';
+  }
+
+  res.render('blog', opts);
+};
+
 exports.home = function (req, res) {
   var opts = {
     title: 'upstrea.me',

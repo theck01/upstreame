@@ -1,0 +1,22 @@
+extend layout
+block sources
+  link(rel="stylesheet", href="css/blog.css")
+  link(rel="stylesheet", href="http://fonts.googleapis.com/css?family=Open+Sans:300,400" type='text/css')
+block content
+  #nav-bar.sidebar
+    .logo-canvas-container
+      canvas#logo-canvas
+    .sidebar-spacer
+    #nav-menu.nav-menu
+      a.nav-entry(href="#") Posts
+      .nav-menu-spacer
+      .nav-category-title Games
+      .nav-category
+        a.nav-entry(href="/submersion") Submersion
+        a.nav-entry(href="/invaders") Invaders
+      .nav-menu-spacer
+      .nav-category-title Tools
+      .nav-category
+        a.nav-entry(href="/pixeleditor") Pixel Editor
+  #nav-separator.nav-separator
+  #main-area.content-container

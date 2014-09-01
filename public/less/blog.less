@@ -1,0 +1,34 @@
+@import "blogcomponents/constants";
+@import "blogcomponents/sidebar";
+
+@nav-separator-width: 1px;
+@nav-separator-horizontal-padding: 0px;
+@nav-separator-vertical-padding: @sidebar-padding;
+@nav-separator-color: #444444;
+
+@content-container-width-offset:
+    (@sidebar-width + @nav-separator-width + 2 * @sidebar-padding);
+@content-container-width: calc(~"100% - "@content-container-width-offset);
+
+
+html {
+  height: 100%;
+  width: 100%;
+}
+
+
+body {
+  margin: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+.nav-separator {
+  display: inline-block;
+  vertical-align: top;
+  height: @sidebar-height;
+  width: @nav-separator-width;
+  background-clip: content-box;
+  background-color: @nav-separator-color;
+  padding: @nav-separator-vertical-padding @nav-separator-horizontal-padding;
+}

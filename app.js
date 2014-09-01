@@ -52,6 +52,7 @@ app.use(express.static(__dirname + '/bower_components'));
 
 // view routes
 app.get('/', views.home);
+app.get('/blog', views.blog);
 app.get('/invaders', views.invaders);
 app.get('/pixeleditor', views.pixeleditor);
 app.get('/submersion', views.submersion);
