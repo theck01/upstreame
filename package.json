@@ -4,12 +4,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "express": "~3.4.0",
     "jade": "~0.35.0",
     "underscore": "~1.5.2",
     "verifier": "~0.2.0",
     "passport": "~0.1.17",
-    "passport-local": "~0.1.6"
+    "passport-local": "~0.1.6",
+    "poet": "~1.0.2",
+    "cookie-parser": "~1.3.2",
+    "morgan": "~1.2.3",
+    "body-parser": "~1.6.7",
+    "express-session": "~1.7.6",
+    "express": "~4.8.7"
   },
   "devDependencies": {
     "less": "~1.4.2",

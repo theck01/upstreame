@@ -1,8 +1,8 @@
 exports.login = function (req, res) {
-  res.send(200);
+  res.status(200).end();
 };
 
 exports.logout = function (req, res) {
   req.logout();
-  res.send(200);
+  res.status(200).end();
 };

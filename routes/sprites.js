@@ -16,7 +16,7 @@ exports.all = function (req, res) {
 
   fs.readdir(spriteDir, function (err, files) {
 
-    if(err) res.json(500, 'Internal server error');
+    if(err) res.status(500).json('Internal server error');
     else{
       sprites = _.reduce(files, function (memo, f) {
         var file = __dirname + '/../public/assets/sprites/' + f;
@@ -28,7 +28,7 @@ exports.all = function (req, res) {
         return memo;
       }, Object.create(null));
 
-      res.json(200, sprites);
+      res.status(200).json(sprites);
     }
   });
 };
@@ -38,10 +38,10 @@ exports.load = function (req, res) {
   filename += '.json';
 
   fs.readFile(filename, { encoding: 'utf8' }, function (err, data) {
-    if(err) res.send(404, 'Sprite named ' + req.params.name + ' not found.');
+    if(err) res.status(404).json(
+        'Sprite named ' + req.params.name + ' not found.');
     else{
-      res.type('application/json');
-      res.send(200, data);
+      res.type('application/json').status(200).send(data);
     }
   });
 };
@@ -52,18 +52,18 @@ exports.save = function (req, res) {
   filename += '.json';
   
   if(!req.params.name) {
-    res.send(400, 'Sprite name required to save.');
+    res.status(400).send('Sprite name required to save.');
     return;
   }
 
   var sprite = verifier.validate(req.body, spriteTemplate, function (msg) {
-    res.send(400, msg);
+    res.status(400).send(msg);
   });
 
   if (sprite) {
     fs.writeFile(filename, JSON.stringify(req.body), function (err) {
-      if(err) res.send(500, 'Internal server error.');
-      else res.send(200);
+      if(err) res.status(500).send('Internal server error.');
+      else res.status(200).end();
     });
   }
 };

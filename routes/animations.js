@@ -14,10 +14,10 @@ exports.load = function (req, res) {
   filename += '.json';
 
   fs.readFile(filename, { encoding: 'utf8' }, function (err, data) {
-    if(err) res.send(404);
+    if(err) res.status(404).end();
     else{
       res.type('application/json');
-      res.send(200, data);
+      res.status(200).send(data);
     }
   });
 };
@@ -29,12 +29,12 @@ exports.save = function (req, res) {
   
   if (!req.params.name ||
       verifier.validate(req.body, animationTemplate) === null){
-    res.send(400);
+    res.status(400).end();
   }
   else{
     fs.writeFile(filename, JSON.stringify(req.body), function (err) {
-      if(err) res.send(500);
-      else res.send(200);
+      if(err) res.status(500).end();
+      else res.status(200).end();
     });
   }
 };

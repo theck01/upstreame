@@ -1,7 +1,11 @@
 var animations = require('./routes/animations');
 var auth = require('./lib/auth'); var express = require('express');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 var LocalStrategy = require('passport-local').Strategy;
+var morgan = require('morgan');
 var passport = require('passport');
+var sessionMiddleware = require('express-session');
 var sessions = require('./routes/sessions');
 var sprites = require('./routes/sprites');
 var views = require('./routes/views');
@@ -27,23 +31,21 @@ passport.deserializeUser(function (user, done) {
 
 
 // APP CONFIGURATION
-
-app.configure(function () {
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  if(process.env.NODE_ENV !== 'test') app.use(express.logger('dev'));
-  app.use(express.json());
-  app.use(express.bodyParser());
-  app.use(express.cookieParser());
-  app.use(express.session({
-    secret: process.env.SESSION_SECRET
-  }));
-  app.use(passport.initialize());
-  app.use(passport.session());
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
-  app.use(express.static(__dirname + '/bower_components'));
-});
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+if(process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+else if(process.env.NODE_ENV === 'production') app.use(morgan('combined'));
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(sessionMiddleware({
+  secret: process.env.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/bower_components'));
 
 
 // ROUTES
