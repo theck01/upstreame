@@ -13,19 +13,6 @@ exports.blog = function (req, res) {
   res.render('blog', opts);
 };
 
-exports.home = function (req, res) {
-  var opts = {
-    title: 'upstrea.me',
-    main: 'scripts/core/main.js'
-  };
-
-  if (process.env.NODE_ENV === 'production') {
-    opts.main = 'scripts/dist/homescreen.min.js';
-  }
-
-  res.render('home', opts);
-};
-
 exports.invaders = function (req, res) {
   var opts = {
     title: 'Invaders',
