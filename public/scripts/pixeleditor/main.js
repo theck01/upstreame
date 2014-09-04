@@ -1,5 +1,5 @@
 require.config({
-  baseUrl: 'scripts',
+  baseUrl: '/scripts',
   packages: [{
     location: '/domkit/domkit',
     name: 'domkit',

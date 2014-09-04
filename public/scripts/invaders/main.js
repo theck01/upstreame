@@ -1,5 +1,5 @@
 require.config({
-  baseUrl: "scripts",
+  baseUrl: "/scripts",
   paths: {
     bootstrap: "/bootstrap/dist/js/bootstrap.min",
     jquery: "/jquery/jquery.min",
