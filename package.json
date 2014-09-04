@@ -14,7 +14,9 @@
     "morgan": "~1.2.3",
     "body-parser": "~1.6.7",
     "express-session": "~1.7.6",
-    "express": "~4.8.7"
+    "express": "~4.8.7",
+    "marked": "~0.3.2",
+    "json-front-matter": "~0.1.6"
   },
   "devDependencies": {
     "less": "~1.4.2",
