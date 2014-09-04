@@ -51,7 +51,7 @@ app.use(express.static(__dirname + '/bower_components'));
 
 
 // BLOG POST INITIALIZATION
-var archive = new PostArchive('./public/posts/');
+var archive = new PostArchive(__dirname + '/public/posts/');
 var postRoutes = posts(archive);
 
 
