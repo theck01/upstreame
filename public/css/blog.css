@@ -7,6 +7,12 @@ a {
 .post-title {
   margin: 5px 0px;
 }
+.post-title-link {
+  color: #000000;
+}
+.post-title-link:hover {
+  color: #0000bb;
+}
 .post-tagline {
   margin: 5px 0px;
 }
@@ -25,7 +31,7 @@ a {
   color: #000000;
 }
 .nav-entry:hover {
-  color: #000099;
+  color: #0000bb;
 }
 .nav-category-title {
   vertical-align: center;
