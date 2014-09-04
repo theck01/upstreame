@@ -1,7 +1,7 @@
 extend layout
 block sources
   link(rel="stylesheet", href="css/blog.css")
-  link(rel="stylesheet", href="http://fonts.googleapis.com/css?family=Open+Sans:300,400" type='text/css')
+  link(rel="stylesheet", href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" type='text/css')
 block content
   #nav-bar.sidebar
     .logo-canvas-container
@@ -18,5 +18,14 @@ block content
       .nav-category-title Tools
       .nav-category
         a.nav-entry(href="/pixeleditor") Pixel Editor
+  .sidebar-space-placeholder
   #nav-separator.nav-separator
   #main-area.content-container
+    .post-title-container
+      h1.post-title #{post.title}
+      h4.post-tagline
+        | by 
+        a(href="/author/#{post.author}") #{post.author}
+        |  on #{post.date} in 
+        a(href="/category/#{post.category}") #{post.category}
+    !{post.htmlContent}

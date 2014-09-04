@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var LocalStrategy = require('passport-local').Strategy;
 var morgan = require('morgan');
 var passport = require('passport');
+var PostArchive = require('./lib/postarchive');
+var posts = require('./routes/posts');
 var sessionMiddleware = require('express-session');
 var sessions = require('./routes/sessions');
 var sprites = require('./routes/sprites');
@@ -48,10 +50,15 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/bower_components'));
 
 
+// BLOG POST INITIALIZATION
+var archive = new PostArchive('./public/posts/');
+var postRoutes = posts(archive);
+
+
 // ROUTES
 
 // view routes
-app.get(['/'], views.blog);
+app.get(['/'], postRoutes.lastPost);
 app.get('/invaders', views.invaders);
 app.get('/pixeleditor', views.pixeleditor);
 app.get('/submersion', views.submersion);
