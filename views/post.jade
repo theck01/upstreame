@@ -1,0 +1,11 @@
+extend postcommon
+block postcontent
+  .post-title-container
+    h1.post-title
+      a.post-title-link(href="/posts/#{post.urlTitle}") #{post.title}
+    h4.post-tagline
+      | by 
+      a.post-title-link(href="/posts/author/#{post.author}") #{post.author}
+      |  on #{post.date} in 
+      a.post-title-link(href="/posts/category/#{post.category}") #{post.category}
+  !{post.htmlContent}

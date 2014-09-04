@@ -57,8 +57,14 @@ var postRoutes = posts(archive);
 
 // ROUTES
 
-// view routes
-app.get(['/'], postRoutes.lastPost);
+// post routes
+app.get('/', postRoutes.lastPost);
+app.get('/posts', postRoutes.all);
+app.get('/posts/:title', postRoutes.getPost);
+app.get('/posts/author/:author', postRoutes.getPostsByAuthor);
+app.get('/posts/category/:category', postRoutes.getPostsByCategory);
+
+// game and tool view routes
 app.get('/invaders', views.invaders);
 app.get('/pixeleditor', views.pixeleditor);
 app.get('/submersion', views.submersion);
