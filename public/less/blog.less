@@ -1,4 +1,5 @@
 @import "blogcomponents/constants";
+@import "blogcomponents/postcontent";
 @import "blogcomponents/sidebar";
 
 @nav-separator-width: 1px;
@@ -7,8 +8,11 @@
 @nav-separator-color: #444444;
 
 @content-container-width-offset:
-    (@sidebar-width + @nav-separator-width + 2 * @sidebar-padding);
+    (@sidebar-width + @nav-separator-width + 2 * @large-spacer-size);
 @content-container-width: calc(~"100% - "@content-container-width-offset);
+@content-container-height: calc(~"100% - "(2 * @large-spacer-size));
+@content-container-padding-left:
+    (@large-spacer-size + @sidebar-width + @nav-separator-width);
 
 
 html {
@@ -18,17 +22,29 @@ html {
 
 
 body {
+  font-family: @font;
   margin: 0px;
   height: 100%;
   width: 100%;
 }
 
+
 .nav-separator {
-  display: inline-block;
-  vertical-align: top;
+  position: fixed;
+  top: 0px;
+  left: @sidebar-width;
   height: @sidebar-height;
   width: @nav-separator-width;
   background-clip: content-box;
   background-color: @nav-separator-color;
   padding: @nav-separator-vertical-padding @nav-separator-horizontal-padding;
+}
+
+
+.content-container {
+  width: @content-container-width;
+  height: @content-container-height;
+  padding:
+      @large-spacer-size @large-spacer-size @large-spacer-size
+      @content-container-padding-left;
 }

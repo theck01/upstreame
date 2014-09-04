@@ -1,3 +1,15 @@
+a {
+  text-decoration: none;
+}
+.post-title-container {
+  padding: 10px 0px;
+}
+.post-title {
+  margin: 5px 0px;
+}
+.post-tagline {
+  margin: 5px 0px;
+}
 .logo-canvas-container {
   width: 260px;
   height: 260px;
@@ -34,9 +46,10 @@
   height: 10px;
 }
 .sidebar {
-  display: inline-block;
-  vertical-align: top;
-  width: 280px;
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  width: 260px;
   height: calc(100% -  20px);
   padding: 10px;
 }
@@ -49,16 +62,23 @@ html {
   width: 100%;
 }
 body {
+  font-family: 'Open Sans', sans-serif;
   margin: 0px;
   height: 100%;
   width: 100%;
 }
 .nav-separator {
-  display: inline-block;
-  vertical-align: top;
+  position: fixed;
+  top: 0px;
+  left: 280px;
   height: calc(100% -  20px);
   width: 1px;
   background-clip: content-box;
   background-color: #444444;
   padding: 10px 0px;
+}
+.content-container {
+  width: calc(100% -  321px);
+  height: calc(100% -  40px);
+  padding: 20px 20px 20px 301px;
 }
