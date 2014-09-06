@@ -179,9 +179,6 @@ define(
     buttons.trashMenu.yes = Button.create('#trash-confirm-yes');
     buttons.trashMenu.no = Button.create('#trash-confirm-no');
 
-    buttons.loadMenu = Object.create(null);
-    buttons.loadMenu.load = Button.create('#load-sprite-button');
-
     buttons.saveMenu = Object.create(null);
     buttons.saveMenu.save = Button.create('#save-sprite-button');
 
@@ -361,16 +358,6 @@ define(
       max: $bottomToolbar.outerHeight()
     };
 
-    palettes.bottomToolbar.load = new Palette({
-      anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
-      anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
-      menu: '#load-sprite-menu',
-      sibling: '#load-button'
-    });
-    this._buttons.toolbar.load.addStateHandler(function (state) {
-      palettes.bottomToolbar.load.visible(state);
-    });
-
     palettes.bottomToolbar.save = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
       anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
@@ -434,7 +421,7 @@ define(
     var radioGroups = Object.create(null);
 
     radioGroups.toolbar = new RadioGroup(_.values(_.omit(
-        this._buttons.toolbar, ['undo', 'redo'])));
+        this._buttons.toolbar, ['undo', 'redo', 'load'])));
 
     var toolSelectButtons = [
       this._buttons.toolSelectMenu.paintBrush,

@@ -2,7 +2,7 @@
 @import "pixeleditorcomponents/constants";
 @import "pixeleditorcomponents/colorselectmenu";
 @import "pixeleditorcomponents/confirmationmenu";
-@import "pixeleditorcomponents/filemenu";
+@import "pixeleditorcomponents/savemenu";
 @import "pixeleditorcomponents/settingsmenu";
 @import "pixeleditorcomponents/toolbar";
 @import "pixeleditorcomponents/toolselectmenu";
@@ -34,4 +34,14 @@ body {
 
 .dk-palette-menu-container {
   border-radius: @border-radius;
+}
+
+
+.hidden-file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: @toolbar-button-width;
+  height: @toolbar-button-height;
+  opacity: 0;
 }
