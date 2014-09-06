@@ -81,10 +81,6 @@
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
 }
-.dk-spacer {
-  width: 10px;
-  height: 10px;
-}
 .dk-button {
   outline: none;
   border-radius: 8px;
@@ -129,6 +125,10 @@
   border-radius: 8px;
   border: 3px solid #6fb1ff;
   background: linear-gradient(to bottom, #e7e7e7 0%, #f0f0f0 100%);
+}
+.dk-spacer {
+  width: 10px;
+  height: 10px;
 }
 .color-select-submenu {
   display: inline-block;
@@ -300,52 +300,6 @@ button.file-menu-button {
   border-radius: 0px;
   padding: 0px 5px;
 }
-.login-menu {
-  width: 312px;
-  height: 106px;
-}
-.login-button {
-  display: inline-block;
-  vertical-align: top;
-  font-family: 'Share Tech Mono';
-  font-size: 16px;
-  width: 154px;
-  height: 30px;
-  border: 1px solid #9f9f9f;
-  border-radius: 0px;
-}
-.login-input {
-  display: inline-block;
-  font-family: 'Share Tech Mono';
-  font-size: 16px;
-  outline: none;
-  width: 200px;
-  height: 30px;
-  border: 1px solid #9f9f9f;
-  border-radius: 0px;
-  padding: 0px 5px;
-}
-.login-label {
-  display: inline-block;
-  font-family: 'Share Tech Mono';
-  font-size: 20px;
-  width: 100px;
-  height: 32px;
-}
-.login-row {
-  height: 32px;
-  width: 312px;
-}
-.login-row-spacer {
-  display: inline-block;
-  vertical-align: top;
-  height: 32px;
-  width: 78px;
-}
-.login-spacer {
-  height: 5px;
-  width: 312px;
-}
 .settings-menu {
   width: 212px;
   height: 106px;
@@ -425,7 +379,7 @@ button.toolbar-button {
   bottom: 0px;
   padding-bottom: 10px;
 }
-@media (max-height: 565px) {
+@media (max-height: 510px) {
   .toolbar-bottom-attached {
     position: static;
   }

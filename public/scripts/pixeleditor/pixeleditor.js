@@ -24,7 +24,6 @@ define(
 
     this._initializeActiveColorSelectRouting();
     this._initializeDefaultColorSelectRouting();
-    this._initializeSessionsRouting();
     this._initializeSettingsRouting();
     this._initializeToolSelectRouting();
     this._initializeTrashRouting();
@@ -77,7 +76,6 @@ define(
         new Value(Constants.AVAILABLE_TOOLS, toolValidator);
     actions.canvasDimensions = new Value(null, dimensionValidator);
     actions.canvasGridDisplay = new Value(null, booleanValidator);
-    actions.userLoggedIn = new Value(false, booleanValidator);
     actions.zoomState = new Value(false, booleanValidator);
 
     return actions;
@@ -166,7 +164,6 @@ define(
     buttons.toolbar.load = Button.create('#load-button');
     buttons.toolbar.save = Button.create('#save-button');
     buttons.toolbar.settings = Button.create('#settings-button');
-    buttons.toolbar.session = Button.create('#session-button');
 
     buttons.toolSelectMenu = Object.create(null);
     buttons.toolSelectMenu.paintBrush =
@@ -187,12 +184,6 @@ define(
 
     buttons.saveMenu = Object.create(null);
     buttons.saveMenu.save = Button.create('#save-sprite-button');
-
-    buttons.loginMenu = Object.create(null);
-    buttons.loginMenu.login = Button.create('#login-button');
-    buttons.logoutMenu = Object.create(null);
-    buttons.logoutMenu.yes = Button.create('#logout-confirm-yes');
-    buttons.logoutMenu.no = Button.create('#logout-confirm-no');
 
     buttons.activeColorSelect = Object.create(null);
     buttons.activeColorSelect.colorPalette = _.map(
@@ -323,7 +314,6 @@ define(
     var palettes = Object.create(null);
     palettes.topToolbar = Object.create(null);
     palettes.bottomToolbar = Object.create(null);
-    var app = this;
 
     palettes.topToolbar.toolSelect = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
@@ -401,29 +391,6 @@ define(
       palettes.bottomToolbar.settings.visible(state);
     });
 
-    palettes.bottomToolbar.login = new Palette({
-      anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
-      anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
-      menu: '#login-menu',
-      sibling: '#session-button'
-    });
-    palettes.bottomToolbar.logout = new Palette({
-      anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
-      anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
-      menu: '#logout-menu',
-      sibling: '#session-button'
-    });
-    this._buttons.toolbar.session.addStateHandler(function (state) {
-      if (app._actions.userLoggedIn.getValue()) {
-        palettes.bottomToolbar.login.visible(false);
-        palettes.bottomToolbar.logout.visible(state);
-      }
-      else {
-        palettes.bottomToolbar.login.visible(state);
-        palettes.bottomToolbar.logout.visible(false);
-      }
-    });
-
     return palettes;
   };
 
@@ -482,37 +449,6 @@ define(
       true /* opt_forceActiveElement */);
 
     return radioGroups;
-  };
-
-
-  // _initializeSessionsRouting connects all components required for the 
-  // login and logout menus.
-  PixelEditor.prototype._initializeSessionsRouting = function () {
-    var $sessionButtonIcon = $('#session-button').find('.toolbar-icon');
-    var app = this;
-
-    this._buttons.loginMenu.login.addClickHandler(function () {
-      app._actions.userLoggedIn.setValue(true);
-      app._radioGroups.toolbar.clear();
-    });
-    this._buttons.logoutMenu.yes.addClickHandler(function () {
-      app._actions.userLoggedIn.setValue(false);
-      app._radioGroups.toolbar.clear();
-    });
-    this._buttons.logoutMenu.no.addClickHandler(function () {
-      app._radioGroups.toolbar.clear();
-    });
-
-    this._actions.userLoggedIn.addValueChangeHandler(function (isLoggedIn) {
-      if (isLoggedIn) {
-        $sessionButtonIcon.addClass('icon-logout');
-        $sessionButtonIcon.removeClass('icon-login');
-      }
-      else {
-        $sessionButtonIcon.addClass('icon-login');
-        $sessionButtonIcon.removeClass('icon-logout');
-      }
-    });
   };
 
 

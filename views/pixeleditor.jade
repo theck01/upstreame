@@ -37,9 +37,6 @@ block content
       .toolbar-spacer
       button#settings-button.dk-toggleable-button.toolbar-button
         i.toolbar-icon.icon-settings
-      .toolbar-spacer
-      button#session-button.dk-toggleable-button.toolbar-button
-        i.toolbar-icon.icon-login
 
   .canvas-container
     canvas#pixel-editor-canvas
@@ -238,25 +235,3 @@ block content
       .settings-row
         .settings-label Show Grid
         input#grid-display-input.settings-grid-display-input(type="checkbox" checked)
-
-    #login-menu.login-menu
-      .login-row
-        .login-label Username
-        input#username-input.login-input(type="text")
-      .login-spacer
-      .login-row
-        .login-label Password
-        input#password-input.login-input(type="password")
-      .login-spacer
-      .login-row
-        .login-row-spacer
-        button#login-button.dk-button.login-button Sign In
-        .login-row-spacer
-
-    #logout-menu.confirmation-menu
-      .confirmation-message Are you sure you want to sign out?
-      .confirmation-menu-spacer
-      .confirmation-select-submenu
-        button#logout-confirm-yes.dk-button.confirmation-button Yes
-        .confirmation-select-spacer
-        button#logout-confirm-no.dk-button.confirmation-button No
