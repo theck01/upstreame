@@ -540,6 +540,12 @@ define(
       app._canvasTools.modelBuilder.paint();
     });
 
+    this._actions.canvasDimensions.addValueChangeHandler(
+        function (newDimensions) {
+      $canvasWidthInput.val(newDimensions.width);
+      $canvasHeightInput.val(newDimensions.height);
+    });
+
     // Set initial values
     this._actions.canvasDimensions.setValue({
       width: Constants.STARTING_VALUES.CANVAS_DIMENSIONS.width,
