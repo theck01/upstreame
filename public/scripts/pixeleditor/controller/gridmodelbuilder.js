@@ -245,6 +245,8 @@ define(
           elements: modelObj.elements }
       ]);
 
+      // Clear the underlying canvas to prevent artifacts from earlier drawing.
+      this._canvas.clear(true /* opt_clearBuffer */);
       this.paint();
     };
 

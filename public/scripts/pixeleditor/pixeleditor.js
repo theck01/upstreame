@@ -24,6 +24,7 @@ define(
 
     this._initializeActiveColorSelectRouting();
     this._initializeDefaultColorSelectRouting();
+    this._initializeLoadRouting();
     this._initializeSettingsRouting();
     this._initializeToolSelectRouting();
     this._initializeTrashRouting();
@@ -302,6 +303,28 @@ define(
     this._actions.recentColors.colorUsed(
         Constants.STARTING_VALUES.DEFAULT_COLOR);
     $colorSelectInput.val('');
+  };
+
+
+  // _initializeLoadRouting sets up the load control on the page.
+  PixelEditor.prototype._initializeLoadRouting = function () {
+    var app = this;
+    var fileReader = new FileReader();
+    var $loadFileInput = $('#load-file-input');
+
+    $loadFileInput.on('change', function () {
+      if ($loadFileInput.val() !== '') {
+        fileReader.readAsText(this.files[0]);
+      }
+    });
+
+    fileReader.onload = function () {
+      app._canvasTools.modelBuilder.importModel(fileReader.result);
+    };
+
+    this._buttons.toolbar.load.addClickHandler(function () {
+      app._radioGroups.toolbar.clear();
+    });
   };
 
 
