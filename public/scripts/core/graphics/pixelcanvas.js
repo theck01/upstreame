@@ -5,18 +5,35 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     //
     // Constructor Arguments:
     //   dimensions: object with 'width' and 'height' fields
-    //   canvasID: css selector style id of the canvas on the page
+    //   canvas: Either a css selector style id of the canvas on the page or
+    //           a jQuery object containing a canvas element.
     //   backgroundColor: default color of pixels not drawn to, "#RRGGBB" string
     //                    Optional, default is undefined (transparent)
-    var PixelCanvas = function (dimensions, canvasID, backgroundColor) {
+    var PixelCanvas = function (dimensions, canvas, backgroundColor) {
       Frame.call(this, dimensions, { x: 0, y: 0 });
 
-      this.canvasID = canvasID;
+      if (canvas instanceof $) {
+        this.canvasID = null;
+        this._htmlCanvas = canvas[0];
+      }
+      else if (typeof canvas === "string") {
+        this.canvasID = canvas;
+        var $canvas = $(canvas);
+        if ($canvas.length !== 1) {
+          throw Error("Cannot create a PixelCanvas with a canvas element " +
+                      "selector that does not match a unique element.");
+        }
+        this._htmlCanvas = $(canvas)[0];
+      }
+      else {
+        throw Error("Cannot create a PixelCanvas with a canvas argument that " +
+                    "is not a jQuery object or css style selector.");
+      }
+
       if (backgroundColor) {
         this.backgroundColor = Color.sanitize(backgroundColor);
       }
       else this.backgroundColor = undefined;
-      this._htmlCanvas = $(canvasID)[0];
       
       var context = this._htmlCanvas.getContext("2d");
 
