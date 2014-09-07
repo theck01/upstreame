@@ -264,14 +264,19 @@ button.confirmation-button {
   width: 59px;
   height: 30px;
 }
-button.save-action-button {
+a.save-action-button {
   display: inline-block;
+  cursor: default;
   vertical-align: top;
+  line-height: 30px;
+  text-align: center;
   font-family: 'Share Tech Mono';
   font-size: 16px;
   width: 130px;
   height: 30px;
   border-radius: 0px;
+  text-decoration: none;
+  color: #000000;
 }
 .save-menu-spacer {
   width: 250px;

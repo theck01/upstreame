@@ -3,14 +3,15 @@ define(
      'domkit/ui/button', 'domkit/ui/palette',
      'core/graphics/color','pixeleditor/controller/gridmodelbuilder',
      'pixeleditor/graphics/editablecanvas',
+     'pixeleditor/graphics/imagedataurigenerator',
      'pixeleditor/interface/metapixelclickinterface',
      'pixeleditor/model/converters/spriteconverter',
      'pixeleditor/model/gridmodel', 'pixeleditor/constants',
      'pixeleditor/actions/recentcolorpalette', 'pixeleditor/actions/value'],
     function (
         $, _, RadioGroup, Button, Palette, Color, GridModelBuilder,
-        EditableCanvas, MetaPixelClickInterface, SpriteConverter, GridModel,
-        Constants, RecentColorPalette, Value) {
+        EditableCanvas, ImageDataURIGenerator, MetaPixelClickInterface,
+        SpriteConverter, GridModel, Constants, RecentColorPalette, Value) {
   // Base application initializer.
   var PixelEditor = function () {
     this._$canvas = $('#pixel-editor-canvas');
@@ -25,6 +26,7 @@ define(
     this._initializeActiveColorSelectRouting();
     this._initializeDefaultColorSelectRouting();
     this._initializeLoadRouting();
+    this._initializeSaveRouting();
     this._initializeSettingsRouting();
     this._initializeToolSelectRouting();
     this._initializeTrashRouting();
@@ -459,6 +461,48 @@ define(
       true /* opt_forceActiveElement */);
 
     return radioGroups;
+  };
+
+
+  // _initializeSaveRouting connects all components required to save the sprite
+  // locally
+  PixelEditor.prototype._initializeSaveRouting = function () {
+    var app = this;
+    var $saveButton = $('#save-sprite-button');
+    var jsonDataUrl = '#';
+    var imageDataUrl = '#';
+    var radioCheckedSelector = 'input:radio[name="save-type"]:checked';
+    var setLinkFn = function () {
+      if ($(radioCheckedSelector).val() === 'json') {
+        $saveButton.attr('href', jsonDataUrl);
+        $saveButton.attr('download', 'untitled.json');
+      }
+      else {
+        $saveButton.attr('href', imageDataUrl);
+        $saveButton.attr('download', 'untitled.png');
+      }
+    };
+
+    // When opening the save menu, update links for the most recent state of
+    // the model.
+    this._palettes.bottomToolbar.save.addVisibleStateHandler(
+        function (isVisible) {
+      if (!isVisible) return;
+      var modelJSON = app._canvasTools.modelBuilder.exportModel();
+      var exportedModel = JSON.parse(modelJSON);
+      modelJSON = JSON.stringify(exportedModel, null, 2);
+      var screenParams = app._canvasTools.canvas.screenParams();
+
+      // Update links with the current state of the model.
+      jsonDataUrl =
+          'data:application/json;charset=utf-8,' + encodeURI(modelJSON);
+      imageDataUrl = ImageDataURIGenerator.exportedModelToDataURI(
+        exportedModel, screenParams.pixelSize);
+
+      setLinkFn();
+    });
+
+    $('input:radio[name="save-type"]').on('change', setLinkFn);
   };
 
 
