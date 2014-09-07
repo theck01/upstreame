@@ -149,42 +149,19 @@ block content
         .confirmation-select-spacer
         button#trash-confirm-no.dk-button.confirmation-button No
 
-    #save-sprite-menu.file-menu
-      .file-list
-        .file-list-entry submersible-pitch-170-yaw-0
-        .file-list-entry submersible-pitch-150-yaw-0
-        .file-list-entry.selected-file-list-entry submersible-pitch-130-yaw-0
-        .file-list-entry submersible-pitch-110-yaw-0
-        .file-list-entry submersible-pitch-90-yaw-0
-        .file-list-entry submersible-pitch-70-yaw-0
-        .file-list-entry submersible-pitch-50-yaw-0
-        .file-list-entry submersible-pitch-30-yaw-0
-        .file-list-entry submersible-pitch-10-yaw-0
-        .file-list-entry submersible-pitch-170-yaw-20
-        .file-list-entry submersible-pitch-150-yaw-20 .file-list-entry submersible-pitch-130-yaw-20
-        .file-list-entry submersible-pitch-110-yaw-20
-        .file-list-entry submersible-pitch-90-yaw-20
-        .file-list-entry submersible-pitch-70-yaw-20
-        .file-list-entry submersible-pitch-50-yaw-20
-        .file-list-entry submersible-pitch-30-yaw-20
-        .file-list-entry submersible-pitch-10-yaw-20
-        .file-list-entry submersible-pitch-170-yaw-neg20
-        .file-list-entry submersible-pitch-150-yaw-neg20
-        .file-list-entry submersible-pitch-130-yaw-neg20
-        .file-list-entry submersible-pitch-110-yaw-neg20
-        .file-list-entry submersible-pitch-90-yaw-neg20
-        .file-list-entry submersible-pitch-70-yaw-neg20
-        .file-list-entry submersible-pitch-50-yaw-neg20
-        .file-list-entry submersible-pitch-30-yaw-neg20
-        .file-list-entry submersible-pitch-10-yaw-neg20
-        .file-list-entry
-      .file-menu-spacer
-      input.file-name-input(type="text" placeholder="sprite name")
-      .file-menu-spacer
-      .file-action-submenu
-        .file-action-spacer
-        button#save-sprite-button.dk-button.file-menu-button Save Sprite
-        .file-action-spacer
+    #save-sprite-menu.save-menu
+      .save-message Save visible area as...
+      .save-menu-spacer
+      label.save-label
+        input.save-type-input(type="radio" name="save-type" value="json" checked)
+        | Editable JSON Sprite
+      label.save-label
+        input.save-type-input(type="radio" name="save-type" value="img")
+        | PNG Image Sprite
+      .save-menu-spacer
+      .save-action-submenu
+        .save-action-spacer
+        button#save-sprite-button.dk-button.save-action-button Save Sprite
       
     #settings-menu.settings-menu
       .settings-row
@@ -195,6 +172,6 @@ block content
         .settings-label Canvas Height
         input#canvas-height-input.settings-dimension-input(type="text")
       .settings-spacer
-      .settings-row
+      label.settings-row
         .settings-label Show Grid
         input#grid-display-input.settings-grid-display-input(type="checkbox" checked)

@@ -1,0 +1,67 @@
+@import "constants";
+
+
+@save-menu-width: 250px;
+@save-menu-height:
+    (4 * @small-input-height + 2 * @small-spacer-size + 2 * @border-width);
+
+@save-action-button-width: 130px;
+
+@save-action-spacer-width:
+    ((@save-menu-width - @save-action-button-width - 2 * @border-width) / 2);
+
+@save-label-padding-left: (@large-spacer-size + @small-spacer-size);
+
+
+.save-menu {
+  width: @save-menu-width;
+  height: @save-menu-height;
+}
+
+
+.save-message {
+  font-size: @large-font-size;
+  width: @save-menu-width;
+  height: @small-input-height;
+}
+
+
+.save-label {
+  display: block;
+  vertical-align: center;
+  font-size: @small-font-size;
+  width: @save-menu-width;
+  height: @small-input-height;
+  padding-left: @save-label-padding-left;
+}
+
+
+.save-action-submenu {
+  width: @save-menu-width;
+  height: @small-input-height;
+}
+
+
+.save-action-spacer {
+  display: inline-block;
+  vertical-align: top;
+  width: @save-action-spacer-width;
+  height: @small-input-height;
+}
+
+
+button.save-action-button {
+  display: inline-block;
+  vertical-align: top;
+  font-family: @font;
+  font-size: @small-font-size;
+  width: @save-action-button-width;
+  height: @small-input-height;
+  border-radius: @border-radius;
+}
+
+
+.save-menu-spacer {
+  width: @save-menu-width;
+  height: @small-spacer-size;
+}

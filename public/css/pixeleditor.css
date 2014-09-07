@@ -237,68 +237,45 @@ button.confirmation-button {
   height: 30px;
   border-radius: 0px;
 }
-.file-menu {
-  width: 300px;
-  height: 276px;
+.save-menu {
+  width: 250px;
+  height: 132px;
 }
-.file-action-submenu {
-  width: 300px;
+.save-message {
+  font-size: 20px;
+  width: 250px;
   height: 30px;
 }
-.file-action-spacer {
+.save-label {
+  display: block;
+  vertical-align: center;
+  font-size: 16px;
+  width: 250px;
+  height: 30px;
+  padding-left: 25px;
+}
+.save-action-submenu {
+  width: 250px;
+  height: 30px;
+}
+.save-action-spacer {
   display: inline-block;
   vertical-align: top;
-  width: 75px;
+  width: 59px;
   height: 30px;
 }
-.file-action-spacer {
-  display: inline-block;
-  vertical-align: top;
-  width: 75px;
-  height: 30px;
-}
-button.file-menu-button {
+button.save-action-button {
   display: inline-block;
   vertical-align: top;
   font-family: 'Share Tech Mono';
   font-size: 16px;
-  width: 147px;
+  width: 130px;
   height: 30px;
   border-radius: 0px;
 }
-.file-menu-spacer {
-  width: 300px;
+.save-menu-spacer {
+  width: 250px;
   height: 5px;
-}
-.file-list {
-  width: 288px;
-  height: 200px;
-  background-color: #ffffff;
-  border: 1px solid #9f9f9f;
-  border-radius: 0px;
-  padding: 0px 5px;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-.file-list-entry {
-  font-family: 'Share Tech Mono';
-  font-size: 16px;
-  width: 288px;
-  height: 20px;
-  white-space: nowrap;
-}
-.selected-file-list-entry {
-  background-color: #aaaaff;
-}
-.file-name-input {
-  font-family: 'Share Tech Mono';
-  font-size: 16px;
-  outline: none;
-  width: 288px;
-  height: 30px;
-  border: 1px solid #9f9f9f;
-  border-radius: 0px;
-  padding: 0px 5px;
 }
 .settings-menu {
   width: 212px;
@@ -422,7 +399,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100px;
+  height: 50px;
   opacity: 0;
 }
