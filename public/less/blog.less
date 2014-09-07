@@ -5,7 +5,6 @@
 @nav-separator-width: 1px;
 @nav-separator-horizontal-padding: 0px;
 @nav-separator-vertical-padding: @sidebar-padding;
-@nav-separator-color: #444444;
 
 @content-container-width-offset:
     (@sidebar-width + @nav-separator-width + 2 * @large-spacer-size);
@@ -26,6 +25,16 @@ body {
   margin: 0px;
   height: 100%;
   width: 100%;
+  color: @text-color;
+}
+
+
+.main-link {
+  color: @main-link-color;
+  text-decoration: none;
+}
+.main-link:hover {
+  color: @main-link-hover-color;
 }
 
 
@@ -36,7 +45,7 @@ body {
   height: @sidebar-height;
   width: @nav-separator-width;
   background-clip: content-box;
-  background-color: @nav-separator-color;
+  background-color: @text-color;
   padding: @nav-separator-vertical-padding @nav-separator-horizontal-padding;
 }
 

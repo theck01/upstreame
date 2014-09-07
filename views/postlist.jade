@@ -3,9 +3,9 @@ block postcontent
   for  post in posts
     .post-title-container
       h1.post-title
-        a.post-title-link(href="/posts/#{post.urlTitle}") #{post.title}
+        a.post-title-link.main-link(href="/posts/#{post.urlTitle}") #{post.title}
       h4.post-tagline
         | by 
-        a.post-title-link(href="/posts/author/#{post.author}") #{post.author}
+        a.post-title-link.main-link(href="/posts/author/#{post.author}") #{post.author}
         |  on #{post.date} in 
-        a.post-title-link(href="/posts/category/#{post.category}") #{post.category}
+        a.post-title-link.main-link(href="/posts/category/#{post.category}") #{post.category}
