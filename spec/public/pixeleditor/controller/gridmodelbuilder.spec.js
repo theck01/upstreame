@@ -227,7 +227,7 @@ describe('GridModelBuilder', function () {
 
 
   describe('exportModel', function () {
-    before(function () {
+    beforeEach(function () {
       sinon.spy(IdentityConverter, 'fromCommonModelFormat');
     });
 
@@ -246,7 +246,31 @@ describe('GridModelBuilder', function () {
       assert(IdentityConverter.fromCommonModelFormat.calledOnce);
     });
 
-    after(function () {
+    it('should export the visible area rather than the full area covered by ' +
+        'the dimensions.', function () {
+      makeEdits(modelBuilder, activeColorValue);
+
+      var offset = { x: 1, y: 2 };
+      var dimensions = { width: 2, height: 1 };
+      modelBuilder.zoomIn(offset, dimensions);
+
+      var exportedModelJSON = modelBuilder.exportModel();
+      var exportedModel = JSON.parse(exportedModelJSON);
+
+      assertModelForBuilderHasElements(
+          gridModel, modelBuilder, exportedModel.elements);
+
+      assert(_.isEqual(
+          exportedModel.defaultElement, defaultColorValue.getValue()));
+      assert(_.isEqual(
+          exportedModel.currentElement, activeColorValue.getValue()));
+      assert(!_.isEqual(exportedModel.dimensions, dimensionsValue.getValue()));
+      assert(_.isEqual(exportedModel.dimensions, modelBuilder.getDimensions()));
+
+      assert(IdentityConverter.fromCommonModelFormat.calledOnce);
+    });
+
+    afterEach(function () {
       IdentityConverter.fromCommonModelFormat.restore();
     });
   });

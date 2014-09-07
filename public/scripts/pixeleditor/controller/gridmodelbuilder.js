@@ -158,10 +158,13 @@ define(
     //               width and height fields
     //   elements: An array of objects with at least x, y, and color fields
     GridModelBuilder.prototype.exportModel = function () {
+      // Use the visible dimensions of the model builder to export the model.
+      // If the model builder has a zoom applied the visible dimensions and the
+      // dimensions value may be out of sync.
       var model = {
         defaultElement: this._defaultElementValue.getValue(),
         currentElement: this._currentElementValue.getValue(),
-        dimensions: this._dimensionsValue.getValue(),
+        dimensions: this.getDimensions(),
         elements: this._model.getElements(this)
       };
 
