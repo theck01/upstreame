@@ -30,8 +30,8 @@ body {
 
 
 .nav-separator {
-  position: fixed;
-  top: 0px;
+  display: inline-block;
+  vertical-align: top;
   left: @sidebar-width;
   height: @sidebar-height;
   width: @nav-separator-width;
@@ -42,9 +42,10 @@ body {
 
 
 .content-container {
+  display: inline-block;
+  vertical-align: top;
   width: @content-container-width;
-  height: @content-container-height;
-  padding:
-      @large-spacer-size @large-spacer-size @large-spacer-size
-      @content-container-padding-left;
+  height: 100%;
+  overflow-y: auto;
+  padding: 0px @large-spacer-size;
 }

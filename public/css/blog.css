@@ -52,9 +52,8 @@ a {
   height: 10px;
 }
 .sidebar {
-  position: fixed;
-  top: 0px;
-  bottom: 0px;
+  display: inline-block;
+  vertical-align: top;
   width: 260px;
   height: calc(100% -  20px);
   padding: 10px;
@@ -74,8 +73,8 @@ body {
   width: 100%;
 }
 .nav-separator {
-  position: fixed;
-  top: 0px;
+  display: inline-block;
+  vertical-align: top;
   left: 280px;
   height: calc(100% -  20px);
   width: 1px;
@@ -84,7 +83,10 @@ body {
   padding: 10px 0px;
 }
 .content-container {
+  display: inline-block;
+  vertical-align: top;
   width: calc(100% -  321px);
-  height: calc(100% -  40px);
-  padding: 20px 20px 20px 301px;
+  height: 100%;
+  overflow-y: auto;
+  padding: 0px 20px;
 }
