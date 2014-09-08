@@ -1,5 +1,5 @@
-var animations = require('./routes/animations');
-var auth = require('./lib/auth'); var express = require('express');
+var auth = require('./lib/auth');
+var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var LocalStrategy = require('passport-local').Strategy;
@@ -8,7 +8,6 @@ var passport = require('passport');
 var PostArchive = require('./lib/postarchive');
 var posts = require('./routes/posts');
 var sessionMiddleware = require('express-session');
-var sessions = require('./routes/sessions');
 var sprites = require('./routes/sprites');
 var views = require('./routes/views');
 
@@ -69,18 +68,9 @@ app.get('/invaders', views.invaders);
 app.get('/pixeleditor', views.pixeleditor);
 app.get('/submersion', views.submersion);
 
-// animation routes
-app.get('/animation/:name', animations.load);
-app.post('/animation/:name', auth.ensureLoggedIn, animations.save);
-
-// authentication routes
-app.post('/login', passport.authenticate('local'), sessions.login);
-app.post('/logout', auth.ensureLoggedIn, sessions.logout);
-
 // sprite routes
 app.get('/sprite/all', sprites.all);
 app.get('/sprite/:name', sprites.load);
-app.post('/sprite/:name', auth.ensureLoggedIn, sprites.save);
 
 
 app.listen(3000);

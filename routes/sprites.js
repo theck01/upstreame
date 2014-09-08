@@ -45,25 +45,3 @@ exports.load = function (req, res) {
     }
   });
 };
-
-
-exports.save = function (req, res) {
-  var filename = __dirname + '/../public/assets/sprites/' + req.params.name;
-  filename += '.json';
-  
-  if(!req.params.name) {
-    res.status(400).send('Sprite name required to save.');
-    return;
-  }
-
-  var sprite = verifier.validate(req.body, spriteTemplate, function (msg) {
-    res.status(400).send(msg);
-  });
-
-  if (sprite) {
-    fs.writeFile(filename, JSON.stringify(req.body), function (err) {
-      if(err) res.status(500).send('Internal server error.');
-      else res.status(200).end();
-    });
-  }
-};
