@@ -84,7 +84,7 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
           delete existingElementMap[encoded];
         }
         else if (change.action === GridModel.MODEL_ACTIONS.SET) {
-          existingElementMap[encoded] = e;
+          existingElementMap[encoded] = _.clone(e);
         }
       }, this);
     }, this);
