@@ -1,34 +1,14 @@
-var auth = require('./lib/auth');
 var express = require('express');
 var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var LocalStrategy = require('passport-local').Strategy;
 var morgan = require('morgan');
-var passport = require('passport');
 var PostArchive = require('./lib/postarchive');
 var posts = require('./routes/posts');
-var sessionMiddleware = require('express-session');
 var sprites = require('./routes/sprites');
 var views = require('./routes/views');
 
-if (!process.env.SESSION_SECRET) {
-  console.log('Environment variable SESSION_SECRET must be set');
-  process.exit(1);
-}
 
 var app = express();
 module.exports = app;
-
-
-// MIDDLEWARE CONFIGURATION
-
-passport.use(new LocalStrategy(auth.authenticate));
-passport.serializeUser(function (user, done) {
-	done(null, JSON.stringify(user));
-});
-passport.deserializeUser(function (user, done) {
-	done(null, JSON.parse(user));
-});
 
 
 // APP CONFIGURATION
@@ -37,14 +17,6 @@ app.set('view engine', 'jade');
 if(process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 else if(process.env.NODE_ENV === 'production') app.use(morgan('combined'));
 app.use(bodyParser.json());
-app.use(cookieParser());
-app.use(sessionMiddleware({
-  secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true
-}));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/bower_components'));
 
