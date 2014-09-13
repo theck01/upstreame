@@ -96,6 +96,7 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
 
     switch (Constants.TOOL_TO_TYPE_MAP[this._toolValue.getValue()]) {
       case Constants.TOOL_TYPES.SINGLE_PIXEL:
+      case Constants.TOOL_TYPES.DRAG:
         var pixelPos = this._getMetaPixelCoord(coord);
         if (pixelPos) {
           this._modelBuilder.addLocationToCurrentChange(pixelPos);
@@ -127,6 +128,15 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
         this._modelBuilder.commitCurrentChange();
         break;
 
+      case Constants.TOOL_TYPES.DRAG:
+        this._modelBuilder.commitCurrentChange();
+
+        // Clear the canvas as well as the current painted buffer, to ensure
+        // that no artifacts remain after drag.
+        this._pCanvas.clear(true /* opt_clearBuffer */);
+        this._modelBuilder.paint();
+        break;
+
       case Constants.TOOL_TYPES.SELECTION:
         var selection = this._pCanvas.getSelection();
         if (!selection.origin || !selection.terminator) break;
@@ -143,18 +153,11 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
           y: Math.min(originMetaPixel.y, terminatorMetaPixel.y)
         };
 
-        if (this._toolValue.getValue() === Constants.AVAILABLE_TOOLS.ZOOM_IN) {
-          this._modelBuilder.zoomIn(origin, dimensions);
+        this._modelBuilder.zoomIn(origin, dimensions);
 
-          // Clear the canvas as well as the current painted buffer, to ensure
-          // that no artifacts remain after zoom.
-          this._pCanvas.clear(true /* opt_clearBuffer */);
-        }
-        else if (this._toolValue.getValue() ===
-            Constants.AVAILABLE_TOOLS.CROP) {
-
-        }
-
+        // Clear the canvas as well as the current painted buffer, to ensure
+        // that no artifacts remain after zoom.
+        this._pCanvas.clear(true /* opt_clearBuffer */);
         this._pCanvas.clearSelection();
         this._modelBuilder.paint();
         break;

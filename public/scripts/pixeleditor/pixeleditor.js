@@ -176,7 +176,7 @@ define(
         Button.create('#select-paint-bucket-button');
     buttons.toolSelectMenu.eraser = Button.create('#select-eraser-button');
     buttons.toolSelectMenu.zoom = Button.create('#select-zoom-button');
-    buttons.toolSelectMenu.crop = Button.create('#select-crop-button');
+    buttons.toolSelectMenu.shifter = Button.create('#select-shifter-button');
 
     buttons.trashMenu = Object.create(null);
     buttons.trashMenu.yes = Button.create('#trash-confirm-yes');
@@ -456,7 +456,7 @@ define(
       this._buttons.toolSelectMenu.paintBucket,
       this._buttons.toolSelectMenu.eraser,
       this._buttons.toolSelectMenu.zoom,
-      this._buttons.toolSelectMenu.crop
+      this._buttons.toolSelectMenu.shifter
     ];
     radioGroups.toolSelect = new RadioGroup(
       toolSelectButtons, 0 /* activeIndex */,
@@ -624,10 +624,10 @@ define(
       // Close all palettes on state change.
       app._radioGroups.toolbar.clear();
     });
-    this._buttons.toolSelectMenu.crop.addStateHandler(
+    this._buttons.toolSelectMenu.shifter.addStateHandler(
         function (toggled) {
       if (toggled) {
-        app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.CROP);
+        app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.SHIFTER);
       }
       // Close all palettes on state change.
       app._radioGroups.toolbar.clear();

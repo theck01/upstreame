@@ -11,7 +11,7 @@ define(
     ERASER: 'eraser-tool',
     ZOOM_IN: 'zoom-in-tool',
     ZOOM_OUT: 'zoom-out-tool',
-    CROP: 'crop-tool'
+    SHIFTER: 'shifter-tool'
   };
 
   Constants.COLOR_PALETTE_SIZE = 12;
@@ -37,7 +37,7 @@ define(
       'icon-zoom-in';
   Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.ZOOM_OUT] =
       'icon-zoom-out';
-  Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.CROP] = '';
+  Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.SHIFTER] = '';
 
   Constants.TOOL_TO_ACTION_MAP = Object.create(null);
   Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.PAINTBRUSH] =
@@ -52,14 +52,15 @@ define(
       GridModelBuilder.CONTROLLER_ACTIONS.NONE;
   Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.ZOOM_OUT] =
       GridModelBuilder.CONTROLLER_ACTIONS.NONE;
-  Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.CROP] =
-      GridModelBuilder.CONTROLLER_ACTIONS.NONE;
+  Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.SHIFTER] =
+      GridModelBuilder.CONTROLLER_ACTIONS.SHIFT;
 
-  Constants.TOOL_TYPES = Object.create(null);
-  Constants.TOOL_TYPES.SINGLE_PIXEL = 'single-pixel';
-  Constants.TOOL_TYPES.SELECTION = 'selection';
-  Constants.TOOL_TYPES.DRAG = 'drag';
-  Constants.TOOL_TYPES.CANVAS_CLICK = 'canvas-click';
+  Constants.TOOL_TYPES = {
+    SINGLE_PIXEL: 'single-pixel',
+    SELECTION: 'selection',
+    DRAG: 'drag',
+    CANVAS_CLICK: 'canvas-click'
+  };
 
   Constants.TOOL_TO_TYPE_MAP = Object.create(null);
   Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.PAINTBRUSH] =
@@ -74,8 +75,8 @@ define(
       Constants.TOOL_TYPES.SELECTION;
   Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.ZOOM_OUT] =
       Constants.TOOL_TYPES.CANVAS_CLICK;
-  Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.CROP] =
-      Constants.TOOL_TYPES.SELECTION;
+  Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.SHIFTER] =
+      Constants.TOOL_TYPES.DRAG;
 
   Constants.KEYS = {
     ENTER: 13,
