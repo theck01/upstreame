@@ -222,6 +222,29 @@ describe('GridModelBuilder', function () {
         ];
         assertModelForBuilderHasElements(gridModel, modelBuilder, elements);
       });
+
+      it('should shift elements on "shift" action', function () {
+        activeColorValue.setValue({ color: '#000000' });
+        modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.SET);
+        modelBuilder.addLocationToCurrentChange({ x: 0, y: 1 });
+        modelBuilder.addLocationToCurrentChange({ x: 1, y: 1 });
+        modelBuilder.addLocationToCurrentChange({ x: 1, y: 0 });
+        modelBuilder.commitCurrentChange();
+
+        modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.SHIFT);
+        modelBuilder.addLocationToCurrentChange({ x: 0, y: 0 });
+        modelBuilder.addLocationToCurrentChange({ x: 1, y: 0 });
+        modelBuilder.addLocationToCurrentChange({ x: 1, y: 1 });
+        modelBuilder.addLocationToCurrentChange({ x: 0, y: 1 });
+        modelBuilder.commitCurrentChange();
+
+        var elements = [
+          { x: 0, y: 2, color: '#000000' },
+          { x: 1, y: 2, color: '#000000' },
+          { x: 1, y: 1, color: '#000000' }
+        ];
+        assertModelForBuilderHasElements(gridModel, modelBuilder, elements);
+      });
     });
   });
 
@@ -357,6 +380,14 @@ describe('GridModelBuilder', function () {
     context('when there are redos in the redo stack', function () {
       it('should process redos on the stack in order', function () {
         makeEdits(modelBuilder, activeColorValue);
+
+        // Ensure that SHIFT change is also properly redone.
+        modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.SHIFT);
+        modelBuilder.addLocationToCurrentChange({ x: 0, y: 0 });
+        modelBuilder.addLocationToCurrentChange({ x: 1, y: 1 });
+        modelBuilder.commitCurrentChange();
+
+        modelBuilder.undo();
         modelBuilder.undo();
         modelBuilder.undo();
 
@@ -372,6 +403,14 @@ describe('GridModelBuilder', function () {
             gridModel, modelBuilder, expectedElements);
 
         expectedElements.splice(3, 1);
+        modelBuilder.redo();
+        assertModelForBuilderHasElements(
+            gridModel, modelBuilder, expectedElements);
+
+        expectedElements = _.map(expectedElements, function (ee) {
+          return { x: ee.x + 1, y: ee.y + 1, color: ee.color };
+        });
+
         modelBuilder.redo();
         assertModelForBuilderHasElements(
             gridModel, modelBuilder, expectedElements);

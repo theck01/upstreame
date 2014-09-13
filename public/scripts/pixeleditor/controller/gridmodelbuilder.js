@@ -1,6 +1,6 @@
 define(
-    ["underscore", "core/util/frame", "core/util/encoder",
-     "pixeleditor/model/gridmodel"],
+    ['underscore', 'core/util/frame', 'core/util/encoder',
+     'pixeleditor/model/gridmodel'],
   function(_, Frame, Encoder, GridModel){
     // GridModelBuilder provides methods for creating models in the browser and
     // exporting that model as a JSON string, using a PixelCanvas instance to
@@ -49,12 +49,14 @@ define(
     // Actions that the controller can perform on the model.
     GridModelBuilder.CONTROLLER_ACTIONS = {
       CLEAR: GridModel.MODEL_ACTIONS.CLEAR,
-      CLEAR_ALL: "clear all",
-      FILL: "fill",
-      GET: "get",
-      NONE: "none",
-      POSITION: "position",
+      CLEAR_ALL: 'clear all',
+      FILL: 'fill',
+      GET: 'get',
+      NONE: 'none',
+      POSITION: 'position',
       SET: GridModel.MODEL_ACTIONS.SET,
+      SHIFT: 'shift',
+      ZOOM: 'zoom'
     };
 
 
@@ -105,6 +107,28 @@ define(
             action: this._action, elements: [fillElement]
           };
           this.paint();
+          break;
+
+        case GridModelBuilder.CONTROLLER_ACTIONS.SHIFT:
+          if (this._currentChange) {
+            var shiftTerminator = this._currentChange.elements[1];
+            var offset =
+                { x: loc.x - shiftTerminator.x, y: loc.y - shiftTerminator.y };
+
+            // If the shift termination point changed then shift the model and
+            // repaint the screen.
+            if (offset.x !== 0 || offset.y !== 0) {
+              this._currentChange.elements[1] = _.clone(loc);
+              this._model.shiftElements(offset);
+              this.paint();
+            }
+          }
+          else {
+            this._currentChange = {
+              action: this._action, elements: [ _.clone(loc), _.clone(loc) ]
+            };
+          }
+          break;
       }
     };
 
@@ -128,9 +152,12 @@ define(
     //       field (any GridModel.MODEL_ACTION) and 'elements' field. Defaults
     //       to an array containing currentChange.
     //   preserveRedoStack: Whether to preserve the redoStack on commit.
+    //   opt_skipApplyingShiftChanges: Whether to skip applying SHIFT
+    //       controller actions to the model, default false.
     GridModelBuilder.prototype._commitChanges = function (
-        changes, preserveRedoStack) {
-      var modelChanges = this._preprocessChanges(changes);
+        changes, preserveRedoStack, opt_skipApplyingShiftChanges) {
+      var modelChanges = this._preprocessChanges(
+          changes, !opt_skipApplyingShiftChanges);
       this._model.applyChanges(modelChanges);
       if (!preserveRedoStack) this._redoStack = [];
       this._undoStack.push(changes);
@@ -141,7 +168,9 @@ define(
     // alteration to the model.
     GridModelBuilder.prototype.commitCurrentChange = function () {
       if (this._currentChange) {
-        this._commitChanges([this._currentChange], false);
+        this._commitChanges(
+            [this._currentChange], false /* preserveRedoStack */,
+            true /* opt_skipApplyingShiftChanges */);
         this._currentChange = null;
       }
     };
@@ -246,7 +275,7 @@ define(
           elements: [] },
         { action: GridModelBuilder.CONTROLLER_ACTIONS.SET,
           elements: modelObj.elements }
-      ]);
+      ], false /* preserveRedoStack */);
 
       // Clear the underlying canvas to prevent artifacts from earlier drawing.
       this._canvas.clear(true /* opt_clearBuffer */);
@@ -262,7 +291,7 @@ define(
     GridModelBuilder.prototype._onDimensionChange = function (dimensions) {
       var offset = { x: 0, y: 0 };
 
-      this.move(offset, "absolute");
+      this.move(offset, 'absolute');
       this.resize(dimensions);
       this._canvas.clear(true /* opt_clearBuffer */);
       this.paint();
@@ -270,7 +299,7 @@ define(
 
 
     // paint writes all stored pixels to the PixelCanvas and calls the
-    // PixelCanvas" paint method
+    // PixelCanvas' paint method
     GridModelBuilder.prototype.paint = function () {
       var elements = this._getModelElements();
       _.each(elements, function(e) {
@@ -284,8 +313,12 @@ define(
     // preprocessChanges converts GridModelBuilder changes into GridModel
     // changes.
     //
-    // Arguments: Array of objects with 'action' and 'elements' fields
-    GridModelBuilder.prototype._preprocessChanges = function (changes) {
+    // Arguments: 
+    //     changes: Array of objects with 'action' and 'elements' fields
+    //     opt_processShiftChanges: Whether to process SHIFT controller actions,
+    //          default false.
+    GridModelBuilder.prototype._preprocessChanges = function (
+          changes, opt_processShiftChanges) {
       return _.reduce(changes, function (memo, c) {
         var modelChange = _.clone(c);
         switch (modelChange.action) {
@@ -308,15 +341,29 @@ define(
             modelChange.action = GridModel.MODEL_ACTIONS.SET;
             break;
 
+          case GridModelBuilder.CONTROLLER_ACTIONS.SHIFT:
+            if (opt_processShiftChanges) {
+              var shiftOrigin = modelChange.elements[0];
+              var shiftTerminator = modelChange.elements[1];
+              var offset = {
+                x: shiftTerminator.x - shiftOrigin.x,
+                y: shiftTerminator.y - shiftOrigin.y
+              };
+              this._model.shiftElements(offset);
+            }
+            // Return the memo early, shift changes should not be applied
+            // directly to the model.
+            return memo;
+
           case GridModelBuilder.CONTROLLER_ACTIONS.ZOOM:
             this.resize(c.dimensions);
-            this.move(c.offset, "absolute");
+            this.move(c.offset, 'absolute');
             this._zoomValue.setValue(c.zoomed);
             // Return the memo early, zooming should not affect model.
             return memo;
 
           default:
-            throw Error("Bad controller action, cannot process change");
+            throw Error('Bad controller action, cannot process change');
         }
 
         memo.push(modelChange);
@@ -330,7 +377,7 @@ define(
     GridModelBuilder.prototype.redo = function () {
       if (this._redoStack.length === 0) return;
       var changes = this._redoStack.pop();
-      this._commitChanges(changes, true);
+      this._commitChanges(changes, true /* preserveRedoStack */);
       this._canvas.clear(true /* opt_clearBuffer */);
       this.paint();
     };
@@ -353,15 +400,15 @@ define(
     //
     // Arguments:
     //   actionString: One of the following strings -
-    //       "clear", sets the element in the model at the location added to
+    //       'clear', sets the element in the model at the location added to
     //           the change to the default element.
-    //       "get", sets the value of the current element to the value of the
+    //       'get', sets the value of the current element to the value of the
     //           element at the last location added to the change.
-    //       "set", sets the element in the model at the location added to the 
+    //       'set', sets the element in the model at the location added to the 
     //           change to the current element.
-    //       "fill", fills the like area around the location added to the
+    //       'fill', fills the like area around the location added to the
     //           change with the current element.
-    //       "none", do nothing.
+    //       'none', do nothing.
     GridModelBuilder.prototype.setAction = function (actionString) {
       if (_.has(_.invert(GridModelBuilder.CONTROLLER_ACTIONS), actionString)) {
         this._action = actionString;
@@ -376,12 +423,13 @@ define(
 
       // The default state of the application has no zoom.
       this.resize(this._dimensionsValue.getValue());
-      this.move({ x: 0, y: 0 }, "absolute");
+      this.move({ x: 0, y: 0 }, 'absolute');
       this._zoomValue.setValue(false);
 
       this._model.applyChanges([{ action: GridModel.MODEL_ACTIONS.CLEAR_ALL }]);
       _.each(this._undoStack, function (changes) {
-        changes = this._preprocessChanges(changes);
+        changes = this._preprocessChanges(
+            changes, true /* opt_processShiftChanges */);
         this._model.applyChanges(changes);
       }, this);
 
@@ -402,7 +450,7 @@ define(
         offset: origin,
         dimensions: dimensions,
         zoomed: true
-      }]);
+      }], false /* preserveRedoStack */);
     };
 
 
@@ -414,7 +462,7 @@ define(
         offset: { x: 0, y: 0 },
         dimensions: this._dimensionsValue.getValue(),
         zoomed: false
-      }]);
+      }], false /* preserveRedoStack */);
     };
 
 
