@@ -437,6 +437,8 @@ define(
       requestAnimationFrame(onAnimationFrameCallback);
     };
     requestAnimationFrame(onAnimationFrameCallback);
+
+    $('#staging-area').remove();
   };
 
 
