@@ -20,14 +20,9 @@ Code can be found in /public/scripts/submersion/
 
 ## Tools
 
-### pixelart: http://upstrea.me/pixelart
+### pixeleditor: http://upstrea.me/pixeleditor
 
 A tool for creating pixel art in a JSON format that the core engine expects.
-Work in progress, features being added as needed.
-
-### animator: http://upstrea.me/animator
-
-A tool for constructing and viewing sprite animations.
 
 ## Game Engine
 
