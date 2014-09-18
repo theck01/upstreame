@@ -26,7 +26,7 @@ define(
 
   Constants.TOOL_ICON_CLASSES = Object.create(null);
   Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.PAINTBRUSH] =
-      'icon-paint-brush';
+      'icon-paintbrush';
   Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.DROPPER] =
       'icon-dropper';
   Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.PAINTBUCKET] =
@@ -37,7 +37,8 @@ define(
       'icon-zoom-in';
   Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.ZOOM_OUT] =
       'icon-zoom-out';
-  Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.SHIFTER] = '';
+  Constants.TOOL_ICON_CLASSES[Constants.AVAILABLE_TOOLS.SHIFTER] =
+      'icon-dragger';
 
   Constants.TOOL_TO_ACTION_MAP = Object.create(null);
   Constants.TOOL_TO_ACTION_MAP[Constants.AVAILABLE_TOOLS.PAINTBRUSH] =
