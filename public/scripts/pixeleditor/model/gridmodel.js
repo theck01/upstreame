@@ -28,6 +28,7 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
   //   changes: Array of objects with 'action' and 'elements' fields.
   //     action: An string value in the GridModel.MODEL_ACTION object.
   //     elements: An object with at least 'x', 'y' and 'color' fields.
+  //     origin: Origin where the change occured.
   GridModel.prototype.applyChanges = function (changes) {
     this._elements = this._elementsWithChanges(changes);
   };
@@ -65,6 +66,11 @@ define(['underscore', 'core/util/encoder'], function (_, Encoder) {
       }
 
       _.each(change.elements, function (e) {
+        // Shift a copy of e by the origin of the change, ensuring that the
+        // change will be applied in the correct location.
+        e = _.clone(e);
+        e.x += change.origin.x;
+        e.y += change.origin.y;
         var offsetCoord = this._offsetElement(e);
 
         // If the element will not fit into the model dimensions, update

@@ -141,7 +141,8 @@ describe('GridModelBuilder', function () {
 
         var expectedChange = {
           action: GridModelBuilder.CONTROLLER_ACTIONS.SET,
-          elements: elements
+          elements: elements,
+          origin: { x: 0, y: 0 }
         };
 
         assert(applyChangesSpy.calledOnce);

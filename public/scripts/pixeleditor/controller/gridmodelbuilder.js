@@ -66,11 +66,6 @@ define(
     // Arguments:
     //     loc: An object with 'x' and 'y' fields.
     GridModelBuilder.prototype.addLocationToCurrentChange = function (loc) {
-      // Offset location by the shift applied to the model builder.
-      var origin = this.getOrigin();
-      loc.x += origin.x;
-      loc.y += origin.y;
-
       switch (this._action) {
         case GridModelBuilder.CONTROLLER_ACTIONS.NONE:
           this._currentChange = null;
@@ -91,7 +86,9 @@ define(
               _.clone(this._currentElementValue.getValue()), loc);
           if (!this._currentChange) {
             this._currentChange = {
-              action: this._action, elements: [newElement]
+              action: this._action,
+              elements: [newElement],
+              origin: _.clone(this.getOrigin())
             };
           }
           else {
@@ -104,7 +101,9 @@ define(
           var fillElement = _.extend(
               _.clone(this._currentElementValue.getValue()), loc);
           this._currentChange = {
-            action: this._action, elements: [fillElement]
+            action: this._action,
+            elements: [fillElement],
+            origin: _.clone(this.getOrigin())
           };
           this.paint();
           break;
@@ -125,7 +124,9 @@ define(
           }
           else {
             this._currentChange = {
-              action: this._action, elements: [ _.clone(loc), _.clone(loc) ]
+              action: this._action,
+              elements: [ _.clone(loc), _.clone(loc) ],
+              origin: _.clone(this.getOrigin())
             };
           }
           break;
@@ -271,10 +272,16 @@ define(
       this._currentElementValue.setValue(modelObj.currentElement);
       this._dimensionsValue.setValue(modelObj.dimensions);
       this._commitChanges([
-        { action: GridModelBuilder.CONTROLLER_ACTIONS.CLEAR_ALL,
-          elements: [] },
-        { action: GridModelBuilder.CONTROLLER_ACTIONS.SET,
-          elements: modelObj.elements }
+        {
+          action: GridModelBuilder.CONTROLLER_ACTIONS.CLEAR_ALL,
+          elements: [],
+          origin: { x: 0, y: 0 }
+        },
+        {
+          action: GridModelBuilder.CONTROLLER_ACTIONS.SET,
+          elements: modelObj.elements,
+          origin: { x: 0, y: 0 }
+        }
       ], false /* preserveRedoStack */);
 
       // Clear the underlying canvas to prevent artifacts from earlier drawing.

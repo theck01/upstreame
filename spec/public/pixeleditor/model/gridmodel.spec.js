@@ -24,20 +24,23 @@ function makeEdits(gridModel) {
         { x: 1, y: 0, color: '#FFFFFF' },
         { x: 0, y: 1, color: '#FFFFFF' },
         { x: 1, y: 1, color: '#FFFFFF' }
-      ]
+      ],
+      origin: { x: 0, y: 0 }
     },
     {
       action: GridModel.MODEL_ACTIONS.CLEAR,
       elements: [
         { x: 1, y: 0, color: '#FFFFFF' },
         { x: 1, y: 1, color: '#FFFFFF' }
-      ]
+      ],
+      origin: { x: 0, y: 0 }
     },
     {
       action: GridModel.MODEL_ACTIONS.SET,
       elements: [
         { x: 1, y: 0, color: '#000000' },
-      ]
+      ],
+      origin: { x: 0, y: 0 }
     }
   ]);
 
@@ -105,7 +108,8 @@ describe('GridModel', function () {
 
           gridModel.applyChanges([{
             action: GridModel.MODEL_ACTIONS.SET,
-            elements: setElements
+            elements: setElements,
+            origin: { x: 0, y: 0 }
           }]);
 
           var relativeElements = [
@@ -137,11 +141,13 @@ describe('GridModel', function () {
           gridModel.applyChanges([
             {
               action: GridModel.MODEL_ACTIONS.SET,
-              elements: setElements
+              elements: setElements,
+              origin: { x: 0, y: 0 }
             },
             {
               action: GridModel.MODEL_ACTIONS.SET,
-              elements: overrideElements
+              elements: overrideElements,
+              origin: { x: 0, y: 0 }
             }
           ]);
 
@@ -153,6 +159,26 @@ describe('GridModel', function () {
           var elements = gridModel.getElements(frame);
 
           assert(elements.length === 3);
+          assertModelHasElements(gridModel, frame, relativeElements);
+        });
+
+        it('should account for change origin.', function () {
+          var setElements = [
+            { x: 0, y: 0, color: '#FFFFFF' }
+          ];
+
+          gridModel.applyChanges([{
+            action: GridModel.MODEL_ACTIONS.SET,
+            elements: setElements,
+            origin: { x: 1, y: 1 }
+          }]);
+
+          var relativeElements = [
+            { x: 1, y: 1, color: '#FFFFFF' }
+          ];
+          var elements = gridModel.getElements(frame);
+
+          assert(elements.length === 1);
           assertModelHasElements(gridModel, frame, relativeElements);
         });
       }
@@ -178,11 +204,13 @@ describe('GridModel', function () {
           gridModel.applyChanges([
             {
               action: GridModel.MODEL_ACTIONS.SET,
-              elements: setElements
+              elements: setElements,
+              origin: { x: 0, y: 0 }
             },
             {
               action: GridModel.MODEL_ACTIONS.CLEAR,
-              elements: clearElements
+              elements: clearElements,
+              origin: { x: 0, y: 0 }
             }
           ]);
 
@@ -212,11 +240,13 @@ describe('GridModel', function () {
           gridModel.applyChanges([
             {
               action: GridModel.MODEL_ACTIONS.SET,
-              elements: setElements
+              elements: setElements,
+              origin: { x: 0, y: 0 }
             },
             {
               action: GridModel.MODEL_ACTIONS.CLEAR,
-              elements: clearElements
+              elements: clearElements,
+              origin: { x: 0, y: 0 }
             }
           ]);
 
@@ -229,6 +259,32 @@ describe('GridModel', function () {
 
           assert(elements.length === 3);
           assertModelHasElements(gridModel, frame, relativeElements);
+        });
+
+        it('should account for change origin.', function () {
+          var setElements = [
+            { x: 1, y: 1, color: '#FFFFFF' }
+          ];
+
+          var clearElements = [
+            { x: 0, y: 0, color: '#FFFFFF' }
+          ];
+
+          gridModel.applyChanges([
+            {
+              action: GridModel.MODEL_ACTIONS.SET,
+              elements: setElements,
+              origin: { x: 0, y: 0 }
+            },
+            {
+              action: GridModel.MODEL_ACTIONS.CLEAR,
+              elements: clearElements,
+              origin: { x: 1, y: 1 }
+            }
+          ]);
+
+          var elements = gridModel.getElements(frame);
+          assert(elements.length === 0);
         });
       }
     );
@@ -269,7 +325,8 @@ describe('GridModel', function () {
         var changeElement = { x: 3, y: 3, color: '#7777777' };
         var changes = [{
           action: GridModel.MODEL_ACTIONS.SET,
-          elements: [changeElement]
+          elements: [changeElement],
+          origin: { x: 0, y: 0 }
         }];
 
         expectedElements.push(changeElement);
@@ -282,7 +339,8 @@ describe('GridModel', function () {
         var changeElement = { x: 3, y: 3, color: '#7777777' };
         var changes = [{
           action: GridModel.MODEL_ACTIONS.SET,
-          elements: [changeElement]
+          elements: [changeElement],
+          origin: { x: 0, y: 0 }
         }];
 
         gridModel.getElements(frame, changes);
