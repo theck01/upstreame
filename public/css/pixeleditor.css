@@ -81,6 +81,27 @@
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
 }
+.dk-spacer {
+  width: 10px;
+  height: 10px;
+}
+.default-cursor {
+  cursor: default;
+}
+.crosshair-cursor {
+  cursor: crosshair;
+}
+.zoom-out-cursor {
+  cursor: zoom-out;
+}
+.grab-cursor {
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+}
+.grabbing-cursor {
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
+}
 .dk-button {
   outline: none;
   border-radius: 8px;
@@ -125,10 +146,6 @@
   border-radius: 8px;
   border: 3px solid #6fb1ff;
   background: linear-gradient(to bottom, #e7e7e7 0%, #f0f0f0 100%);
-}
-.dk-spacer {
-  width: 10px;
-  height: 10px;
 }
 .color-select-submenu {
   display: inline-block;

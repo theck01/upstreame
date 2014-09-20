@@ -79,6 +79,44 @@ define(
   Constants.TOOL_TO_TYPE_MAP[Constants.AVAILABLE_TOOLS.SHIFTER] =
       Constants.TOOL_TYPES.DRAG;
 
+  Constants.CURSOR_CLASSES = {
+    DEFAULT: 'default-cursor',
+    CROSSHAIR: 'crosshair-cursor',
+    ZOOM_OUT: 'zoom-out-cursor',
+    GRAB: 'grab-cursor',
+    GRABBING: 'grabbing-cursor'
+  }
+
+  Constants.TOOL_TO_CURSOR_CLASS_MAP = Object.create(null);
+  Constants.TOOL_TO_CURSOR_CLASS_MAP[Constants.AVAILABLE_TOOLS.PAINTBRUSH] = {
+    DEFAULT: Constants.CURSOR_CLASSES.DEFAULT,
+    CLICK: Constants.CURSOR_CLASSES.DEFAULT
+  };
+  Constants.TOOL_TO_CURSOR_CLASS_MAP[Constants.AVAILABLE_TOOLS.DROPPER] = {
+    DEFAULT: Constants.CURSOR_CLASSES.DEFAULT,
+    CLICK: Constants.CURSOR_CLASSES.DEFAULT
+  };
+  Constants.TOOL_TO_CURSOR_CLASS_MAP[Constants.AVAILABLE_TOOLS.PAINTBUCKET] = {
+    DEFAULT: Constants.CURSOR_CLASSES.DEFAULT,
+    CLICK: Constants.CURSOR_CLASSES.DEFAULT
+  };
+  Constants.TOOL_TO_CURSOR_CLASS_MAP[Constants.AVAILABLE_TOOLS.ERASER] = {
+    DEFAULT: Constants.CURSOR_CLASSES.DEFAULT,
+    CLICK: Constants.CURSOR_CLASSES.DEFAULT
+  };
+  Constants.TOOL_TO_CURSOR_CLASS_MAP[Constants.AVAILABLE_TOOLS.ZOOM_IN] = {
+    DEFAULT: Constants.CURSOR_CLASSES.CROSSHAIR,
+    CLICK: Constants.CURSOR_CLASSES.CROSSHAIR
+  };
+  Constants.TOOL_TO_CURSOR_CLASS_MAP[Constants.AVAILABLE_TOOLS.ZOOM_OUT] = {
+    DEFAULT: Constants.CURSOR_CLASSES.ZOOM_OUT,
+    CLICK: Constants.CURSOR_CLASSES.ZOOM_OUT
+  };
+  Constants.TOOL_TO_CURSOR_CLASS_MAP[Constants.AVAILABLE_TOOLS.SHIFTER] = {
+    DEFAULT: Constants.CURSOR_CLASSES.GRAB,
+    CLICK: Constants.CURSOR_CLASSES.GRABBING
+  };
+
   Constants.KEYS = {
     ENTER: 13,
     ESCAPE: 27

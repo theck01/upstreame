@@ -208,6 +208,7 @@ define(
   // Returns an instance of a PixelCanvas.
   PixelEditor.prototype._initializeCanvas  = function () {
     var canvasTools = Object.create(null);
+    var $canvas = $('#pixel-editor-canvas');
 
     canvasTools.canvas = new EditableCanvas(
         Constants.STARTING_VALUES.CANVAS_DIMENSIONS, '#pixel-editor-canvas',
@@ -226,9 +227,24 @@ define(
         this._actions.canvasDimensions, this._actions.currentTool,
         this._actions.canvasClicked);
 
+    var cursorChangeHandler = function () {
+      var tool = this._actions.currentTool.getValue();
+      var click = this._actions.canvasClicked.getValue() ? 'CLICK' : 'DEFAULT';
+
+      _.each(Constants.CURSOR_CLASSES, function (v) {
+        $canvas.removeClass(v);
+      });
+      $canvas.addClass(Constants.TOOL_TO_CURSOR_CLASS_MAP[tool][click]);
+    };
+
+    this._actions.currentTool.addValueChangeHandler(
+        cursorChangeHandler.bind(this));
     this._actions.currentTool.addValueChangeHandler(function (value) {
       canvasTools.modelBuilder.setAction(Constants.TOOL_TO_ACTION_MAP[value]);
     });
+
+    this._actions.canvasClicked.addValueChangeHandler(
+        cursorChangeHandler.bind(this));
 
     this._buttons.toolbar.undo.addClickHandler(function () {
       canvasTools.modelBuilder.undo();
