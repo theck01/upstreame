@@ -79,6 +79,7 @@ define(
         new Value(Constants.AVAILABLE_TOOLS, toolValidator);
     actions.canvasDimensions = new Value(null, dimensionValidator);
     actions.canvasGridDisplay = new Value(null, booleanValidator);
+    actions.canvasClicked = new Value(false, booleanValidator);
     actions.zoomState = new Value(false, booleanValidator);
 
     return actions;
@@ -222,7 +223,8 @@ define(
 
     canvasTools.clickInterface = new MetaPixelClickInterface(
         canvasTools.canvas, canvasTools.modelBuilder,
-        this._actions.canvasDimensions, this._actions.currentTool);
+        this._actions.canvasDimensions, this._actions.currentTool,
+        this._actions.canvasClicked);
 
     this._actions.currentTool.addValueChangeHandler(function (value) {
       canvasTools.modelBuilder.setAction(Constants.TOOL_TO_ACTION_MAP[value]);

@@ -7,14 +7,19 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
   //   dimensionsValue: instance of a Value containing the current canvas
   //       dimensions.
   //   toolValue: instance of a Value containing the current tool selection.
+  //   canvasClickedValue: instance of a Value containing a boolean of
+  //       whether the canvas is currently being interacted with.
   var MetaPixelClickInterface = function (
-      pixelCanvas, modelBuilder, dimensionsValue, toolValue) {
+      pixelCanvas, modelBuilder, dimensionsValue, toolValue,
+      canvasClickedValue) {
     this._$htmlCanvas = $(pixelCanvas.getCanvasID());
-    this._mouseDown = false;
     this._modelBuilder = modelBuilder;
     this._pCanvas = pixelCanvas;
     this._dimensionsValue = dimensionsValue;
     this._toolValue = toolValue;
+    this._canvasClickedValue = canvasClickedValue;
+    
+    this._canvasClickedValue.setValue(false);
 
     this._$htmlCanvas.on("mouseup mouseleave",
                         this._onMouseRelease.bind(this));
@@ -90,8 +95,8 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
   // _onMouseAction is a private function that handles mousedown and
   // mouse move events
   MetaPixelClickInterface.prototype._onMouseAction = function (e) {
-    if(e.type === "mousedown") this._mouseDown = true;
-    if(!this._mouseDown) return;
+    if(e.type === "mousedown") this._canvasClickedValue.setValue(true);
+    if(!this._canvasClickedValue.getValue()) return;
     var coord = this._getCanvasRelativeCoordinate(e);
 
     switch (Constants.TOOL_TO_TYPE_MAP[this._toolValue.getValue()]) {
@@ -120,8 +125,8 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
   // _onMouseRelease is a private function that handles mouseup and
   // mouseleave events
   MetaPixelClickInterface.prototype._onMouseRelease = function () {
-    if (!this._mouseDown) return;
-    this._mouseDown = false;
+    if (!this._canvasClickedValue.getValue()) return;
+    this._canvasClickedValue.setValue(false);
 
     switch (Constants.TOOL_TO_TYPE_MAP[this._toolValue.getValue()]) {
       case Constants.TOOL_TYPES.SINGLE_PIXEL:
