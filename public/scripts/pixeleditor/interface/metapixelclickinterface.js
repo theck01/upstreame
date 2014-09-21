@@ -21,9 +21,9 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
     
     this._canvasClickedValue.setValue(false);
 
-    this._$htmlCanvas.on("mouseup mouseleave",
+    this._$htmlCanvas.on("mouseup mouseleave touchend touchleave",
                         this._onMouseRelease.bind(this));
-    this._$htmlCanvas.on("mousedown mousemove",
+    this._$htmlCanvas.on("mousedown mousemove touchstart touchmove",
                         this._onMouseAction.bind(this));
   };
 
@@ -38,7 +38,22 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
   MetaPixelClickInterface.prototype._getCanvasRelativeCoordinate =
       function (e) {
     var canvasOffset = this._$htmlCanvas.offset();
-    return { x: e.pageX - canvasOffset.left, y: e.pageY - canvasOffset.top };
+    var x = 0;
+    var y = 0;
+
+    if (e.originalEvent instanceof MouseEvent) {
+      x = e.pageX;
+      y = e.pageY;
+    }
+    else if (e.originalEvent instanceof TouchEvent) {
+      x = e.originalEvent.touches[0].pageX;
+      y = e.originalEvent.touches[0].pageY;
+    }
+
+    return {
+      x: Math.floor(x - canvasOffset.left),
+      y: Math.floor(y - canvasOffset.top),
+    };
   };
   
   
@@ -95,7 +110,9 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
   // _onMouseAction is a private function that handles mousedown and
   // mouse move events
   MetaPixelClickInterface.prototype._onMouseAction = function (e) {
-    if(e.type === "mousedown") this._canvasClickedValue.setValue(true);
+    if(e.type === "mousedown" || e.type === "touchstart") {
+      this._canvasClickedValue.setValue(true);
+    }
     if(!this._canvasClickedValue.getValue()) return;
     var coord = this._getCanvasRelativeCoordinate(e);
 
