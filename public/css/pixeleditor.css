@@ -81,27 +81,6 @@
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
 }
-.dk-spacer {
-  width: 10px;
-  height: 10px;
-}
-.default-cursor {
-  cursor: default;
-}
-.crosshair-cursor {
-  cursor: crosshair;
-}
-.zoom-out-cursor {
-  cursor: zoom-out;
-}
-.grab-cursor {
-  cursor: -webkit-grab;
-  cursor: -moz-grab;
-}
-.grabbing-cursor {
-  cursor: -webkit-grabbing;
-  cursor: -moz-grabbing;
-}
 .dk-button {
   outline: none;
   border-radius: 8px;
@@ -146,6 +125,27 @@
   border-radius: 8px;
   border: 3px solid #6fb1ff;
   background: linear-gradient(to bottom, #e7e7e7 0%, #f0f0f0 100%);
+}
+.dk-spacer {
+  width: 10px;
+  height: 10px;
+}
+.default-cursor {
+  cursor: default;
+}
+.crosshair-cursor {
+  cursor: crosshair;
+}
+.zoom-out-cursor {
+  cursor: zoom-out;
+}
+.grab-cursor {
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+}
+.grabbing-cursor {
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
 }
 .color-select-submenu {
   display: inline-block;
@@ -345,10 +345,15 @@ button.toolbar-button {
   border-radius: 0px;
 }
 .toolbar-container {
+  display: inline-block;
+  vertical-align: top;
   padding: 10px;
   width: 100px;
   height: calc(100% -  20px);
-  float: left;
+  overflow-y: auto;
+}
+.toolbar-container::-webkit-scrollbar {
+  display: none;
 }
 .toolbar-icon {
   font-size: 36px;
@@ -405,9 +410,13 @@ body {
   margin: 0px;
   height: 100%;
   font-family: 'Share Tech Mono';
+  overflow: hidden;
 }
 .canvas-container {
+  display: inline-block;
+  vertical-align: top;
   height: calc(100% -  20px);
+  width: calc(100% -  140px);
   overflow: hidden;
   padding: 10px;
 }

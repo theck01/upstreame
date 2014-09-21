@@ -25,11 +25,18 @@ button.toolbar-button {
 
 
 .toolbar-container {
+  display: inline-block;
+  vertical-align: top;
   padding: @toolbar-padding;
   width: @toolbar-width;
   height: @toolbar-height;
-  float: left;
+  overflow-y: auto;
 }
+
+
+.toolbar-container::-webkit-scrollbar {
+  display: none;
+};
 
 
 .toolbar-icon {

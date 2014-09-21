@@ -9,6 +9,10 @@
 @import "pixeleditorcomponents/toolselectmenu";
 
 
+@container-width:
+    calc(~"100% - "(@toolbar-width + 4 * @toolbar-padding));
+
+
 html {
   height: 100%;
 }
@@ -18,11 +22,15 @@ body {
   margin: 0px;
   height: 100%;
   font-family: @font;
+  overflow: hidden;
 }
 
 
 .canvas-container {
+  display: inline-block;
+  vertical-align: top;
   height: @container-height;
+  width: @container-width;
   overflow: hidden;
   padding: @container-padding;
 }
