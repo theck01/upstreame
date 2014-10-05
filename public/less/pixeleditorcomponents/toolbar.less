@@ -5,6 +5,7 @@
 @num-toolbar-buttons: 9;
 @toolbar-button-height: 50px;
 @toolbar-button-width: 100px;
+@div-toolbar-button-top-padding: 5px;
 @toolbar-icon-size: 36px;
 @toolbar-icon-offset: 5px;
 @small-toolbar-icon-size: 31px;
@@ -17,10 +18,16 @@
     2 * @toolbar-padding);
 
 
-button.toolbar-button {
+.toolbar-button {
+  text-align: center;
   width: @toolbar-button-width;
   height: @toolbar-button-height;
   border-radius: @border-radius;
+}
+
+
+div.toolbar-button {
+  padding-top: @div-toolbar-button-top-padding;
 }
 
 

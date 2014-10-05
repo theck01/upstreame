@@ -147,6 +147,9 @@
   cursor: -webkit-grabbing;
   cursor: -moz-grabbing;
 }
+::-moz-focus-inner {
+  border: none;
+}
 .color-select-submenu {
   display: inline-block;
   vertical-align: top;
@@ -339,10 +342,14 @@ a.save-action-button {
   width: 212px;
   height: 5px;
 }
-button.toolbar-button {
+.toolbar-button {
+  text-align: center;
   width: 100px;
   height: 50px;
   border-radius: 0px;
+}
+div.toolbar-button {
+  padding-top: 5px;
 }
 .toolbar-container {
   display: inline-block;
