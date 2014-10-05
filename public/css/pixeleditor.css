@@ -349,7 +349,9 @@ a.save-action-button {
   border-radius: 0px;
 }
 div.toolbar-button {
-  padding-top: 5px;
+  padding-top: 2px;
+  width: 98px;
+  height: 46px;
 }
 .toolbar-container {
   display: inline-block;
@@ -393,6 +395,7 @@ div.toolbar-button {
 @media (max-height: 510px) {
   .toolbar-bottom-attached {
     position: static;
+    padding-bottom: 0px;
   }
 }
 .tool-select-menu {

@@ -5,7 +5,12 @@
 @num-toolbar-buttons: 9;
 @toolbar-button-height: 50px;
 @toolbar-button-width: 100px;
-@div-toolbar-button-top-padding: 5px;
+@div-toolbar-button-top-padding: 2px;
+@div-toolbar-button-height:
+    (@toolbar-button-height - 2 * @border-width -
+    @div-toolbar-button-top-padding);
+@div-toolbar-button-width:  (@toolbar-button-width - 2 * @border-width);
+@toolbar-button-width: 100px;
 @toolbar-icon-size: 36px;
 @toolbar-icon-offset: 5px;
 @small-toolbar-icon-size: 31px;
@@ -13,7 +18,8 @@
 @toolbar-padding: @container-padding;
 @toolbar-width: @toolbar-button-width;
 @toolbar-height: @container-height;
-@toolbar-min-height: (@num-toolbar-buttons * @toolbar-button-height +
+@toolbar-min-height:
+    (@num-toolbar-buttons * @toolbar-button-height +
     (@num-toolbar-buttons - 1) * @small-spacer-size +
     2 * @toolbar-padding);
 
@@ -28,6 +34,8 @@
 
 div.toolbar-button {
   padding-top: @div-toolbar-button-top-padding;
+  width: @div-toolbar-button-width;
+  height: @div-toolbar-button-height;
 }
 
 
@@ -90,6 +98,7 @@ div.toolbar-button {
 @media (max-height: @toolbar-min-height) {
   .toolbar-bottom-attached {
     position: static;
+    padding-bottom: 0px;
   }
 }
 
