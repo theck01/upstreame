@@ -395,15 +395,9 @@ define(
       palettes.topToolbar.trash.visible(state);
     });
 
-    var $bottomToolbar = $('#bottom-toolbar');
-    var bottomToolbarAnchorEdgeBounds = {
-      min: -$bottomToolbar.position().top,
-      max: $bottomToolbar.outerHeight()
-    };
-
     palettes.bottomToolbar.save = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
-      anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
+      anchorEdgeBounds: { min: 0, max: $(window).height() },
       menu: '#save-sprite-menu',
       sibling: '#save-button'
     });
@@ -413,7 +407,7 @@ define(
 
     palettes.bottomToolbar.settings = new Palette({
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
-      anchorEdgeBounds: bottomToolbarAnchorEdgeBounds,
+      anchorEdgeBounds: { min: 0, max: $(window).height() },
       menu: '#settings-menu',
       sibling: '#settings-button'
     });
@@ -441,11 +435,14 @@ define(
     });
 
     $(window).bind('resize', function () {
-      app._recalculatePaletteBounds();
+      app._recalculatePalettePositions();
       app._sizeCanvas();
       app._canvasTools.modelBuilder.paint();
     });
 
+    $('#toolbar').bind('scroll', function () {
+      app._recalculatePalettePositions();
+    });
 
     var onAnimationFrameCallback = function () {
       if (app._canvasTools.canvas.doesRequireRedraw()) {
@@ -705,20 +702,18 @@ define(
   };
 
 
-  // _recalculatePaletteBounds recalculates and sets the bounding range for the
-  // palette menus in the application.
-  PixelEditor.prototype._recalculatePaletteBounds = function () {
-    var topToolbarAnchorEdgeBounds = { min: 0, max: $(window).height() };
-    var bottomToolbarAnchorEdgeBounds = {
-      min: -this._$bottomToolbar.position().top,
-      max: this._$bottomToolbar.outerHeight()
-    };
+  // _recalculatePalettePositions recalculates and sets the bounding range for
+  // the palette menus in the application.
+  PixelEditor.prototype._recalculatePalettePositions = function () {
+    var bounds = { min: 0, max: $(window).height() };
 
     _.each(_.values(this._palettes.topToolbar), function (p) {
-      p.bound(topToolbarAnchorEdgeBounds);
+      p.bound(bounds);
+      p.refreshPosition();
     });
     _.each(_.values(this._palettes.bottomToolbar), function (p) {
-      p.bound(bottomToolbarAnchorEdgeBounds);
+      p.bound(bounds);
+      p.refreshPosition();
     });
   };
 

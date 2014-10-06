@@ -394,7 +394,7 @@ div.toolbar-button {
 }
 @media (max-height: 510px) {
   .toolbar-bottom-attached {
-    position: static;
+    position: relative;
     padding-bottom: 0px;
   }
 }
