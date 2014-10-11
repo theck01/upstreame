@@ -263,6 +263,18 @@ define(
     };
 
 
+    // hasRedos returns whether there are redos available.
+    GridModelBuilder.prototype.hasRedos = function () {
+      return this._redoStack.length > 0;
+    };
+
+
+    // hasUndos returns whether there are undos available.
+    GridModelBuilder.prototype.hasUndos = function () {
+      return this._undoStack.length > 0;
+    };
+
+
     // importModel loads an model JSON string saved using exportModel 
     GridModelBuilder.prototype.importModel = function (modelJSON) {
       var modelObj = this._converter.toCommonModelFormat(JSON.parse(modelJSON));

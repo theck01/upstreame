@@ -372,6 +372,7 @@ describe('GridModelBuilder', function () {
   describe('redo', function () {
     context('when there are no redos in the redo stack', function () {
       it('should do nothing', function () {
+        assert(!modelBuilder.hasRedos());
         modelBuilder.redo();
         assertModelForBuilderHasElements(gridModel, modelBuilder, []);
       });
@@ -381,6 +382,7 @@ describe('GridModelBuilder', function () {
     context('when there are redos in the redo stack', function () {
       it('should process redos on the stack in order', function () {
         makeEdits(modelBuilder, activeColorValue);
+        assert(!modelBuilder.hasRedos());
 
         // Ensure that SHIFT change is also properly redone.
         modelBuilder.setAction(GridModelBuilder.CONTROLLER_ACTIONS.SHIFT);
@@ -391,6 +393,7 @@ describe('GridModelBuilder', function () {
         modelBuilder.undo();
         modelBuilder.undo();
         modelBuilder.undo();
+        assert(modelBuilder.hasRedos());
 
         var expectedElements = [
           { x: 0, y: 0, color: '#FF0000' },
@@ -413,6 +416,7 @@ describe('GridModelBuilder', function () {
         });
 
         modelBuilder.redo();
+        assert(!modelBuilder.hasRedos());
         assertModelForBuilderHasElements(
             gridModel, modelBuilder, expectedElements);
       });
@@ -441,8 +445,11 @@ describe('GridModelBuilder', function () {
 
   
   it('should undo last committed change on undo', function () {
+    assert(!modelBuilder.hasUndos());
+
     makeEdits(modelBuilder, activeColorValue);
 
+    assert(modelBuilder.hasUndos());
     modelBuilder.undo();
 
     var expectedElements = [
