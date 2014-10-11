@@ -428,6 +428,7 @@ div.toolbar-button {
   font-family: 'Share Tech Mono';
   font-size: 16px;
   z-index: 1;
+  display: none;
 }
 html {
   height: 100%;
