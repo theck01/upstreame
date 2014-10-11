@@ -87,7 +87,7 @@
   border: 1px solid #9f9f9f;
   background: linear-gradient(to bottom, #f0f0f0 0%, #e7e7e7 100%);
 }
-.dk-button:hover {
+.dk-button:hover:not(.dk-disabled) {
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5);
 }
 .dk-toggleable-button {
@@ -96,7 +96,7 @@
   border: 1px solid #9f9f9f;
   background: linear-gradient(to bottom, #f0f0f0 0%, #e7e7e7 100%);
 }
-.dk-toggleable-button:hover {
+.dk-toggleable-button:hover:not(.dk-disabled) {
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5);
 }
 .dk-toggleable-button-active {
@@ -105,7 +105,7 @@
   border: 3px solid #6fb1ff;
   background: linear-gradient(to bottom, #f0f0f0 0%, #e7e7e7 100%);
 }
-.dk-toggleable-button-active:hover {
+.dk-toggleable-button-active:hover:not(.dk-disabled) {
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5);
 }
 .dk-button-pressed {
@@ -125,6 +125,17 @@
   border-radius: 8px;
   border: 3px solid #6fb1ff;
   background: linear-gradient(to bottom, #e7e7e7 0%, #f0f0f0 100%);
+}
+.dk-tooltip {
+  position: absolute;
+  background-color: #000000;
+  color: #FFFFFF;
+  padding: 5px;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+.dk-disabled {
+  opacity: 0.5;
 }
 .dk-spacer {
   width: 10px;
@@ -412,6 +423,11 @@ div.toolbar-button {
 .small-tool-select-spacer {
   width: 100px;
   height: 5px;
+}
+.dk-tooltip {
+  font-family: 'Share Tech Mono';
+  font-size: 16px;
+  z-index: 1;
 }
 html {
   height: 100%;

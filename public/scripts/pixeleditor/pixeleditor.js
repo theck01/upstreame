@@ -1,6 +1,6 @@
 define(
     ['jquery', 'underscore', 'domkit/controllers/radiogroup',
-     'domkit/ui/button', 'domkit/ui/palette',
+     'domkit/ui/button', 'domkit/ui/palette', 'domkit/ui/tooltip',
      'core/graphics/color','pixeleditor/controller/gridmodelbuilder',
      'pixeleditor/graphics/editablecanvas',
      'pixeleditor/graphics/imagedataurigenerator',
@@ -9,9 +9,11 @@ define(
      'pixeleditor/model/gridmodel', 'pixeleditor/constants',
      'pixeleditor/actions/recentcolorpalette', 'pixeleditor/actions/value'],
     function (
-        $, _, RadioGroup, Button, Palette, Color, GridModelBuilder,
+        $, _, RadioGroup, Button, Palette, Tooltip, Color, GridModelBuilder,
         EditableCanvas, ImageDataURIGenerator, MetaPixelClickInterface,
         SpriteConverter, GridModel, Constants, RecentColorPalette, Value) {
+  var _TOOLTIP_DISPLAY_DELAY = 1000;
+
   // Base application initializer.
   var PixelEditor = function () {
     this._$canvas = $('#pixel-editor-canvas');
@@ -21,6 +23,9 @@ define(
     this._buttons = this._initializeButtons();
     this._canvasTools = this._initializeCanvas();
     this._radioGroups = this._initializeRadioGroups();
+    // Initialize tooltips before palettes, to avoid adding palette transition
+    // classes to tooltips
+    Tooltip.createAll(_TOOLTIP_DISPLAY_DELAY);
     this._palettes = this._initializePalettes();
 
     this._initializeActiveColorSelectRouting();

@@ -13,33 +13,42 @@ block content
     #top-toolbar
       button#active-color-button.dk-toggleable-button.toolbar-button
         i.toolbar-icon.toolbar-icon-outlined.icon-active-color
+        .dk-tooltip Select active color
       .toolbar-spacer
       button#default-color-button.dk-toggleable-button.toolbar-button
         i.toolbar-icon.toolbar-icon-outlined.icon-default-color
+        .dk-tooltip Select background color
       .toolbar-spacer
       button#tool-select-button.dk-toggleable-button.toolbar-button
         i.toolbar-icon.icon-paint-brush
+        .dk-tooltip Select editing tool
       .toolbar-spacer
       button#undo-button.dk-button.toolbar-button
         i.small-toolbar-icon.icon-undo
+        .dk-tooltip Undo last action
       .toolbar-spacer
       button#redo-button.dk-button.toolbar-button
         i.small-toolbar-icon.icon-redo
+        .dk-tooltip Redo last action
       .toolbar-spacer
       button#trash-button.dk-toggleable-button.toolbar-button
         i.toolbar-icon.icon-trash
+        .dk-tooltip Clear editor canvas
       .toolbar-spacer
 
     #bottom-toolbar.toolbar-bottom-attached
       #load-button.dk-button.toolbar-button
         i.toolbar-icon.icon-open
         input#load-file-input.hidden-file-input(type="file" accept=".json")
+        .dk-tooltip Load local JSON sprite
       .toolbar-spacer
       button#save-button.dk-toggleable-button.toolbar-button
         i.toolbar-icon.icon-save
+        .dk-tooltip Save local JSON sprite or PNG image
       .toolbar-spacer
       button#settings-button.dk-toggleable-button.toolbar-button
         i.toolbar-icon.icon-settings
+        .dk-tooltip Update editor settings
 
   .canvas-container
     canvas#pixel-editor-canvas
@@ -49,21 +58,27 @@ block content
     #tool-select-menu.tool-select-menu
       button#select-paint-brush-button.dk-toggleable-button.toolbar-button
         i.toolbar-icon.icon-paintbrush
+        .dk-tooltip Paints single pixel with active color
       .small-tool-select-spacer
       button#select-paint-bucket-button.dk-toggleable-button.toolbar-button
         i.toolbar-icon.icon-paint-bucket
+        .dk-tooltip Fills areas with active color
       .large-tool-select-spacer
       button#select-dropper-button.dk-toggleable-button.toolbar-button
         i.toolbar-icon.icon-dropper
+        .dk-tooltip Sets active color from pixel on canvas
       .large-tool-select-spacer
       button#select-eraser-button.dk-toggleable-button.toolbar-button
         i.toolbar-icon.icon-eraser
+        .dk-tooltip Clears single pixel
       .large-tool-select-spacer
       button#select-zoom-button.dk-toggleable-button.toolbar-button
         i.toolbar-icon.icon-zoom-in
+        .dk-tooltip Click and drag to zoom on area
       .small-tool-select-spacer
       button#select-shifter-button.dk-toggleable-button.toolbar-button
         i.toolbar-icon.icon-dragger
+        .dk-tooltip Click and drag to shift pixels
 
     #active-color-select-menu.color-menu
       .color-select-submenu
