@@ -11,13 +11,15 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
   //       whether the canvas is currently being interacted with.
   var MetaPixelClickInterface = function (
       pixelCanvas, modelBuilder, dimensionsValue, toolValue,
-      canvasClickedValue) {
+      canvasClickedValue, undosAvailableValue, redosAvailableValue) {
     this._$htmlCanvas = $(pixelCanvas.getCanvasID());
     this._modelBuilder = modelBuilder;
     this._pCanvas = pixelCanvas;
     this._dimensionsValue = dimensionsValue;
     this._toolValue = toolValue;
     this._canvasClickedValue = canvasClickedValue;
+    this._undosAvailableValue = undosAvailableValue;
+    this._redosAvailableValue = redosAvailableValue;
     
     this._canvasClickedValue.setValue(false);
 
@@ -195,6 +197,9 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
         }
         break;
     }
+
+    this._redosAvailableValue.setValue(this._modelBuilder.hasRedos());
+    this._undosAvailableValue.setValue(this._modelBuilder.hasUndos());
   };
 
 

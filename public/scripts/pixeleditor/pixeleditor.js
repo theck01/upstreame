@@ -35,6 +35,7 @@ define(
     this._initializeSettingsRouting();
     this._initializeToolSelectRouting();
     this._initializeTrashRouting();
+    this._initializeUndoRedoRouting();
     this._initializeZoomRouting();
 
     this._initializeGlobal();
@@ -86,6 +87,8 @@ define(
     actions.canvasGridDisplay = new Value(null, booleanValidator);
     actions.canvasClicked = new Value(false, booleanValidator);
     actions.zoomState = new Value(false, booleanValidator);
+    actions.undosAvailable = new Value(false, booleanValidator);
+    actions.redosAvailable = new Value(false, booleanValidator);
 
     return actions;
   };
@@ -230,7 +233,8 @@ define(
     canvasTools.clickInterface = new MetaPixelClickInterface(
         canvasTools.canvas, canvasTools.modelBuilder,
         this._actions.canvasDimensions, this._actions.currentTool,
-        this._actions.canvasClicked);
+        this._actions.canvasClicked, this._actions.undosAvailable,
+        this._actions.redosAvailable);
 
     var cursorChangeHandler = function () {
       var tool = this._actions.currentTool.getValue();
@@ -250,13 +254,6 @@ define(
 
     this._actions.canvasClicked.addValueChangeHandler(
         cursorChangeHandler.bind(this));
-
-    this._buttons.toolbar.undo.addClickHandler(function () {
-      canvasTools.modelBuilder.undo();
-    });
-    this._buttons.toolbar.redo.addClickHandler(function () {
-      canvasTools.modelBuilder.redo();
-    });
 
     this._sizeCanvas();
 
@@ -345,6 +342,8 @@ define(
 
     fileReader.onload = function () {
       app._canvasTools.modelBuilder.importModel(fileReader.result);
+      app._actions.redosAvailable.setValue(false);
+      app._actions.undosAvailable.setValue(true);
     };
 
     this._buttons.toolbar.load.addClickHandler(function () {
@@ -672,11 +671,49 @@ define(
     this._buttons.trashMenu.yes.addClickHandler(function () {
       app._radioGroups.toolbar.clear();
       app._canvasTools.modelBuilder.clear();
+      app._actions.redosAvailable.setValue(false);
+      app._actions.undosAvailable.setValue(true);
     });
     this._buttons.trashMenu.no.addClickHandler(function () {
       app._radioGroups.toolbar.clear();
     });
   };
+
+
+  // _initializeUndoRedoRouting connects undo/redo buttons of the toolbar.
+  PixelEditor.prototype._initializeUndoRedoRouting = function () {
+    var app = this;
+
+    this._buttons.toolbar.undo.disable();
+    this._buttons.toolbar.redo.disable();
+
+    this._buttons.toolbar.undo.addClickHandler(function () {
+      app._canvasTools.modelBuilder.undo();
+      app._actions.redosAvailable.setValue(
+          app._canvasTools.modelBuilder.hasRedos());
+      app._actions.undosAvailable.setValue(
+          app._canvasTools.modelBuilder.hasUndos());
+    });
+    this._buttons.toolbar.redo.addClickHandler(function () {
+      app._canvasTools.modelBuilder.redo();
+      app._actions.redosAvailable.setValue(
+          app._canvasTools.modelBuilder.hasRedos());
+      app._actions.undosAvailable.setValue(
+          app._canvasTools.modelBuilder.hasUndos());
+    });
+
+    this._actions.undosAvailable.addValueChangeHandler(
+        function (undosAvailable) {
+      if (undosAvailable) app._buttons.toolbar.undo.enable();
+      else app._buttons.toolbar.undo.disable();
+    });
+    this._actions.redosAvailable.addValueChangeHandler(
+        function (redosAvailable) {
+      if (redosAvailable) app._buttons.toolbar.redo.enable();
+      else app._buttons.toolbar.redo.disable();
+    });
+  };
+  
 
 
   // _initializeZoomRouting connects zoom action to zoom controls.
