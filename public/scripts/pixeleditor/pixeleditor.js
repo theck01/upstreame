@@ -37,6 +37,7 @@ define(
     this._initializeTrashRouting();
     this._initializeUndoRedoRouting();
     this._initializeZoomRouting();
+    this._initializeShorcutsRouting();
 
     this._initializeGlobal();
   };
@@ -576,6 +577,39 @@ define(
     $canvasHeightInput.val(Constants.STARTING_VALUES.CANVAS_DIMENSIONS.height);
     this._actions.canvasGridDisplay.setValue(
         Constants.STARTING_VALUES.GRID_VISIBLE);
+  };
+
+
+  // Initialize handling of keyboard shortcuts.
+  PixelEditor.prototype._initializeShorcutsRouting = function () {
+    var app = this;
+
+    $('body').on('keypress', function (e) {
+      if (app._radioGroups.toolbar.getActiveElement()) return;
+
+      switch (e.which) {
+        case Constants.KEYS.P:
+          app._buttons.toolSelectMenu.paintBrush.click();
+          break;
+        case Constants.KEYS.F:
+          app._buttons.toolSelectMenu.paintBucket.click();
+          break;
+        case Constants.KEYS.G:
+          app._buttons.toolSelectMenu.dropper.click();
+          break;
+        case Constants.KEYS.C:
+        case Constants.KEYS.E:
+          app._buttons.toolSelectMenu.eraser.click();
+          break;
+        case Constants.KEYS.D:
+        case Constants.KEYS.S:
+          app._buttons.toolSelectMenu.shifter.click();
+          break;
+        case Constants.KEYS.Z:
+          app._buttons.toolSelectMenu.zoom.click();
+          break;
+      }
+    });
   };
 
 

@@ -119,7 +119,16 @@ define(
 
   Constants.KEYS = {
     ENTER: 13,
-    ESCAPE: 27
+    ESCAPE: 27,
+    B: 98,
+    C: 99,
+    D: 100,
+    E: 101,
+    F: 102,
+    G: 103,
+    P: 112,
+    S: 115,
+    Z: 122
   };
 
   return Constants;
