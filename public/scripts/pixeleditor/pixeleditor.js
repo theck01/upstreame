@@ -12,7 +12,7 @@ define(
         $, _, RadioGroup, Button, Palette, Tooltip, Color, GridModelBuilder,
         EditableCanvas, ImageDataURIGenerator, MetaPixelClickInterface,
         SpriteConverter, GridModel, Constants, RecentColorPalette, Value) {
-  var _TOOLTIP_DISPLAY_DELAY = 1000;
+  var _TOOLTIP_DISPLAY_DELAY = 1500;
 
   // Base application initializer.
   var PixelEditor = function () {
