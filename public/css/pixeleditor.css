@@ -87,7 +87,7 @@
   color: #FFFFFF;
   padding: 5px;
   opacity: 0;
-  transition: opacity 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 .dk-disabled {
   opacity: 0.5;
@@ -267,6 +267,12 @@ button.confirmation-button {
   width: 86.66666666666667px;
   height: 30px;
   border-radius: 0px;
+}
+.toolbar-icon.icon-active-color {
+  color: #000000;
+}
+.toolbar-icon.icon-default-color {
+  color: #FFFFFF;
 }
 .save-menu {
   width: 250px;
