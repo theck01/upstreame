@@ -7,7 +7,7 @@
     "requirejs": "~2.1.8",
     "underscore-amd": "~1.5.2",
     "jquery": "~2.0.3",
-    "domkit": "~0.1.0",
+    "domkit": "~0.2.0",
     "pixel-editor-icons": "~0.1.0"
   }
 }

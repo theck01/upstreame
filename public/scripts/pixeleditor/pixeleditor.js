@@ -25,7 +25,9 @@ define(
     this._radioGroups = this._initializeRadioGroups();
     // Initialize tooltips before palettes, to avoid adding palette transition
     // classes to tooltips
-    Tooltip.createAll(_TOOLTIP_DISPLAY_DELAY);
+    if (!('ontouchstart' in window)) {
+      Tooltip.createAll(_TOOLTIP_DISPLAY_DELAY);
+    }
     this._palettes = this._initializePalettes();
 
     this._initializeActiveColorSelectRouting();
