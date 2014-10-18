@@ -19,25 +19,27 @@ define([], function () {
 
   // Return a random number between [0, 1)
   Random.next = function () {
-    return _randomCache[_index++];
+    var num = _randomCache[_index++];
+    if (_index >= _RANDOM_NUMBER_COUNT) _index = 0;
+    return num;
   };
 
 
   // Return a random float between [min, max)
   Random.withinRange = function (min, max) {
-    return _randomCache[_index++] * (max - min) + min;
+    return Random.next() * (max - min) + min;
   };
 
 
   // Return a random integer between [min, max]
   Random.integerWithinRange = function (min, max) {
-    return Math.floor(_randomCache[_index++] * (max - min) + min + 0.5);
+    return Math.floor(Random.withinRange(min, max + 1));
   };
 
 
   // Return whether an occurence with given probability should happen or not.
   Random.probability = function (probability) {
-    return _randomCache[_index++] < probability;
+    return Random.next() < probability;
   };
 
 
