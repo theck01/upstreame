@@ -4,7 +4,7 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite',
 
     // CONSTANTS
     var FISH_DRIFT_FREQUENCY = 30;
-    var FISH_DRIFT_VELOCITY = 0.1; // Pixels per animation frame
+    var FISH_DRIFT_VELOCITY = 0.1;  // Pixels per animation frame
     var FISH_MOVEMENT_PERIODS = 5;  // Number of periods each cycle of drift is
                                     // broken into, so all fish dont change at
                                     // once
@@ -131,9 +131,9 @@ define(['underscore', 'core/actors/base', 'core/graphics/sprite',
         period = (period + 1) % FISH_MOVEMENT_PERIODS;
 
         for (var i=start; i<end; i++) {
-          school.fish[i].v.x = Random.integerWithinRange(0, 2) *
+          school.fish[i].v.x = Random.integerWithinRange(-1, 1) *
                                 FISH_DRIFT_VELOCITY;
-          school.fish[i].v.y = Random.integerWithinRange(0, 2) *
+          school.fish[i].v.y = Random.integerWithinRange(-1, 1) *
                                 FISH_DRIFT_VELOCITY;
         }
       }, FISH_DRIFT_FREQUENCY/FISH_MOVEMENT_PERIODS);
