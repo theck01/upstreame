@@ -548,7 +548,6 @@ define(
         width: parseInt($canvasWidthInput.val(), 10),
         height: dimensions.height
       });
-      app._sizeCanvas();
     });
 
     $canvasHeightInput.on('keyup', function () {
@@ -557,7 +556,6 @@ define(
         width: dimensions.width,
         height: parseInt($canvasHeightInput.val(), 10)
       });
-      app._sizeCanvas();
     });
 
     $gridDisplayInput.on('change', function () {
@@ -574,6 +572,7 @@ define(
         function (newDimensions) {
       $canvasWidthInput.val(newDimensions.width);
       $canvasHeightInput.val(newDimensions.height);
+      app._sizeCanvas();
     });
 
     // Set initial values
@@ -639,8 +638,8 @@ define(
     });
 
     var canvasAvailableSpace = {
-      width: screenParams.pixelSize * metaPixelDimensions.width + 1,
-      height: screenParams.pixelSize * metaPixelDimensions.height + 1
+      width: screenParams.pixelSize * metaPixelDimensions.width,
+      height: screenParams.pixelSize * metaPixelDimensions.height
     };
     if (this._$canvas[0].width !== canvasAvailableSpace.width ||
         this._$canvas[0].height !== canvasAvailableSpace.height){

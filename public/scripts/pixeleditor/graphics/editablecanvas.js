@@ -27,7 +27,7 @@ define(
   EditableCanvas.prototype.constructor = EditableCanvas;
 
 
-  EditableCanvas.DEFAULT_GRID_COLOR = '#777777';
+  EditableCanvas.DEFAULT_GRID_COLOR = '#BBBBBB';
   EditableCanvas.GRID_LINE_WIDTH = 1;
 
   EditableCanvas.DEFAULT_SELECTION_COLOR = '#FF00FF';
@@ -136,7 +136,7 @@ define(
     var dimensions = this.getDimensions();
     var sparams = this.getScreenParams();
 
-    for (var i = 0; i <= dimensions.width; i++) {
+    for (var i = 1; i < dimensions.width; i++) {
       this._paintLineToImageData(
           { x: i * sparams.pixelSize + sparams.xoffset, y: sparams.yoffset },
           {
@@ -145,7 +145,7 @@ define(
           }, EditableCanvas.GRID_LINE_WIDTH, this._gridColor);
     }
 
-    for (var i = 0; i <= dimensions.height; i++) {
+    for (var i = 1; i < dimensions.height; i++) {
       this._paintLineToImageData(
           { x: sparams.xoffset, y: i * sparams.pixelSize + sparams.yoffset },
           {
