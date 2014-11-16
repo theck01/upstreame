@@ -12,10 +12,14 @@ define(["underscore", "core/graphics/pixelcanvas", "core/util/encoder"],
     //   canvasID: css selector style id of the canvas on the page
     //   backgroundColor: default color of pixels not drawn to, "#RRGGBB" string
     //                    Optional, default is undefined (transparent)
-    var LayeredCanvas = function (dimensions, canvasID, backgroundColor) {
+    //   availableSpace: object with 'width' and 'height' fields available
+    //                   on the vanbas element for the pixel canvas.
+    var LayeredCanvas = function (
+        dimensions, canvasID, backgroundColor, availableSpace) {
       this.dim = _.clone(dimensions);
       this.layers = Object.create(null);
-      this.pCanvas = new PixelCanvas(dimensions, canvasID, backgroundColor);
+      this.pCanvas = new PixelCanvas(
+          dimensions, canvasID, backgroundColor, availableSpace);
     };
 
 
@@ -34,6 +38,12 @@ define(["underscore", "core/graphics/pixelcanvas", "core/util/encoder"],
       }, this);
 
       this.pCanvas.paint();
+    };
+
+
+    // setAvailableSpace delegates to stored pixel canvas.
+    LayeredCanvas.prototype.setAvailableSpace = function(width, height) {
+      this.pCanvas.setAvailableSpace(width, height);
     };
 
     // setPixel colors in the meta-pixel at location (x,y) with given color 

@@ -41,6 +41,7 @@ define(
     this._initializeZoomRouting();
     this._initializeShorcutsRouting();
 
+    this._sizeCanvas();
     this._initializeGlobal();
   };
 
@@ -223,7 +224,8 @@ define(
 
     canvasTools.canvas = new EditableCanvas(
         Constants.STARTING_VALUES.CANVAS_DIMENSIONS, '#pixel-editor-canvas',
-        Constants.STARTING_VALUES.DEFAULT_COLOR);
+        Constants.STARTING_VALUES.DEFAULT_COLOR,
+        { width: 1, height: 1 });
 
     canvasTools.model = new GridModel(
         Constants.STARTING_VALUES.CANVAS_DIMENSIONS);
@@ -257,8 +259,6 @@ define(
 
     this._actions.canvasClicked.addValueChangeHandler(
         cursorChangeHandler.bind(this));
-
-    this._sizeCanvas();
 
     return canvasTools;
   };
@@ -515,7 +515,7 @@ define(
       var modelJSON = app._canvasTools.modelBuilder.exportModel();
       var exportedModel = JSON.parse(modelJSON);
       modelJSON = JSON.stringify(exportedModel, null, 2);
-      var screenParams = app._canvasTools.canvas.screenParams();
+      var screenParams = app._canvasTools.canvas.getScreenParams();
 
       // Update links with the current state of the model.
       jsonDataUrl =
@@ -623,6 +623,8 @@ define(
         this._$canvas[0].height !== this._$canvas.parent().height()){
       this._$canvas[0].width = this._$canvas.parent().width();
       this._$canvas[0].height = this._$canvas.parent().height();
+      this._canvasTools.canvas.setAvailableSpace(
+          this._$canvas[0].width, this._$canvas[0].height);
     }
   };
 

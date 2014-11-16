@@ -9,7 +9,10 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     //           a jQuery object containing a canvas element.
     //   backgroundColor: default color of pixels not drawn to, "#RRGGBB" string
     //                    Optional, default is undefined (transparent)
-    var PixelCanvas = function (dimensions, canvas, backgroundColor) {
+    //   availableSpace: object with 'width' and 'height' fields available
+    //                   on the vanbas element for the pixel canvas.
+    var PixelCanvas = function (
+        dimensions, canvas, backgroundColor, availableSpace) {
       Frame.call(this, dimensions, { x: 0, y: 0 });
 
       if (canvas instanceof $) {
@@ -20,14 +23,16 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
         this.canvasID = canvas;
         var $canvas = $(canvas);
         if ($canvas.length !== 1) {
-          throw Error("Cannot create a PixelCanvas with a canvas element " +
-                      "selector that does not match a unique element.");
+          throw Error(
+              "Cannot create a PixelCanvas with a canvas element selector " +
+              "that does not match a unique element.");
         }
-        this._htmlCanvas = $(canvas)[0];
+        this._htmlCanvas = $canvas[0];
       }
       else {
-        throw Error("Cannot create a PixelCanvas with a canvas argument that " +
-                    "is not a jQuery object or css style selector.");
+        throw Error(
+            "Cannot create a PixelCanvas with a canvas argument that is not " +
+            "a jQuery object or css style selector.");
       }
 
       if (backgroundColor) {
@@ -37,10 +42,9 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
       
       var context = this._htmlCanvas.getContext("2d");
 
-      this._cachedCanvasDim = { width: this._htmlCanvas.width,
-                                height: this._htmlCanvas.height };
+      this._availableSpace = _.clone(availableSpace);
       this._cachedImageData = context.createImageData(
-          this._htmlCanvas.width, this._htmlCanvas.height);
+          availableSpace.width, availableSpace.height);
       this._cachedScreenParams = null;
       this.resize(dimensions);
     };
@@ -56,7 +60,7 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     PixelCanvas.prototype.clear = function (opt_clearBuffer) {
       var context = this._htmlCanvas.getContext("2d");
       this._cachedImageData = context.createImageData(
-          this._cachedCanvasDim.width, this._cachedCanvasDim.height);
+          this._availableSpace.width, this._availableSpace.height);
 
       PixelCanvas._clearPixelGrid(this.pastBuffer, undefined);
       if (opt_clearBuffer) {
@@ -152,6 +156,43 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     };
 
 
+    // getScreenParams measures current canvas dimensions and returns an object 
+    // with the fields:
+    //
+    // Return fields:
+    //   pixelSize: meta-pixel width and height in screen pixels
+    //   xoffset: x offset in screen pixels of the left most pixels from the
+    //            left edge of the canvas
+    //   yoffset: yoffset in screen pixels of the top most pixels from the
+    //            top most edge of the canvas
+    PixelCanvas.prototype.getScreenParams = function () {
+      if (this._cachedScreenParams) return this._cachedScreenParams;
+
+      var dim = this.getDimensions();
+      var height = this._availableSpace.height;
+      var width = this._availableSpace.width;
+
+      var xfactor = Math.floor(width/dim.width);
+      var yfactor = Math.floor(height/dim.height);
+
+      this._cachedScreenParams = Object.create(null);
+
+      // meta-pixel dimensions determined by the smallest screen pixel to 
+      // meta-pixel ratio, so that all pixels will fit on screen
+      this._cachedScreenParams.pixelSize = xfactor < yfactor ?
+        xfactor : yfactor;
+
+      // compute offsets using computed pixelSize and number of pixels in each
+      // dimension so that the canvas is centered
+      this._cachedScreenParams.xoffset = Math.floor(
+          (width - this._cachedScreenParams.pixelSize*dim.width)/2);
+      this._cachedScreenParams.yoffset = Math.floor(
+          (height - this._cachedScreenParams.pixelSize*dim.height)/2);
+
+      return this._cachedScreenParams;
+    };
+
+
     // makePixelGrid creates a 2D array with given dimensions containin an RGB
     // string at each location in the array
     //
@@ -192,17 +233,8 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     // _paintImageData paints the current buffer to the cached image data
     // but not to the screen.
     PixelCanvas.prototype._paintToImageData = function () {
-      // if the canvas has been resized, clear it as everthing must be redrawn
-      if (this._htmlCanvas.width !== this._cachedCanvasDim.width ||
-          this._htmlCanvas.height !== this._cachedCanvasDim.height) {
-        this._cachedCanvasDim = { width: this._htmlCanvas.width,
-                                  height: this._htmlCanvas.height };
-        this.clear();
-        this._cachedScreenParams = null;
-      }
-
       var diff = PixelCanvas._diffFrames(this.pixelBuffer, this.pastBuffer);
-      var sparams = this.screenParams();
+      var sparams = this.getScreenParams();
 
       var pairs = _.pairs(diff);
       var colorObj = { red: 255, green: 255, blue: 255 };
@@ -232,11 +264,11 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     //   colorObj: Object with 'red', 'green', and 'blue' fields. Color to paint
     //             the pixel.
     //   opt_screenParams: Optional screen parameters retrieved in a previous
-    //                     call PixelCanvas#screenParams. If unspecified new
+    //                     call PixelCanvas#getScreenParams. If unspecified new
     //                     parameters are calculated.
     PixelCanvas.prototype._paintPixel = function (pixel, colorObj,
                                                   opt_screenParams) {
-      var sparams = opt_screenParams || this.screenParams();
+      var sparams = opt_screenParams || this.getScreenParams();
       
       var bounds = {
         xmin: pixel.x * sparams.pixelSize + sparams.xoffset,
@@ -279,45 +311,17 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
       this.pixelBuffer = PixelCanvas._makePixelGrid(dim.width, dim.height,
                                                     this.backgroundColor);
       this._cachedImageData = this._htmlCanvas.getContext("2d").getImageData(
-          0, 0, this._htmlCanvas.width, this._htmlCanvas.height);
+          0, 0, this._availableSpace.width, this._availableSpace.height);
       this._cachedScreenParams = null;
     };
 
 
-    // screenParams measures current canvas dimensions and returns an object 
-    // with the fields:
-    //
-    // Return fields:
-    //   pixelSize: meta-pixel width and height in screen pixels
-    //   xoffset: x offset in screen pixels of the left most pixels from the
-    //            left edge of the canvas
-    //   yoffset: yoffset in screen pixels of the top most pixels from the
-    //            top most edge of the canvas
-    PixelCanvas.prototype.screenParams = function () {
-      if (this._cachedScreenParams) return this._cachedScreenParams;
-
-      var dim = this.getDimensions();
-      var height = this._htmlCanvas.height;
-      var width = this._htmlCanvas.width;
-
-      var xfactor = Math.floor(width/dim.width);
-      var yfactor = Math.floor(height/dim.height);
-
-      this._cachedScreenParams = Object.create(null);
-
-      // meta-pixel dimensions determined by the smallest screen pixel to 
-      // meta-pixel ratio, so that all pixels will fit on screen
-      this._cachedScreenParams.pixelSize = xfactor < yfactor ?
-        xfactor : yfactor;
-
-      // compute offsets using computed pixelSize and number of pixels in each
-      // dimension so that the canvas is centered
-      this._cachedScreenParams.xoffset = Math.floor(
-          (width - this._cachedScreenParams.pixelSize*dim.width)/2);
-      this._cachedScreenParams.yoffset = Math.floor(
-          (height - this._cachedScreenParams.pixelSize*dim.height)/2);
-
-      return this._cachedScreenParams;
+    // setAvailableSpace updates the space available to the pixel canvas and
+    // clears the canvas content.
+    PixelCanvas.prototype.setAvailableSpace = function(width, height) {
+      this._availableSpace = { width: width, height: height };
+      this.clear();
+      this._cachedScreenParams = null;
     };
 
 

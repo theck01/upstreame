@@ -14,7 +14,8 @@ define(
   Blog.prototype.init = function (logoCanvasID) {
     this._$canvas = $(logoCanvasID);
     this._logoCanvas = new PixelCanvas(
-        Constants.LOGO_CANVAS_DIMENSIONS, logoCanvasID);
+        Constants.LOGO_CANVAS_DIMENSIONS, logoCanvasID, '#FFFFFF',
+        { width: 1, height: 1 });
 
     this._sizeAndPaintLogoCanvas();
     $(window).on('resize', Blog.prototype._sizeAndPaintLogoCanvas.bind(this));
@@ -36,7 +37,6 @@ define(
     });
   };
 
-
   // Resize size the canvas to fill the parent container and paint the logo on
   // the canvas, if the logo has been loaded.
   Blog.prototype._sizeAndPaintLogoCanvas = function () {
@@ -45,6 +45,8 @@ define(
         this._$canvas[0].height !== $canvasParent.height()){
       this._$canvas[0].width = $canvasParent.width();
       this._$canvas[0].height = $canvasParent.height();
+      this._logoCanvas.setAvailableSpace(
+          this._$canvas[0].width, this._$canvas[0].height);
     }
 
     if (this._logoSprite) {

@@ -34,6 +34,8 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
           $canvas[0].height !== $(window).height()){
         $canvas[0].width = $(window).width();
         $canvas[0].height = $(window).height();
+        Game.viewport.setAvailableSpace(
+            $canvas[0].width, $canvas[0].height);
       }
     }
 
@@ -59,6 +61,7 @@ require(["jquery", "core/graphics/spritearchive", "core/graphics/viewport",
         origin: { x: 0, y: 0 },
         canvasID: "#game-canvas",
         backgroundColor: "#224477",
+        availableSpace: { width: 1, height: 1 }
       });
       Game.clock = new FrameClock();
 

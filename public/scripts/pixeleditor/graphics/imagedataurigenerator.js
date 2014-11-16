@@ -30,7 +30,8 @@ define(
     canvas.height = exportedModel.dimensions.height * pixelSize;
 
     var pixelCanvas = new PixelCanvas(
-        exportedModel.dimensions, $canvas, exportedModel.backgroundColor);
+        exportedModel.dimensions, $canvas, exportedModel.backgroundColor,
+        { width: canvas.width, height: canvas.height });
     _.each(exportedModel.pixels, function (p) {
       pixelCanvas.setPixel(p.x, p.y, p.color);
     });

@@ -10,10 +10,12 @@ define(['underscore', 'core/graphics/layeredcanvas', 'core/controller/eventhub',
     //   origin: object with 'x' and 'y' fields
     //   canvasID: the canvas that the viewport is attached to
     //   backgroundColor: CSS color string
+    //   availableSpace: The space available to the canvas.
     var Viewport = function (opts) {
       Frame.call(this, opts.dimensions, opts.origin);
-      this.canvas = new LayeredCanvas(opts.dimensions, opts.canvasID,
-                                      opts.backgroundColor);
+      this.canvas = new LayeredCanvas(
+        opts.dimensions, opts.canvasID, opts.backgroundColor,
+        opts.availableSpace);
     };
     Viewport.prototype = Object.create(Frame.prototype);
     Viewport.prototype.constructor = Viewport;
@@ -51,6 +53,12 @@ define(['underscore', 'core/graphics/layeredcanvas', 'core/controller/eventhub',
       _.each(pixels, function (p) {
         this.canvas.setPixel(p.x, p.y, p.color, background.layer());
       }, this);
+    };
+
+
+    // setAvailableSpace updates the area within which the viewport can render.
+    Viewport.prototype.setAvailableSpace = function(width, height) {
+      this.canvas.setAvailableSpace(width, height);
     };
 
     return Viewport;

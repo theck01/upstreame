@@ -95,7 +95,7 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
   //   Number, location on the given axis where the pixel appears.
   MetaPixelClickInterface.prototype._getMetaPixelComponent = function (
       coord, axis, opt_getNearest) {
-    var sparams = this._pCanvas.screenParams();
+    var sparams = this._pCanvas.getScreenParams();
     var offset = axis === "x" ? "xoffset" : "yoffset";
     var loc = Math.floor((coord[axis] - sparams[offset])/sparams.pixelSize);
 

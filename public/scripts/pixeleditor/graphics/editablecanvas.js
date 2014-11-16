@@ -9,8 +9,12 @@ define(
   //   canvasID: css selector style id of the canvas on the page
   //   backgroundColor: default color of pixels not drawn to, "#RRGGBB" string
   //       Optional, default is undefined (transparent).
-  var EditableCanvas = function (dimensions, canvasID, backgroundColor) {
-    PixelCanvas.call(this, dimensions, canvasID, backgroundColor);
+  //   availableSpace: object with 'width' and 'height' fields available
+  //                   on the vanbas element for the pixel canvas.
+  var EditableCanvas = function (
+      dimensions, canvasID, backgroundColor, availableSpace) {
+    PixelCanvas.call(
+        this, dimensions, canvasID, backgroundColor, availableSpace);
 
     this._gridColor = Color.toObject(EditableCanvas.DEFAULT_GRID_COLOR);
     this._requiresRedraw = false;
@@ -130,7 +134,7 @@ define(
   // canvas.
   EditableCanvas.prototype._paintGridToImageData = function () {
     var dimensions = this.getDimensions();
-    var sparams = this.screenParams();
+    var sparams = this.getScreenParams();
 
     for (var i = 0; i <= dimensions.width; i++) {
       this._paintLineToImageData(
