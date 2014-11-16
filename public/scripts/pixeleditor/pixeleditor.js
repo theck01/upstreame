@@ -1,7 +1,8 @@
 define(
     ['jquery', 'underscore', 'domkit/controllers/radiogroup',
      'domkit/ui/button', 'domkit/ui/palette', 'domkit/ui/tooltip',
-     'core/graphics/color','pixeleditor/controller/gridmodelbuilder',
+     'core/graphics/color', 'core/graphics/screenparameters',
+     'pixeleditor/controller/gridmodelbuilder',
      'pixeleditor/graphics/editablecanvas',
      'pixeleditor/graphics/imagedataurigenerator',
      'pixeleditor/interface/metapixelclickinterface',
@@ -9,9 +10,10 @@ define(
      'pixeleditor/model/gridmodel', 'pixeleditor/constants',
      'pixeleditor/actions/recentcolorpalette', 'pixeleditor/actions/value'],
     function (
-        $, _, RadioGroup, Button, Palette, Tooltip, Color, GridModelBuilder,
-        EditableCanvas, ImageDataURIGenerator, MetaPixelClickInterface,
-        SpriteConverter, GridModel, Constants, RecentColorPalette, Value) {
+        $, _, RadioGroup, Button, Palette, Tooltip, Color, ScreenParameters,
+        GridModelBuilder, EditableCanvas, ImageDataURIGenerator,
+        MetaPixelClickInterface, SpriteConverter, GridModel, Constants,
+        RecentColorPalette, Value) {
   var _TOOLTIP_DISPLAY_DELAY = 1500;
 
   // Base application initializer.
@@ -226,6 +228,8 @@ define(
         Constants.STARTING_VALUES.CANVAS_DIMENSIONS, '#pixel-editor-canvas',
         Constants.STARTING_VALUES.DEFAULT_COLOR,
         { width: 1, height: 1 });
+    canvasTools.canvas.setShouldDrawGrid(
+        Constants.STARTING_VALUES.GRID_VISIBLE);
 
     canvasTools.model = new GridModel(
         Constants.STARTING_VALUES.CANVAS_DIMENSIONS);
@@ -544,6 +548,7 @@ define(
         width: parseInt($canvasWidthInput.val(), 10),
         height: dimensions.height
       });
+      app._sizeCanvas();
     });
 
     $canvasHeightInput.on('keyup', function () {
@@ -552,6 +557,7 @@ define(
         width: dimensions.width,
         height: parseInt($canvasHeightInput.val(), 10)
       });
+      app._sizeCanvas();
     });
 
     $gridDisplayInput.on('change', function () {
@@ -619,12 +625,29 @@ define(
   // Arguments:
   //   $canvas: The jQuery object for the canvas that must be sized
   PixelEditor.prototype._sizeCanvas  = function () {
-    if (this._$canvas[0].width !== this._$canvas.parent().width() ||
-        this._$canvas[0].height !== this._$canvas.parent().height()){
-      this._$canvas[0].width = this._$canvas.parent().width();
-      this._$canvas[0].height = this._$canvas.parent().height();
+    var totalAvailableSpace = {
+      width: this._$canvas.parent().width(),
+      height: this._$canvas.parent().height()
+    };
+    var metaPixelDimensions = this._actions.canvasDimensions.getValue();
+    var screenParams = ScreenParameters.create(
+        metaPixelDimensions, totalAvailableSpace);
+
+    this._$canvas.css({
+      'top': screenParams.yoffset + 'px',
+      'left': screenParams.xoffset + 'px'
+    });
+
+    var canvasAvailableSpace = {
+      width: screenParams.pixelSize * metaPixelDimensions.width + 1,
+      height: screenParams.pixelSize * metaPixelDimensions.height + 1
+    };
+    if (this._$canvas[0].width !== canvasAvailableSpace.width ||
+        this._$canvas[0].height !== canvasAvailableSpace.height){
+      this._$canvas[0].width = canvasAvailableSpace.width;
+      this._$canvas[0].height = canvasAvailableSpace.height;
       this._canvasTools.canvas.setAvailableSpace(
-          this._$canvas[0].width, this._$canvas[0].height);
+          canvasAvailableSpace.width, canvasAvailableSpace.height);
     }
   };
 

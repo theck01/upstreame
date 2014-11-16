@@ -21,7 +21,7 @@ define(
     DEFAULT_COLOR: '#FFFFFF',
     DEFAULT_TOOL: Constants.AVAILABLE_TOOLS.PAINTBRUSH,
     CANVAS_DIMENSIONS: { width: 16, height: 16 },
-    GRID_VISIBLE: true
+    GRID_VISIBLE: false
   };
 
   Constants.TOOL_ICON_CLASSES = Object.create(null);

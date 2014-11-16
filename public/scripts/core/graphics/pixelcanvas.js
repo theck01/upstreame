@@ -1,5 +1,7 @@
-define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
-  function ($, _, Color, Frame) {
+define([
+    "jquery", "underscore", "core/graphics/color",
+    "core/graphics/screenparameters", "core/util/frame"],
+  function ($, _, Color, ScreenParameters, Frame) {
     // PixelCanvas object abstracts the HTML canvas object and exposes an API to
     // draw meta-pixels on the canvas. Clears the canvas on creation
     //
@@ -167,28 +169,8 @@ define(["jquery", "underscore", "core/graphics/color", "core/util/frame"],
     //            top most edge of the canvas
     PixelCanvas.prototype.getScreenParams = function () {
       if (this._cachedScreenParams) return this._cachedScreenParams;
-
-      var dim = this.getDimensions();
-      var height = this._availableSpace.height;
-      var width = this._availableSpace.width;
-
-      var xfactor = Math.floor(width/dim.width);
-      var yfactor = Math.floor(height/dim.height);
-
-      this._cachedScreenParams = Object.create(null);
-
-      // meta-pixel dimensions determined by the smallest screen pixel to 
-      // meta-pixel ratio, so that all pixels will fit on screen
-      this._cachedScreenParams.pixelSize = xfactor < yfactor ?
-        xfactor : yfactor;
-
-      // compute offsets using computed pixelSize and number of pixels in each
-      // dimension so that the canvas is centered
-      this._cachedScreenParams.xoffset = Math.floor(
-          (width - this._cachedScreenParams.pixelSize*dim.width)/2);
-      this._cachedScreenParams.yoffset = Math.floor(
-          (height - this._cachedScreenParams.pixelSize*dim.height)/2);
-
+      this._cachedScreenParams = ScreenParameters.create(
+          this.getDimensions(), this._availableSpace);
       return this._cachedScreenParams;
     };
 
