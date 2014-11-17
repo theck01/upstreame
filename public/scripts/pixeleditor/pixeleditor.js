@@ -592,7 +592,12 @@ define(
     var app = this;
 
     $('body').on('keypress', function (e) {
-      if (app._radioGroups.toolbar.getActiveElement()) return;
+      if (app._radioGroups.toolbar.getActiveElement() ===
+          app._buttons.toolbar.activeColor ||
+          app._radioGroups.toolbar.getActiveElement() ===
+          app._buttons.toolbar.defaultColor) {
+        return;
+      }
 
       switch (e.which) {
         case Constants.KEYS.P:
