@@ -140,9 +140,6 @@
   display: none;
   pointer-events: none;
 }
-::-moz-focus-inner {
-  border: none;
-}
 .dk-disabled {
   opacity: 0.5;
 }
@@ -166,6 +163,9 @@
 .grabbing-cursor {
   cursor: -webkit-grabbing;
   cursor: -moz-grabbing;
+}
+::-moz-focus-inner {
+  border: none;
 }
 .color-select-submenu {
   display: inline-block;
@@ -481,4 +481,7 @@ body {
   width: 100px;
   height: 50px;
   opacity: 0;
+}
+.hidden {
+  display: none;
 }

@@ -465,6 +465,7 @@ define(
     requestAnimationFrame(onAnimationFrameCallback);
 
     $('#staging-area').remove();
+    $('#pixel-editor-canvas').removeClass('hidden');
   };
 
 
