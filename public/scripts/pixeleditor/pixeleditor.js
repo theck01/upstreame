@@ -633,7 +633,10 @@ define(
       width: this._$canvas.parent().width(),
       height: this._$canvas.parent().height()
     };
-    var metaPixelDimensions = this._actions.canvasDimensions.getValue();
+
+    // Get metapixel dimensions from canvas, to ensure that sizing is done with
+    // zoom taken into account.
+    var metaPixelDimensions = this._canvasTools.canvas.getDimensions();
     var screenParams = ScreenParameters.create(
         metaPixelDimensions, totalAvailableSpace);
 
@@ -800,6 +803,7 @@ define(
           app._actions.currentTool.setValue(Constants.AVAILABLE_TOOLS.ZOOM_IN);
         }
       }
+      app._sizeCanvas();
     });
 
     // Changing the canvas dimensions always resets the zoom state.
