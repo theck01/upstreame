@@ -141,7 +141,7 @@ define(
           { x: i * sparams.pixelSize + sparams.xoffset, y: sparams.yoffset },
           {
             x: i * sparams.pixelSize + sparams.xoffset,
-            y: sparams.yoffset + dimensions.height * sparams.pixelSize
+            y: sparams.yoffset + dimensions.height * sparams.pixelSize - 1
           }, EditableCanvas.GRID_LINE_WIDTH, this._gridColor);
     }
 
@@ -149,7 +149,7 @@ define(
       this._paintLineToImageData(
           { x: sparams.xoffset, y: i * sparams.pixelSize + sparams.yoffset },
           {
-            x: sparams.xoffset + dimensions.width * sparams.pixelSize,
+            x: sparams.xoffset + dimensions.width * sparams.pixelSize - 1,
             y: i * sparams.pixelSize + sparams.yoffset
           }, EditableCanvas.GRID_LINE_WIDTH, this._gridColor);
     }
