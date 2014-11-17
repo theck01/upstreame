@@ -6,8 +6,8 @@
 @confirmation-menu-width: 
     (@confirmation-message-width +
      2 * @confirmation-message-horizontal-padding);
-@confirmation-submenu-element-size: 
-    (@confirmation-menu-width / 3);
+@confirmation-submenu-element-size: (@confirmation-menu-width / 3);
+@confirmation-submenu-spacer-size: (@confirmation-menu-width / 9);
 @confirmation-menu-height:
     (@confirmation-message-height + @small-spacer-size +
      @small-input-height);
@@ -21,7 +21,7 @@
 
 .confirmation-message {
   font-size: @large-font-size;
-  width: @confirmation-menu-width;
+  width: @confirmation-message-width;
   height: @confirmation-message-height;
   padding: 0px @confirmation-message-horizontal-padding;
 }
@@ -36,7 +36,7 @@
 .confirmation-select-spacer {
   display: inline-block;
   vertical-align: top;
-  width: @confirmation-submenu-element-size;
+  width: @confirmation-submenu-spacer-size;
   height: @small-input-height;
 }
 

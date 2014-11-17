@@ -1,8 +1,8 @@
 .dk-palette-disappear-transition {
-  transition: width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), height 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), top 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), left 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), border-width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), padding 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.15s cubic-bezier(0.645, 0.045, 0.355, 1), font-size 0.15s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), height 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), top 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), left 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), border-width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), padding 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.15s cubic-bezier(0.645, 0.045, 0.355, 1), font-size 0.15s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
 }
 .dk-palette-appear-transition {
-  transition: width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), height 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), top 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), left 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), border-width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), padding 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.45s cubic-bezier(0.645, 0.045, 0.355, 1), font-size 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), height 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), top 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), left 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), border-width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), padding 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.45s cubic-bezier(0.645, 0.045, 0.355, 1), font-size 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
 }
 .dk-palette {
   position: absolute;
@@ -106,6 +106,7 @@
   border-radius: 8px;
   border: 3px solid #6fb1ff;
   background: linear-gradient(to bottom, #f0f0f0 0%, #e7e7e7 100%);
+  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 .dk-toggleable-button-active:hover:not(.dk-disabled) {
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5);
@@ -115,18 +116,21 @@
   border-radius: 8px;
   border: 1px solid #9f9f9f;
   background: linear-gradient(to bottom, #e7e7e7 0%, #f0f0f0 100%);
+  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 .dk-toggleable-button-pressed {
   outline: none;
   border-radius: 8px;
   border: 1px solid #9f9f9f;
   background: linear-gradient(to bottom, #e7e7e7 0%, #f0f0f0 100%);
+  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 .dk-toggleable-button-active-pressed {
   outline: none;
   border-radius: 8px;
   border: 3px solid #6fb1ff;
   background: linear-gradient(to bottom, #e7e7e7 0%, #f0f0f0 100%);
+  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 .dk-tooltip {
   position: absolute;
@@ -134,6 +138,10 @@
   color: #FFFFFF;
   padding: 5px;
   display: none;
+  pointer-events: none;
+}
+::-moz-focus-inner {
+  border: none;
 }
 .dk-disabled {
   opacity: 0.5;
@@ -158,9 +166,6 @@
 .grabbing-cursor {
   cursor: -webkit-grabbing;
   cursor: -moz-grabbing;
-}
-::-moz-focus-inner {
-  border: none;
 }
 .color-select-submenu {
   display: inline-block;
@@ -208,7 +213,7 @@
 .color-palette-submenu {
   display: inline-block;
   vertical-align: top;
-  width: 104px;
+  width: 105px;
   height: 139px;
 }
 .color-palette-color {
@@ -221,7 +226,8 @@
 }
 .color-palette-row {
   height: 28px;
-  width: 105px;
+  width: 106px;
+  white-space: nowrap;
 }
 .color-palette-row-spacer {
   width: 10px;
@@ -233,8 +239,9 @@
   height: 10px;
 }
 .color-menu {
-  width: 227px;
+  width: 228px;
   height: 139px;
+  white-space: nowrap;
 }
 .confirmation-menu {
   width: 260px;
@@ -242,7 +249,7 @@
 }
 .confirmation-message {
   font-size: 20px;
-  width: 260px;
+  width: 250px;
   height: 50px;
   padding: 0px 5px;
 }
@@ -253,7 +260,7 @@
 .confirmation-select-spacer {
   display: inline-block;
   vertical-align: top;
-  width: 86.66666666666667px;
+  width: 28.88888888888889px;
   height: 30px;
 }
 .confirmation-select-submenu {
@@ -276,30 +283,30 @@ button.confirmation-button {
   color: #FFFFFF;
 }
 .save-menu {
-  width: 250px;
+  width: 260px;
   height: 132px;
 }
 .save-message {
   font-size: 20px;
-  width: 250px;
+  width: 260px;
   height: 30px;
 }
 .save-label {
   display: block;
   vertical-align: center;
   font-size: 16px;
-  width: 250px;
+  width: 260px;
   height: 30px;
   padding-left: 25px;
 }
 .save-action-submenu {
-  width: 250px;
+  width: 260px;
   height: 30px;
 }
 .save-action-spacer {
   display: inline-block;
   vertical-align: top;
-  width: 59px;
+  width: 64px;
   height: 30px;
 }
 a.save-action-button {
@@ -317,11 +324,11 @@ a.save-action-button {
   color: #000000;
 }
 .save-menu-spacer {
-  width: 250px;
+  width: 260px;
   height: 5px;
 }
 .settings-menu {
-  width: 212px;
+  width: 222px;
   height: 106px;
 }
 .settings-dimension-input {
@@ -348,16 +355,17 @@ a.save-action-button {
   display: inline-block;
   font-family: 'Share Tech Mono';
   font-size: 20px;
-  width: 150px;
+  width: 160px;
   height: 32px;
   line-height: 32px;
 }
 .settings-row {
-  width: 212px;
+  width: 222px;
   height: 32px;
+  white-space: nowrap;
 }
 .settings-spacer {
-  width: 212px;
+  width: 222px;
   height: 5px;
 }
 .toolbar-button {
@@ -457,7 +465,7 @@ body {
 }
 .pixel-canvas {
   position: relative;
-  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.5);
 }
 .palette-menu-staging-area {
   display: none;
