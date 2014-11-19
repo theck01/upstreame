@@ -466,6 +466,13 @@ define(
 
     $('#staging-area').remove();
     $('#pixel-editor-canvas').removeClass('hidden');
+
+    $(document).bind('touchmove', function (e) {
+      e.preventDefault();
+    });
+    $('#toolbar').bind('touchmove', function (e) {
+      e.stopPropagation();
+    });
   };
 
 
