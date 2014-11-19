@@ -23,10 +23,11 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
     
     this._canvasClickedValue.setValue(false);
 
-    this._$htmlCanvas.on("mouseup mouseleave touchend touchleave",
-                        this._onMouseRelease.bind(this));
-    this._$htmlCanvas.on("mousedown mousemove touchstart touchmove",
-                        this._onMouseAction.bind(this));
+    this._$htmlCanvas.on("mouseup mouseleave", this._onMouseRelease.bind(this));
+    this._$htmlCanvas.on("mousedown mousemove", this._onMouseAction.bind(this));
+    this._$htmlCanvas.on("touchend touchleave", this._onTouchEnd.bind(this));
+    this._$htmlCanvas.on(
+        "touchstart touchmove", this._onTouchAction.bind(this));
   };
 
 
@@ -108,20 +109,14 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
     return loc;
   };
 
-  
-  // _onMouseAction is a private function that handles mousedown and
-  // mouse move events
-  MetaPixelClickInterface.prototype._onMouseAction = function (e) {
-    if(e.type === "mousedown" || e.type === "touchstart") {
-      this._canvasClickedValue.setValue(true);
-    }
-    if(!this._canvasClickedValue.getValue()) return;
-    var coord = this._getCanvasRelativeCoordinate(e);
 
+  // processNewCoordinate handles coordinates as a result clicked mouse events
+  // or touch events.
+  MetaPixelClickInterface.prototype._processNewCoordinate = function (c) {
     switch (Constants.TOOL_TO_TYPE_MAP[this._toolValue.getValue()]) {
       case Constants.TOOL_TYPES.SINGLE_PIXEL:
       case Constants.TOOL_TYPES.DRAG:
-        var pixelPos = this._getMetaPixelCoord(coord);
+        var pixelPos = this._getMetaPixelCoord(c);
         if (pixelPos) {
           this._modelBuilder.addLocationToCurrentChange(pixelPos);
         }
@@ -130,10 +125,10 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
       case Constants.TOOL_TYPES.SELECTION:
         var selection = this._pCanvas.getSelection();
         if (!selection.origin) {
-          this._pCanvas.setSelectionOrigin(coord);
+          this._pCanvas.setSelectionOrigin(c);
         }
         else {
-          this._pCanvas.setSelectionTerminator(coord);
+          this._pCanvas.setSelectionTerminator(c);
         }
         this._modelBuilder.paint();
         break;
@@ -141,12 +136,27 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
   };
 
   
-  // _onMouseRelease is a private function that handles mouseup and
-  // mouseleave events
-  MetaPixelClickInterface.prototype._onMouseRelease = function () {
-    if (!this._canvasClickedValue.getValue()) return;
-    this._canvasClickedValue.setValue(false);
+  // _onMouseAction is a private function that handles mousedown and
+  // mouse move events
+  MetaPixelClickInterface.prototype._onMouseAction = function (e) {
+    if(e.type === "mousedown") {
+      this._canvasClickedValue.setValue(true);
+    }
+    if(!this._canvasClickedValue.getValue()) return;
+    var coord = this._getCanvasRelativeCoordinate(e);
+    this._processNewCoordinate(coord);
+  };
 
+  
+  // _onTouchAction is a private function that handles touch events and
+  // mouse move events
+  MetaPixelClickInterface.prototype._onTouchAction = function (e) {
+    var coord = this._getCanvasRelativeCoordinate(e);
+    this._processNewCoordinate(coord);
+  };
+
+  // processActionEnd handles completing the end of the event processing.
+  MetaPixelClickInterface.prototype._processActionEnd = function () {
     switch (Constants.TOOL_TO_TYPE_MAP[this._toolValue.getValue()]) {
       case Constants.TOOL_TYPES.SINGLE_PIXEL:
         this._modelBuilder.commitCurrentChange();
@@ -201,6 +211,20 @@ define(["jquery", "pixeleditor/constants"], function($, Constants){
     this._redosAvailableValue.setValue(this._modelBuilder.hasRedos());
     this._undosAvailableValue.setValue(this._modelBuilder.hasUndos());
   };
+
+  
+  // _onMouseRelease is a private function that handles mouseup and
+  // mouseleave events
+  MetaPixelClickInterface.prototype._onMouseRelease = function () {
+    if (!this._canvasClickedValue.getValue()) return;
+    this._canvasClickedValue.setValue(false);
+    this._processActionEnd();
+  };
+
+  
+  // _onTouchUp is a private function that handles touchup events
+  MetaPixelClickInterface.prototype._onTouchEnd =
+      MetaPixelClickInterface.prototype._processActionEnd;
 
 
   return MetaPixelClickInterface;
