@@ -434,7 +434,7 @@ define(
   PixelEditor.prototype._initializeGlobal = function () {
     var app = this;
 
-    $('#pixel-editor-canvas').bind('mousedown', function() {
+    $('#canvas-container').bind('mousedown', function() {
       app._radioGroups.toolbar.clear();
     });
 
