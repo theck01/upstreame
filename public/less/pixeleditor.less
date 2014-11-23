@@ -14,7 +14,8 @@
 @container-width:
     calc(~"100% - "(@toolbar-width + 4 * @toolbar-padding));
 
-@canvas-shadow: 0px 3px 6px 0px rgba(0,0,0,0.50);
+@canvas-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
+@palette-shadow: 0px 3px 6px 0px rgba(0,0,0,0.50);
 
 html {
   height: 100%;
@@ -26,7 +27,7 @@ body {
   height: 100%;
   font-family: @font;
   overflow: hidden;
-  background-color: #F7F7F7;
+  background-color: #EEEEEE;
 }
 
 
@@ -55,7 +56,9 @@ body {
 
 
 .dk-palette-menu-container {
+  border: none;
   border-radius: @border-radius;
+  box-shadow: @palette-shadow;
 }
 
 
