@@ -81,56 +81,61 @@
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
 }
-.dk-button {
+.dk-flat-button {
+  border: none;
+  background: none;
+  background-color: rgba(153, 153, 153, 0);
   outline: none;
+  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), background-color 0.03333s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+.dk-button {
   border-radius: 8px;
   border: 1px solid #9f9f9f;
   background: linear-gradient(to bottom, #f0f0f0 0%, #e7e7e7 100%);
-  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  outline: none;
+  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), background-color 0.03333s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
-.dk-button:hover:not(.dk-disabled) {
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5);
+.dk-flat-toggleable-button {
+  border: none;
+  background: none;
+  background-color: rgba(153, 153, 153, 0);
+  outline: none;
+  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), background-color 0.03333s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 .dk-toggleable-button {
-  outline: none;
   border-radius: 8px;
   border: 1px solid #9f9f9f;
   background: linear-gradient(to bottom, #f0f0f0 0%, #e7e7e7 100%);
-  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-}
-.dk-toggleable-button:hover:not(.dk-disabled) {
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5);
-}
-.dk-toggleable-button-active {
   outline: none;
+  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), background-color 0.03333s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+.dk-active-button.dk-button,
+.dk-active-button.dk-toggleable-button {
   border-radius: 8px;
   border: 3px solid #6fb1ff;
-  background: linear-gradient(to bottom, #f0f0f0 0%, #e7e7e7 100%);
-  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
-.dk-toggleable-button-active:hover:not(.dk-disabled) {
+.dk-active-button.dk-flat-button,
+.dk-active-button.dk-flat-toggleable-button {
+  background-color: rgba(153, 153, 153, 0.3);
+}
+.dk-pressed-button.dk-button,
+.dk-pressed-button.dk-toggleable-button {
+  background: linear-gradient(to bottom, #e7e7e7 0%, #f0f0f0 100%);
+}
+.dk-pressed-button.dk-flat-button,
+.dk-pressed-button.dk-flat-toggleable-button {
+  background-color: rgba(153, 153, 153, 0.5);
+}
+.dk-button:hover:not(.dk-disabled):not(.dk-pressed-button),
+.dk-toggleable-button:hover:not(.dk-disabled):not(.dk-pressed-button) {
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5);
 }
-.dk-button-pressed {
-  outline: none;
-  border-radius: 8px;
-  border: 1px solid #9f9f9f;
-  background: linear-gradient(to bottom, #e7e7e7 0%, #f0f0f0 100%);
-  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+.dk-flat-button:hover:not(.dk-disabled):not(.dk-pressed-button),
+.dk-flat-toggleable-button:hover:not(.dk-disabled):not(.dk-pressed-button):not(.dk-active-button) {
+  background-color: rgba(153, 153, 153, 0.2);
 }
-.dk-toggleable-button-pressed {
-  outline: none;
-  border-radius: 8px;
-  border: 1px solid #9f9f9f;
-  background: linear-gradient(to bottom, #e7e7e7 0%, #f0f0f0 100%);
-  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-}
-.dk-toggleable-button-active-pressed {
-  outline: none;
-  border-radius: 8px;
-  border: 3px solid #6fb1ff;
-  background: linear-gradient(to bottom, #e7e7e7 0%, #f0f0f0 100%);
-  transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+.dk-flat-toggleable-button.dk-active-button:hover:not(.dk-disabled):not(.dk-pressed-button) {
+  background-color: rgba(153, 153, 153, 0.4);
 }
 .dk-tooltip {
   position: absolute;
@@ -139,6 +144,9 @@
   padding: 5px;
   display: none;
   pointer-events: none;
+}
+::-moz-focus-inner {
+  border: none;
 }
 .dk-disabled {
   opacity: 0.5;
@@ -163,9 +171,6 @@
 .grabbing-cursor {
   cursor: -webkit-grabbing;
   cursor: -moz-grabbing;
-}
-::-moz-focus-inner {
-  border: none;
 }
 .color-select-submenu {
   display: inline-block;
@@ -426,16 +431,9 @@ div.toolbar-button {
 }
 .tool-select-menu {
   width: 100px;
-  height: 373px;
+  height: 325px;
 }
-.large-tool-select-spacer {
-  width: 100px;
-  height: 1px;
-  background-clip: content-box;
-  background-color: #9f9f9f;
-  padding: 10px 0px;
-}
-.small-tool-select-spacer {
+.tool-select-spacer {
   width: 100px;
   height: 5px;
 }
@@ -452,7 +450,7 @@ body {
   height: 100%;
   font-family: 'Share Tech Mono';
   overflow: hidden;
-  background-color: #F7F7F7;
+  background-color: #EEEEEE;
 }
 .canvas-container {
   display: relative;
@@ -465,14 +463,16 @@ body {
 }
 .pixel-canvas {
   position: relative;
-  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
   border-radius: 1px;
 }
 .palette-menu-staging-area {
   display: none;
 }
 .dk-palette-menu-container {
+  border: none;
   border-radius: 0px;
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.5);
 }
 .hidden-file-input {
   position: absolute;
