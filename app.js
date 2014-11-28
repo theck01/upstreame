@@ -45,4 +45,5 @@ app.get('/sprite/all', sprites.all);
 app.get('/sprite/:name', sprites.load);
 
 
+console.log('Listening on port 3000...');
 app.listen(3000);
