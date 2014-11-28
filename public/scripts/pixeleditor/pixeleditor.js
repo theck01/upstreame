@@ -15,6 +15,8 @@ define(
         MetaPixelClickInterface, SpriteConverter, GridModel, Constants,
         RecentColorPalette, Value) {
   var _TOOLTIP_DISPLAY_DELAY = 1500;
+  var _LOCAL_STORAGE_KEY = 'sprite-in-progress';
+  var _LOCAL_STORAGE_EXPIRATION = 5 * 60 * 1000; // Expire after 5 minutes.
 
   // Base application initializer.
   var PixelEditor = function () {
@@ -45,6 +47,17 @@ define(
 
     this._sizeCanvas();
     this._initializeGlobal();
+    this._initializeStorage();
+  };
+
+
+  // _importSprite imports a sprite into the application.
+  // Arguments:
+  //    spriteJSON: A json string containing sprite data.
+  PixelEditor.prototype._importSprite = function (spriteJSON) {
+    this._canvasTools.modelBuilder.importModel(spriteJSON);
+    this._actions.redosAvailable.setValue(false);
+    this._actions.undosAvailable.setValue(true);
   };
 
 
@@ -268,6 +281,35 @@ define(
   };
 
 
+  // _initializeStorage loads past sprite from local storage and additionally
+  // sets up unload handlers to ensure that sprite in progress is temporarily
+  // saved in local storage before unload.
+  PixelEditor.prototype._initializeStorage = function () {
+    // If a sprite is stored and has not yet expired then load it.
+    var pastSpriteJSON = localStorage[_LOCAL_STORAGE_KEY];
+    if (pastSpriteJSON) {
+      var pastSprite = JSON.parse(pastSpriteJSON);
+      if (Date.now() - pastSprite.timestamp > _LOCAL_STORAGE_EXPIRATION) {
+        localStorage.removeItem(_LOCAL_STORAGE_KEY);
+      }
+      else {
+        this._importSprite(pastSprite.json);
+        this._actions.canvasGridDisplay.setValue(pastSprite.gridVisible);
+      }
+    }
+
+    // Setup for the model to be stored in the cookie on page unload.
+    var app = this;
+    window.onbeforeunload = function () {
+      localStorage[_LOCAL_STORAGE_KEY] = JSON.stringify({
+        json: app._canvasTools.modelBuilder.exportModel(),
+        timestamp: Date.now(),
+        gridVisible: app._actions.canvasGridDisplay.getValue()
+      });
+    };
+  };
+
+
   // _initalizeDefaultColorSelectRouting connects all of the components of the 
   // default color select menu.
   PixelEditor.prototype._initializeDefaultColorSelectRouting = function () {
@@ -348,9 +390,7 @@ define(
     });
 
     fileReader.onload = function () {
-      app._canvasTools.modelBuilder.importModel(fileReader.result);
-      app._actions.redosAvailable.setValue(false);
-      app._actions.undosAvailable.setValue(true);
+      app._importSprite(fileReader.result);
     };
 
     this._buttons.toolbar.load.addClickHandler(function () {
