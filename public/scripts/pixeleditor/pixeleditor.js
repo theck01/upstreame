@@ -400,6 +400,7 @@ define(
 
     this._buttons.toolbar.load.addClickHandler(function () {
       app._radioGroups.toolbar.clear();
+      $loadFileInput.click();
     });
   };
 
