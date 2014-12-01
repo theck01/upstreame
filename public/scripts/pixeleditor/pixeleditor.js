@@ -1,7 +1,8 @@
 define(
     ['jquery', 'underscore', 'domkit/controllers/radiogroup',
      'domkit/ui/button', 'domkit/ui/palette', 'domkit/ui/tooltip',
-     'core/graphics/color', 'core/graphics/screenparameters',
+     'domkit/util/touchclickcanceller', 'core/graphics/color',
+     'core/graphics/screenparameters',
      'pixeleditor/controller/gridmodelbuilder',
      'pixeleditor/graphics/editablecanvas',
      'pixeleditor/graphics/imagedataurigenerator',
@@ -10,10 +11,10 @@ define(
      'pixeleditor/model/gridmodel', 'pixeleditor/constants',
      'pixeleditor/actions/recentcolorpalette', 'pixeleditor/actions/value'],
     function (
-        $, _, RadioGroup, Button, Palette, Tooltip, Color, ScreenParameters,
-        GridModelBuilder, EditableCanvas, ImageDataURIGenerator,
-        MetaPixelClickInterface, SpriteConverter, GridModel, Constants,
-        RecentColorPalette, Value) {
+        $, _, RadioGroup, Button, Palette, Tooltip, TouchClickCanceller, Color,
+        ScreenParameters, GridModelBuilder, EditableCanvas,
+        ImageDataURIGenerator, MetaPixelClickInterface, SpriteConverter,
+        GridModel, Constants, RecentColorPalette, Value) {
   var _TOOLTIP_DISPLAY_DELAY = 1500;
   var _LOCAL_STORAGE_KEY = 'sprite-in-progress';
   var _LOCAL_STORAGE_EXPIRATION = 5 * 60 * 1000; // Expire after 5 minutes.
@@ -236,6 +237,10 @@ define(
   PixelEditor.prototype._initializeCanvas  = function () {
     var canvasTools = Object.create(null);
     var $canvas = $('#pixel-editor-canvas');
+
+    // Prevent click events caused by touches, so that multiple events are not
+    // triggered for the same effect.
+    new TouchClickCanceller($canvas);
 
     canvasTools.canvas = new EditableCanvas(
         Constants.STARTING_VALUES.CANVAS_DIMENSIONS, '#pixel-editor-canvas',
