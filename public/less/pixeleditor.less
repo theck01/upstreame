@@ -43,6 +43,10 @@ body {
 
 
 .pixel-canvas {
+  // Prevent highlight on touch in iOS
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  // Prevent selecting buttons in iOS
+  -webkit-user-select: none;
   position: relative;
   box-shadow: @canvas-shadow;
   // workaround for force iOS to render shadow.

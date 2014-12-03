@@ -153,9 +153,6 @@
   display: none;
   pointer-events: none;
 }
-::-moz-focus-inner {
-  border: none;
-}
 .dk-disabled {
   opacity: 0.5;
 }
@@ -179,6 +176,9 @@
 .grabbing-cursor {
   cursor: -webkit-grabbing;
   cursor: -moz-grabbing;
+}
+::-moz-focus-inner {
+  border: none;
 }
 .color-select-submenu {
   display: inline-block;
@@ -470,6 +470,8 @@ body {
   padding: 10px;
 }
 .pixel-canvas {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-user-select: none;
   position: relative;
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
   border-radius: 1px;
