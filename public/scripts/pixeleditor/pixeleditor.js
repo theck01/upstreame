@@ -585,6 +585,10 @@ define(
     });
 
     $('input:radio[name="save-type"]').on('change', setLinkFn);
+
+    // Destroy canceller, to allow user initiated click event to trigger link.
+    // Programmatic clicks and touches cannot replicate this behavior.
+    this._buttons.saveMenu.save.destroyTouchClickCanceller();
   };
 
 
