@@ -153,6 +153,9 @@
   display: none;
   pointer-events: none;
 }
+::-moz-focus-inner {
+  border: none;
+}
 .dk-disabled {
   opacity: 0.5;
 }
@@ -176,9 +179,6 @@
 .grabbing-cursor {
   cursor: -webkit-grabbing;
   cursor: -moz-grabbing;
-}
-::-moz-focus-inner {
-  border: none;
 }
 .color-select-submenu {
   display: inline-block;
@@ -257,12 +257,12 @@
   white-space: nowrap;
 }
 .confirmation-menu {
-  width: 260px;
+  width: 241px;
   height: 85px;
 }
 .confirmation-message {
   font-size: 20px;
-  width: 250px;
+  width: 231px;
   height: 50px;
   padding: 0px 5px;
 }
@@ -273,11 +273,11 @@
 .confirmation-select-spacer {
   display: inline-block;
   vertical-align: top;
-  width: 28.88888888888889px;
+  width: 26.77777777777778px;
   height: 30px;
 }
 .confirmation-select-submenu {
-  width: 260px;
+  width: 241px;
   height: 30px;
 }
 button.confirmation-button {
@@ -285,7 +285,7 @@ button.confirmation-button {
   vertical-align: top;
   font-family: 'Share Tech Mono';
   font-size: 16px;
-  width: 86.66666666666667px;
+  width: 80.33333333333333px;
   height: 30px;
   border-radius: 0px;
 }
@@ -296,30 +296,31 @@ button.confirmation-button {
   color: #FFFFFF;
 }
 .save-menu {
-  width: 260px;
+  width: 250px;
   height: 132px;
 }
 .save-message {
   font-size: 20px;
-  width: 260px;
+  width: 250px;
   height: 30px;
+  white-space: nowrap;
 }
 .save-label {
   display: block;
   vertical-align: center;
   font-size: 16px;
-  width: 260px;
+  width: 250px;
   height: 30px;
   padding-left: 25px;
 }
 .save-action-submenu {
-  width: 260px;
+  width: 250px;
   height: 30px;
 }
 .save-action-spacer {
   display: inline-block;
   vertical-align: top;
-  width: 64px;
+  width: 59px;
   height: 30px;
 }
 a.save-action-button {
@@ -337,7 +338,7 @@ a.save-action-button {
   color: #000000;
 }
 .save-menu-spacer {
-  width: 260px;
+  width: 250px;
   height: 5px;
 }
 .settings-menu {
