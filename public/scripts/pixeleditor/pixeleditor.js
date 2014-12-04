@@ -240,7 +240,7 @@ define(
 
     // Prevent click events caused by touches, so that multiple events are not
     // triggered for the same effect.
-    new TouchClickCanceller($canvas);
+    canvasTools._canceller = TouchClickCanceller.create($canvas);
 
     canvasTools.canvas = new EditableCanvas(
         Constants.STARTING_VALUES.CANVAS_DIMENSIONS, '#pixel-editor-canvas',
