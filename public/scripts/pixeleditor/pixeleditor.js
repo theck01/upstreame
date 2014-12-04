@@ -493,8 +493,17 @@ define(
   PixelEditor.prototype._initializeGlobal = function () {
     var app = this;
 
-    $('#canvas-container').bind('mousedown', function() {
+    // Hide palettes when interacting with the canvas or canvas container.
+    var hidePaletteFn = function () {
       app._radioGroups.toolbar.clear();
+    };
+    $('#canvas-container').bind({
+      mousedown: hidePaletteFn,
+      touchstart: hidePaletteFn
+    });
+    $('#pixel-editor-canvas').bind({
+      mousedown: hidePaletteFn,
+      touchstart: hidePaletteFn
     });
 
     $(document).bind('keydown', function (e) {
