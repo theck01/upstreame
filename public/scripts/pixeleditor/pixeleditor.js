@@ -303,15 +303,28 @@ define(
       }
     }
 
-    // Setup for the model to be stored in the cookie on page unload.
+    // Setup for the model to be stored in local storage before page unload or
+    // pagehide.
     var app = this;
-    window.onbeforeunload = function () {
-      localStorage[_LOCAL_STORAGE_KEY] = JSON.stringify({
-        json: app._canvasTools.modelBuilder.exportModel(),
-        timestamp: Date.now(),
-        gridVisible: app._actions.canvasGridDisplay.getValue()
-      });
+    var storeFn = function () {
+      var modelJSON = app._canvasTools.modelBuilder.exportModel();
+      var model = JSON.parse(modelJSON);
+
+      // Store the model in local storage if it has any pixels. If it does not
+      // have pixels clear the local storage to prevent unneeded usage and load
+      // on next visit.
+      if (model.pixels.length) {
+        localStorage[_LOCAL_STORAGE_KEY] = JSON.stringify({
+          json: modelJSON,
+          timestamp: Date.now(),
+          gridVisible: app._actions.canvasGridDisplay.getValue()
+        });
+      } else {
+        localStorage.removeItem(_LOCAL_STORAGE_KEY);
+      }
     };
+    window.onbeforeunload = storeFn;
+    window.onpagehide = storeFn;
   };
 
 
