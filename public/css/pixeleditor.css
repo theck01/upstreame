@@ -437,11 +437,7 @@ div.toolbar-button {
 }
 .tool-select-menu {
   width: 70px;
-  height: 325px;
-}
-.tool-select-spacer {
-  width: 70px;
-  height: 5px;
+  height: 350px;
 }
 .dk-tooltip {
   font-family: 'Ubuntu Mono';
