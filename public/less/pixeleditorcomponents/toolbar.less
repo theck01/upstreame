@@ -14,8 +14,6 @@
 @small-toolbar-icon-size: 31px;
 @small-toolbar-icon-offset: 3px;
 
-@toolbar-padding: @container-padding;
-@toolbar-width: (@toolbar-button-width + 2 * @smu);
 @toolbar-min-height:
     (@num-toolbar-buttons * @toolbar-button-height +
     (@num-toolbar-buttons - 1) * @smu +
@@ -28,6 +26,7 @@
   width: @toolbar-button-width;
   height: @toolbar-button-height;
   border-radius: @border-radius;
+  padding: 0px;
 }
 
 
@@ -45,7 +44,7 @@ div.toolbar-button {
   display: inline-block;
   vertical-align: top;
   padding: @smu;
-  width: @toolbar-width;
+  width: @toolbar-button-width;
   height: @container-height;
   overflow-y: auto;
 }
@@ -87,13 +86,13 @@ div.toolbar-button {
 .toolbar-bottom-attached {
   position: absolute;
   bottom: 0px;
-  padding-bottom: @toolbar-padding;
+  padding-bottom: @smu;
 }
 
 
 @media (max-height: @toolbar-min-height) {
   .toolbar-bottom-attached {
-    position: relative;
+    position: static;
     padding-bottom: 0px;
   }
 }

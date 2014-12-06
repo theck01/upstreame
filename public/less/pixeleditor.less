@@ -14,7 +14,7 @@
 
 
 @container-width:
-    calc(~"100% - "(@toolbar-width + 4 * @toolbar-padding));
+    calc(~"100% - "(@toolbar-button-width + 3 * @smu));
 
 @canvas-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
 @palette-shadow: 0px 3px 6px 0px rgba(0,0,0,0.50);
@@ -22,12 +22,14 @@
 
 html {
   height: 100%;
+  width: 100%;
 }
 
 
 body {
   margin: 0px;
   height: 100%;
+  width: 100%;
   font-family: @font;
   overflow: hidden;
   background-color: #EEEEEE;
@@ -39,13 +41,12 @@ body {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   // Prevent selecting buttons in iOS
   -webkit-user-select: none;
-  display: relative;
   display: inline-block;
   vertical-align: top;
   height: @container-height;
   width: @container-width;
   overflow: hidden;
-  padding: @container-padding;
+  padding: @smu @smu @smu 0px;
 }
 
 
