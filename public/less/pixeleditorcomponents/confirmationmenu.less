@@ -1,58 +1,54 @@
 @import "constants";
 
-@confirmation-message-height: 50px;
-@confirmation-message-width: 231px;
-@confirmation-message-horizontal-padding: 5px;
-@confirmation-menu-width: 
-    (@confirmation-message-width +
-     2 * @confirmation-message-horizontal-padding);
-@confirmation-submenu-element-size: (@confirmation-menu-width / 3);
-@confirmation-submenu-spacer-size: (@confirmation-menu-width / 9);
-@confirmation-menu-height:
-    (@confirmation-message-height + @small-spacer-size +
-     @small-input-height);
+@confirmation-menu-height: (2 * @lgu);
+@confirmation-button-width: (2 * @lgu + @smu);
+@confirmation-button-container-width: (2 * @confirmation-button-width + @smu);
+@confirmation-button-container-center-spacer-width:
+    ((@default-palette-width - @confirmation-button-container-width) / 2);
 
 
 .confirmation-menu {
-  width: @confirmation-menu-width;
+  box-sizing: border-box;
+  width: @default-palette-width;
   height: @confirmation-menu-height;
 }
 
 
 .confirmation-message {
+  box-sizing: border-box;
+  line-height: @lgu;
+  text-align: center;
   font-size: @large-font-size;
-  width: @confirmation-message-width;
-  height: @confirmation-message-height;
-  padding: 0px @confirmation-message-horizontal-padding;
+  width: @default-palette-width;
+  height: @lgu;
 }
 
 
-.confirmation-menu-spacer {
-  width: @small-spacer-size;
-  height: @small-spacer-size;
-}
-
-
-.confirmation-select-spacer {
-  display: inline-block;
-  vertical-align: top;
-  width: @confirmation-submenu-spacer-size;
+.confirmation-button-container {
+  box-sizing: border-box;
+  align: center;
+  width: @confirmation-button-container-width;
   height: @small-input-height;
+  white-space: nowrap;
 }
 
 
-.confirmation-select-submenu {
-  width: @confirmation-menu-width;
-  height: @small-input-height;
-}
-
-
-button.confirmation-button {
+.confirmation-button-container-center-spacer {
+  box-sizing: border-box;
   display: inline-block;
+  width: @confirmation-button-container-center-spacer-width;
+  height: @lgu;
+}
+
+
+.confirmation-button {
   vertical-align: top;
+  box-sizing: border-box;
+  display: inline-block;
   font-family: @font;
-  font-size: @small-font-size;
-  width: @confirmation-submenu-element-size;
-  height: @small-input-height;
+  font-size: @large-font-size;
+  font-weight: bold;
+  width: @confirmation-button-width;
+  height: @lgu;
   border-radius: @border-radius;
 }
