@@ -14,7 +14,7 @@ define(
     SHIFTER: 'shifter-tool'
   };
 
-  Constants.COLOR_PALETTE_SIZE = 12;
+  Constants.COLOR_PALETTE_SIZE = 9;
 
   Constants.STARTING_VALUES = {
     ACTIVE_COLOR: '#000000',
