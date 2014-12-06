@@ -153,6 +153,9 @@
   display: none;
   pointer-events: none;
 }
+::-moz-focus-inner {
+  border: none;
+}
 .dk-disabled {
   opacity: 0.5;
 }
@@ -176,9 +179,6 @@
 .grabbing-cursor {
   cursor: -webkit-grabbing;
   cursor: -moz-grabbing;
-}
-::-moz-focus-inner {
-  border: none;
 }
 .color-select-submenu {
   box-sizing: border-box;
@@ -274,6 +274,16 @@
   width: 70px;
   height: 30px;
   border-radius: 0px;
+}
+@font-face {
+  font-family: 'Ubuntu Mono';
+  src: url('/assets/fonts/UbuntuMono-Regular.ttf');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'Ubuntu Mono';
+  src: url('/assets/fonts/UbuntuMono-Bold.ttf');
+  font-weight: 700;
 }
 .toolbar-icon.icon-active-color {
   color: #000000;
