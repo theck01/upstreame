@@ -3,28 +3,27 @@
 
 
 @num-toolbar-buttons: 9;
-@toolbar-button-height: 50px;
-@toolbar-button-width: 100px;
+
+@toolbar-button-height: @xlgu;
+@toolbar-button-width: (2 * @lgu + @smu);
 @div-toolbar-button-top-padding: 2px;
-@div-toolbar-button-height:
-    (@toolbar-button-height - 2 * @border-width -
-    @div-toolbar-button-top-padding);
-@div-toolbar-button-width:  (@toolbar-button-width - 2 * @border-width);
-@toolbar-button-width: 100px;
+
 @toolbar-icon-size: 36px;
 @toolbar-icon-offset: 5px;
+
 @small-toolbar-icon-size: 31px;
 @small-toolbar-icon-offset: 3px;
+
 @toolbar-padding: @container-padding;
-@toolbar-width: @toolbar-button-width;
-@toolbar-height: @container-height;
+@toolbar-width: (@toolbar-button-width + 2 * @smu);
 @toolbar-min-height:
     (@num-toolbar-buttons * @toolbar-button-height +
-    (@num-toolbar-buttons - 1) * @small-spacer-size +
-    2 * @toolbar-padding);
+    (@num-toolbar-buttons - 1) * @smu +
+    2 * @smu);
 
 
 .toolbar-button {
+  box-sizing: border-box;
   text-align: center;
   width: @toolbar-button-width;
   height: @toolbar-button-height;
@@ -34,8 +33,6 @@
 
 div.toolbar-button {
   padding-top: @div-toolbar-button-top-padding;
-  width: @div-toolbar-button-width;
-  height: @div-toolbar-button-height;
 }
 
 
@@ -44,11 +41,12 @@ div.toolbar-button {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   // Prevent selecting buttons in iOS
   -webkit-user-select: none;
+
   display: inline-block;
   vertical-align: top;
-  padding: @toolbar-padding;
+  padding: @smu;
   width: @toolbar-width;
-  height: @toolbar-height;
+  height: @container-height;
   overflow-y: auto;
 }
 
@@ -83,12 +81,6 @@ div.toolbar-button {
 .small-toolbar-icon:before {
   position: relative;
   top: @small-toolbar-icon-offset;
-}
-
-
-.toolbar-spacer {
-  height: @small-spacer-size;
-  width: @small-spacer-size;
 }
 
 

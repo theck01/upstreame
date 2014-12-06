@@ -383,15 +383,14 @@
   width: 10px;
 }
 .toolbar-button {
+  box-sizing: border-box;
   text-align: center;
-  width: 100px;
+  width: 70px;
   height: 50px;
   border-radius: 0px;
 }
 div.toolbar-button {
   padding-top: 2px;
-  width: 98px;
-  height: 46px;
 }
 .toolbar-container {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -399,7 +398,7 @@ div.toolbar-button {
   display: inline-block;
   vertical-align: top;
   padding: 10px;
-  width: 100px;
+  width: 90px;
   height: calc(100% -  20px);
   overflow-y: auto;
 }
@@ -425,27 +424,23 @@ div.toolbar-button {
   position: relative;
   top: 3px;
 }
-.toolbar-spacer {
-  height: 5px;
-  width: 5px;
-}
 .toolbar-bottom-attached {
   position: absolute;
   bottom: 0px;
   padding-bottom: 10px;
 }
-@media (max-height: 510px) {
+@media (max-height: 550px) {
   .toolbar-bottom-attached {
     position: relative;
     padding-bottom: 0px;
   }
 }
 .tool-select-menu {
-  width: 100px;
+  width: 70px;
   height: 325px;
 }
 .tool-select-spacer {
-  width: 100px;
+  width: 70px;
   height: 5px;
 }
 .dk-tooltip {
@@ -470,7 +465,7 @@ body {
   display: inline-block;
   vertical-align: top;
   height: calc(100% -  20px);
-  width: calc(100% -  140px);
+  width: calc(100% -  130px);
   overflow: hidden;
   padding: 10px;
 }
@@ -493,7 +488,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100px;
+  width: 70px;
   height: 50px;
   opacity: 0;
 }
