@@ -292,50 +292,45 @@
   color: #FFFFFF;
 }
 .save-menu {
-  width: 250px;
-  height: 132px;
+  box-sizing: border-box;
+  width: 190px;
+  height: 60px;
 }
 .save-message {
+  box-sizing: border-box;
   font-size: 20px;
-  width: 250px;
+  width: 190px;
   height: 30px;
+  line-height: 30px;
+  text-align: center;
   white-space: nowrap;
 }
-.save-label {
-  display: block;
-  vertical-align: center;
-  font-size: 16px;
-  width: 250px;
-  height: 30px;
-  padding-left: 25px;
-}
-.save-action-submenu {
-  width: 250px;
+.save-button-container {
+  box-sizing: border-box;
+  width: 190px;
   height: 30px;
 }
-.save-action-spacer {
+.save-button-container-center-spacer {
+  box-sizing: border-box;
+  display: inline-block;
+  width: 20px;
+  height: 30px;
+}
+.save-button {
+  box-sizing: border-box;
   display: inline-block;
   vertical-align: top;
-  width: 59px;
-  height: 30px;
-}
-a.save-action-button {
-  display: inline-block;
   cursor: default;
-  vertical-align: top;
   line-height: 30px;
   text-align: center;
   font-family: 'Ubuntu Mono';
-  font-size: 16px;
-  width: 130px;
+  font-size: 20px;
+  font-weight: bold;
+  width: 70px;
   height: 30px;
   border-radius: 0px;
   text-decoration: none;
   color: #000000;
-}
-.save-menu-spacer {
-  width: 250px;
-  height: 5px;
 }
 .settings-menu {
   width: 222px;

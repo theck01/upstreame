@@ -1,73 +1,57 @@
 @import "constants";
 
-
-@save-menu-width: 250px;
-@save-menu-height:
-    (4 * @small-input-height + 2 * @small-spacer-size + 2 * @border-width);
-
-@save-action-button-width: 130px;
-
-@save-action-spacer-width:
-    ((@save-menu-width - @save-action-button-width - 2 * @border-width) / 2);
-
-@save-label-padding-left: (@large-spacer-size + @small-spacer-size);
+@save-menu-height: (2 * @lgu);
+@save-button-width: (2 * @lgu + @smu);
+@save-button-container-width: (2 * @save-button-width + @smu);
+@save-button-container-center-spacer-width: 
+    ((@default-palette-width - (2 * @save-button-width + @smu)) /  2);
 
 
 .save-menu {
-  width: @save-menu-width;
+  box-sizing: border-box;
+  width: @default-palette-width;
   height: @save-menu-height;
 }
 
 
 .save-message {
+  box-sizing: border-box;
   font-size: @large-font-size;
-  width: @save-menu-width;
-  height: @small-input-height;
+  width: @default-palette-width;
+  height: @lgu;
+  line-height: @lgu;
+  text-align: center;
   white-space: nowrap;
 }
 
 
-.save-label {
-  display: block;
-  vertical-align: center;
-  font-size: @small-font-size;
-  width: @save-menu-width;
-  height: @small-input-height;
-  padding-left: @save-label-padding-left;
+.save-button-container {
+  box-sizing: border-box;
+  width: @default-palette-width;
+  height: @lgu;
 }
 
 
-.save-action-submenu {
-  width: @save-menu-width;
-  height: @small-input-height;
+.save-button-container-center-spacer {
+  box-sizing: border-box;
+  display: inline-block;
+  width: @save-button-container-center-spacer-width;
+  height: @lgu;
 }
 
-
-.save-action-spacer {
+.save-button {
+  box-sizing: border-box;
   display: inline-block;
   vertical-align: top;
-  width: @save-action-spacer-width;
-  height: @small-input-height;
-}
-
-
-a.save-action-button {
-  display: inline-block;
   cursor: default;
-  vertical-align: top;
-  line-height: @small-input-height;
+  line-height: @lgu;
   text-align: center;
   font-family: @font;
-  font-size: @small-font-size;
-  width: @save-action-button-width;
-  height: @small-input-height;
+  font-size: @large-font-size;
+  font-weight: bold;
+  width: @save-button-width;
+  height: @lgu;
   border-radius: @border-radius;
   text-decoration: none;
   color: @text-color;
-}
-
-
-.save-menu-spacer {
-  width: @save-menu-width;
-  height: @small-spacer-size;
 }

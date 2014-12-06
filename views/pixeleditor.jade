@@ -166,18 +166,12 @@ block content
         button#trash-confirm-no.dk-flat-button.confirmation-button NO
 
     #save-sprite-menu.save-menu
-      .save-message Save visible area as...
-      .save-menu-spacer
-      label.save-label
-        input.save-type-input(type="radio" name="save-type" value="json" checked)
-        | Editable JSON Sprite
-      label.save-label
-        input.save-type-input(type="radio" name="save-type" value="img")
-        | PNG Image Sprite
-      .save-menu-spacer
-      .save-action-submenu
-        .save-action-spacer
-        a#save-sprite-button.dk-flat-button.save-action-button(download="untitled.json") SAVE
+      .save-message Save sprite as:
+      .save-button-container
+        .save-button-container-center-spacer
+        a#save-json-button.dk-flat-button.save-button(download="untitled.json") JSON
+        .smu-inline-block-spacer
+        a#save-png-button.dk-flat-button.save-button(download="untitled.png") PNG
       
     #settings-menu.settings-menu
       .settings-row

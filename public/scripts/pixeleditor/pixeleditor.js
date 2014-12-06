@@ -212,7 +212,10 @@ define(
     buttons.trashMenu.no = Button.create('#trash-confirm-no');
 
     buttons.saveMenu = Object.create(null);
-    buttons.saveMenu.save = Button.create('#save-sprite-button');
+    buttons.saveMenu.saveJSON = Button.create(
+        '#save-json-button', true /* opt_preventClickCanceller */);
+    buttons.saveMenu.savePNG = Button.create(
+        '#save-png-button', true /* opt_preventClickCanceller */);
 
     buttons.activeColorSelect = Object.create(null);
     buttons.activeColorSelect.colorPalette = _.map(
@@ -572,20 +575,8 @@ define(
   // locally
   PixelEditor.prototype._initializeSaveRouting = function () {
     var app = this;
-    var $saveButton = $('#save-sprite-button');
-    var jsonDataUrl = '#';
-    var imageDataUrl = '#';
-    var radioCheckedSelector = 'input:radio[name="save-type"]:checked';
-    var setLinkFn = function () {
-      if ($(radioCheckedSelector).val() === 'json') {
-        $saveButton.attr('href', jsonDataUrl);
-        $saveButton.attr('download', 'untitled.json');
-      }
-      else {
-        $saveButton.attr('href', imageDataUrl);
-        $saveButton.attr('download', 'untitled.png');
-      }
-    };
+    var $saveJSONButton = $('#save-json-button');
+    var $savePNGButton = $('#save-png-button');
 
     // When opening the save menu, update links for the most recent state of
     // the model.
@@ -598,19 +589,14 @@ define(
       var screenParams = app._canvasTools.canvas.getScreenParams();
 
       // Update links with the current state of the model.
-      jsonDataUrl =
+      var jsonDataUrl =
           'data:application/json;charset=utf-8,' + encodeURI(modelJSON);
-      imageDataUrl = ImageDataURIGenerator.exportedModelToDataURI(
+      var imageDataUrl = ImageDataURIGenerator.exportedModelToDataURI(
         exportedModel, screenParams.pixelSize);
 
-      setLinkFn();
+      $saveJSONButton.attr('href', jsonDataUrl);
+      $savePNGButton.attr('href', imageDataUrl);
     });
-
-    $('input:radio[name="save-type"]').on('change', setLinkFn);
-
-    // Destroy canceller, to allow user initiated click event to trigger link.
-    // Programmatic clicks and touches cannot replicate this behavior.
-    this._buttons.saveMenu.save.destroyTouchClickCanceller();
   };
 
 
