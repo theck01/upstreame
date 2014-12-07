@@ -432,7 +432,7 @@ div.toolbar-button {
 }
 @media (max-height: 550px) {
   .toolbar-bottom-attached {
-    position: static;
+    position: relative;
     padding-bottom: 0px;
   }
 }
@@ -489,6 +489,7 @@ body {
   width: 70px;
   height: 50px;
   opacity: 0;
+  overflow: hidden;
 }
 .hidden {
   display: none;
