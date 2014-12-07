@@ -536,7 +536,7 @@ define(
     requestAnimationFrame(onAnimationFrameCallback);
 
     $('#staging-area').remove();
-    $('#pixel-editor-canvas').removeClass('hidden');
+    $('#pixel-editor-canvas').css('opacity', 1);
 
     $(document).bind('touchmove', function (e) {
       e.preventDefault();
