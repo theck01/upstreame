@@ -193,7 +193,6 @@
   height: 70px;
   border: 1px solid #9f9f9f;
   border-radius: 0px;
-  transition: background-color cubic-bezier(0.645, 0.045, 0.355, 1) 0.3s;
 }
 .color-select-text-input {
   box-sizing: border-box;
@@ -411,7 +410,6 @@ div.toolbar-button {
 }
 .toolbar-icon-outlined {
   -webkit-text-stroke: 1px #9f9f9f;
-  transition: background-color cubic-bezier(0.645, 0.045, 0.355, 1) 0.3s;
 }
 .toolbar-icon:before {
   position: relative;
@@ -431,7 +429,13 @@ div.toolbar-button {
   padding-bottom: 10px;
 }
 @media (max-height: 550px) {
-  .toolbar-bottom-attached {
+  .toolbar-bottom-attached:not(.load-disabled) {
+    position: relative;
+    padding-bottom: 0px;
+  }
+}
+@media (max-height: 490px) {
+  .toolbar-bottom-attached.load-disabled {
     position: relative;
     padding-bottom: 0px;
   }

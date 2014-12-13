@@ -4,6 +4,7 @@ define(
      'domkit/util/touchclickcanceller', 'core/graphics/color',
      'core/graphics/screenparameters',
      'pixeleditor/controller/gridmodelbuilder',
+     'pixeleditor/controller/featureavailability',
      'pixeleditor/graphics/editablecanvas',
      'pixeleditor/graphics/imagedataurigenerator',
      'pixeleditor/interface/metapixelclickinterface',
@@ -12,7 +13,7 @@ define(
      'pixeleditor/actions/recentcolorpalette', 'pixeleditor/actions/value'],
     function (
         $, _, RadioGroup, Button, Palette, Tooltip, TouchClickCanceller, Color,
-        ScreenParameters, GridModelBuilder, EditableCanvas,
+        ScreenParameters, GridModelBuilder, FeatureAvailability, EditableCanvas,
         ImageDataURIGenerator, MetaPixelClickInterface, SpriteConverter,
         GridModel, Constants, RecentColorPalette, Value) {
   var _TOOLTIP_DISPLAY_DELAY = 1500;
@@ -401,9 +402,25 @@ define(
   // _initializeLoadRouting sets up the load control on the page.
   PixelEditor.prototype._initializeLoadRouting = function () {
     var app = this;
-    var fileReader = new FileReader();
     var $loadFileInput = $('#load-file-input');
+    var $loadButton = $('#load-button');
 
+    // If the load feature is not enabled then remove the load button and
+    // file input from the dom.
+    if (!FeatureAvailability.hasFeature('load')) {
+      $loadFileInput.remove();
+      app._buttons.toolbar.load.destroy();
+      $('#load-button').remove();
+      $('#load-spacer').remove();
+      $('#bottom-toolbar').addClass('load-disabled');
+      return;
+    }
+
+    // Show load button, which is hidden by default to prevent the button from
+    // appearing if the load feature is disabled.
+    $loadButton.css('opacity', 1);
+
+    var fileReader = new FileReader();
     $loadFileInput.on('change', function () {
       if ($loadFileInput.val() !== '') {
         fileReader.readAsText(this.files[0]);

@@ -18,6 +18,10 @@
     (@num-toolbar-buttons * @toolbar-button-height +
     (@num-toolbar-buttons - 1) * @smu +
     2 * @smu);
+@toolbar-load-disabled-min-height:
+    ((@num-toolbar-buttons - 1) * @toolbar-button-height +
+     (@num-toolbar-buttons - 2) * @smu +
+     2 * @smu);
 
 
 .toolbar-button {
@@ -87,9 +91,16 @@ div.toolbar-button {
 
 
 @media (max-height: @toolbar-min-height) {
-  .toolbar-bottom-attached {
+  .toolbar-bottom-attached:not(.load-disabled) {
     position: relative;
     padding-bottom: 0px;
   }
 }
 
+
+@media (max-height: @toolbar-load-disabled-min-height) {
+  .toolbar-bottom-attached.load-disabled {
+    position: relative;
+    padding-bottom: 0px;
+  }
+}
