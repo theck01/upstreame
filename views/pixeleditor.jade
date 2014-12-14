@@ -175,13 +175,14 @@ block content
       
     #settings-menu.settings-menu
       .settings-row
-        .settings-label Canvas Width
-        input#canvas-width-input.settings-dimension-input(type="text")
-      .settings-spacer
+        .settings-label Width
+        input#canvas-width-input.settings-dimension-input(type="number")
+      .smu-block-spacer
       .settings-row
-        .settings-label Canvas Height
-        input#canvas-height-input.settings-dimension-input(type="text")
-      .settings-spacer
+        .settings-label Height
+        input#canvas-height-input.settings-dimension-input(type="number")
+      .smu-block-spacer
       label.settings-row
-        .settings-label Show Grid
-        input#grid-display-input.settings-grid-display-input(type="checkbox" checked)
+        .settings-label Grid
+        .settings-grid-display-input-container
+          input#grid-display-input.settings-grid-display-input(type="checkbox" checked)

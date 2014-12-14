@@ -1,24 +1,16 @@
 @import "constants";
 
-@settings-dimension-input-width: 50px;
-@settings-dimension-input-outer-width:
-    (@settings-dimension-input-width + 2 * @border-width +
-    2 * @small-spacer-size);
+@settings-grid-display-input-size: @large-font-size;
+@settings-grid-display-input-margin-horizontal:
+    ((@settings-input-width - @settings-grid-display-input-size) / 2);
+@settings-grid-display-input-margin-vertical:
+    ((@lgu - @settings-grid-display-input-size) / 2);
 
-@settings-grid-display-input-size: @small-font-size;
-@settings-grid-display-input-margin-left:
-    ((@settings-dimension-input-outer-width -
-        @settings-grid-display-input-size) / 2);
+@settings-input-width: (@lgu + @smu);
+@settings-label-width: (2 * @lgu + @smu);
+@settings-row-width: (@settings-input-width + @settings-label-width);
 
-@settings-label-width: 160px;
-@settings-label-height: (@small-input-height + 2 * @border-width);
-
-@settings-row-width:
-    (@settings-dimension-input-outer-width + @settings-label-width);
-
-@settings-menu-height:
-    (3 * @settings-label-height + 2 * @small-spacer-size);
-
+@settings-menu-height: (3 * @lgu + 2 * @smu);
 
 .settings-menu {
   width: @settings-row-width;
@@ -28,46 +20,57 @@
 
 .settings-dimension-input {
   display: inline-block;
+  box-sizing: border-box;
+  vertical-align: top;
   font-family: @font;
   font-size: @small-font-size;
   text-align: center;
   outline: none;
-  width: @settings-dimension-input-width;
-  height: @small-input-height;
+  width: @settings-input-width;
+  height: @lgu;
   border: @border-width solid @border-color;
   border-radius: @border-radius;
-  padding: 0px @small-spacer-size;
+}
+
+
+// Hide incrment buttons on numeric input;
+.settings-dimension-input::-webkit-outer-spin-button,
+.settings-dimension-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
 }
 
 
 .settings-grid-display-input {
-  display: inline-block;
   width: @settings-grid-display-input-size;
   height: @settings-grid-display-input-size;
-  margin-left: @settings-grid-display-input-margin-left;
+  margin:
+      @settings-grid-display-input-margin-vertical
+      @settings-grid-display-input-margin-horizontal;
   border: @border-width solid @border-color;
   border-radius: @border-radius;
+}
+
+.settings-grid-display-input-container {
+  display: inline-block;
+  width: @settings-input-width;
+  height: @lgu
 }
 
 
 .settings-label {
   display: inline-block;
+  vertical-align: top;
+  box-sizing: border-box;
   font-family: @font;
   font-size: @large-font-size;
   width: @settings-label-width;
-  height: @settings-label-height;
-  line-height: @settings-label-height;
+  height: @lgu;
+  line-height: @lgu;
 }
 
 
 .settings-row {
-  width: @settings-row-width;
-  height: @settings-label-height;
+  width: @default-palette-width;
+  height: @lgu;
   white-space: nowrap;
-}
-
-
-.settings-spacer {
-  width: @settings-row-width;
-  height: @small-spacer-size;
 }
