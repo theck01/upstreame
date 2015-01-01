@@ -10,15 +10,13 @@ define(
   //         validated form of the argument, or null if the value is malformed.
   //         Optional, no validation performed if not specified.
   var Value = function (initialValue, opt_initialValidator) {
-    HandlerCollection.call(this);
+    this._handlerCollection = new HandlerCollection();
     this._value = null;
     this._validator = opt_initialValidator || function (value) {
       return value;
     };
     this.setValue(initialValue);
   };
-  Value.prototype = Object.create(HandlerCollection.prototype);
-  Value.prototype.constructor = Value;
 
 
   // addValueChangeHandler registers a callback for when the value changes.
@@ -26,7 +24,9 @@ define(
   // Arguments:
   //     handler:
   //         A function that takes the new value as an argument.
-  Value.prototype.addValueChangeHandler = Value.prototype._addHandler;
+  Value.prototype.addValueChangeHandler = function (handler) {
+    this._handlerCollection.addHandler(handler);
+  };
 
 
   // getValue returns the value stored.
@@ -45,7 +45,7 @@ define(
     var validatedValue = this._validator(newValue);
     if (validatedValue !== null && !_.isEqual(this._value, validatedValue)) {
       this._value = validatedValue;
-      this._callHandlers(this._value);
+      this._handlerCollection.callHandlers(this._value);
     }
   };
 
@@ -67,7 +67,9 @@ define(
   // Arguments:
   //     handler:
   //         A function that takes the new value on a change.
-  Value.prototype.removeValueChangeHandler = Value.prototype._removeHandler;
+  Value.prototype.removeValueChangeHandler = function (handler) {
+    this._handlerCollection.removeHandler(handler);
+  };
 
 
   return Value;

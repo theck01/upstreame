@@ -83,7 +83,7 @@ block content
       .color-select-submenu
         .color-select-preview
         .smu-block-spacer
-        input.color-select-text-input(type="text" placeholder="#RRGGBB")
+        input.color-select-text-input.dk-text-input(type="text" placeholder="#RRGGBB")
       .smu-inline-block-spacer
       .color-palette-submenu
         .color-palette-row
@@ -122,7 +122,7 @@ block content
       .color-select-submenu
         .color-select-preview
         .smu-block-spacer
-        input.color-select-text-input(type="text" placeholder="#RRGGBB")
+        input.color-select-text-input.dk-text-input(type="text" placeholder="#RRGGBB")
       .smu-inline-block-spacer
       .color-palette-submenu
         .color-palette-row
@@ -176,11 +176,11 @@ block content
     #settings-menu.settings-menu
       .settings-row
         .settings-label Width
-        input#canvas-width-input.settings-dimension-input(type="number")
+        input#canvas-width-input.settings-dimension-input.dk-text-input(type="number" pattern="\d*")
       .smu-block-spacer
       .settings-row
         .settings-label Height
-        input#canvas-height-input.settings-dimension-input(type="number")
+        input#canvas-height-input.settings-dimension-input.dk-text-input(type="number" pattern="\d*")
       .smu-block-spacer
       label.settings-row
         .settings-label Grid

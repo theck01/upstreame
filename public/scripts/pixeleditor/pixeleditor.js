@@ -1,8 +1,8 @@
 define(
     ['jquery', 'underscore', 'domkit/controllers/radiogroup',
-     'domkit/ui/button', 'domkit/ui/palette', 'domkit/ui/tooltip',
-     'domkit/util/touchclickcanceller', 'core/graphics/color',
-     'core/graphics/screenparameters',
+     'domkit/ui/button', 'domkit/ui/palette', 'domkit/ui/textinput',
+     'domkit/ui/tooltip', 'domkit/util/touchclickcanceller',
+     'core/graphics/color', 'core/graphics/screenparameters',
      'pixeleditor/controller/gridmodelbuilder',
      'pixeleditor/controller/featureavailability',
      'pixeleditor/graphics/editablecanvas',
@@ -12,10 +12,11 @@ define(
      'pixeleditor/model/gridmodel', 'pixeleditor/constants',
      'pixeleditor/actions/recentcolorpalette', 'pixeleditor/actions/value'],
     function (
-        $, _, RadioGroup, Button, Palette, Tooltip, TouchClickCanceller, Color,
-        ScreenParameters, GridModelBuilder, FeatureAvailability, EditableCanvas,
-        ImageDataURIGenerator, MetaPixelClickInterface, SpriteConverter,
-        GridModel, Constants, RecentColorPalette, Value) {
+        $, _, RadioGroup, Button, Palette, TextInput, Tooltip,
+        TouchClickCanceller, Color, ScreenParameters, GridModelBuilder,
+        FeatureAvailability, EditableCanvas, ImageDataURIGenerator,
+        MetaPixelClickInterface, SpriteConverter, GridModel, Constants,
+        RecentColorPalette, Value) {
   var _TOOLTIP_DISPLAY_DELAY = 1500;
   var _LOCAL_STORAGE_KEY = 'sprite-in-progress';
   var _LOCAL_STORAGE_EXPIRATION = 5 * 60 * 1000; // Expire after 5 minutes.
@@ -35,6 +36,8 @@ define(
       Tooltip.createAll(_TOOLTIP_DISPLAY_DELAY);
     }
     this._palettes = this._initializePalettes();
+
+    TextInput.createAll();
 
     this._initializeActiveColorSelectRouting();
     this._initializeDefaultColorSelectRouting();
@@ -410,7 +413,7 @@ define(
     if (!FeatureAvailability.hasFeature('load')) {
       $loadFileInput.remove();
       app._buttons.toolbar.load.destroy();
-      $('#load-button').remove();
+      $loadButton.remove();
       $('#load-spacer').remove();
       $('#bottom-toolbar').addClass('load-disabled');
       return;

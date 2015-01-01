@@ -7,12 +7,10 @@ define(
   // Arguments:
   //     paletteSize: The maximum number of colors to track.
   var RecentColorPalette = function (paletteSize) {
-    HandlerCollection.call(this);
+    this._handlerCollection = new HandlerCollection();
     this._paletteSize = paletteSize;
     this._colors = [];
   };
-  RecentColorPalette.prototype = Object.create(HandlerCollection.prototype);
-  RecentColorPalette.prototype.constructor = RecentColorPalette;
 
 
   // addPaletteChangeHandler registers a callback for when the recent color
@@ -22,8 +20,9 @@ define(
   //     handler:
   //         A function that takes an array of hexadecimal color strings as an
   //         argument.
-  RecentColorPalette.prototype.addPaletteChangeHandler =
-      RecentColorPalette.prototype._addHandler;
+  RecentColorPalette.prototype.addPaletteChangeHandler = function (handler) {
+    this._handlerCollection.addHandler(handler);
+  };
 
 
   // colorUsed tracks a color as used, potentially updating the palette.
@@ -45,7 +44,7 @@ define(
       this._colors.length = this._paletteSize;
     }
 
-    this._callHandlers(this._colors);
+    this._handlerCollection.callHandlers(this._colors);
   };
 
 
@@ -63,8 +62,9 @@ define(
   //     handler:
   //         A function that takes an array of hexadecimal color strings as an
   //         argument.
-  RecentColorPalette.prototype.removePaletteChangeHandler =
-      RecentColorPalette.prototype._removeHandler;
+  RecentColorPalette.prototype.removePaletteChangeHandler = function (handler) {
+    this._handlerCollection.removeHandler(handler);
+  };
 
 
   return RecentColorPalette;
