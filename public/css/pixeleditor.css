@@ -500,8 +500,8 @@ body {
 }
 .hidden-file-input {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: -1000;
+  left: -1000;
   width: 70px;
   height: 50px;
   opacity: 0;

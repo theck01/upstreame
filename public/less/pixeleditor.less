@@ -71,8 +71,9 @@ body {
 
 .hidden-file-input {
   position: absolute;
-  top: 0;
-  left: 0;
+  // Hide the file input off the screen so that it cannot be clicked directly
+  top: -1000;
+  left: -1000;
   width: @toolbar-button-width;
   height: @toolbar-button-height;
   opacity: 0;
