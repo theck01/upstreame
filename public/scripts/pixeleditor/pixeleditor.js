@@ -706,6 +706,12 @@ define(
         case Constants.KEYS.Z:
           app._buttons.toolSelectMenu.zoom.click();
           break;
+        case Constants.KEYS.U:
+          app._buttons.toolbar.undo.click();
+          break;
+        case Constants.KEYS.R:
+          app._buttons.toolbar.redo.click();
+          break;
       }
     });
   };
