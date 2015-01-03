@@ -686,6 +686,7 @@ define(
       }
 
       switch (e.which) {
+        case Constants.KEYS.D:
         case Constants.KEYS.P:
           app._buttons.toolSelectMenu.paintBrush.click();
           break;
@@ -699,7 +700,6 @@ define(
         case Constants.KEYS.E:
           app._buttons.toolSelectMenu.eraser.click();
           break;
-        case Constants.KEYS.D:
         case Constants.KEYS.S:
           app._buttons.toolSelectMenu.shifter.click();
           break;
