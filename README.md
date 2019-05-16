@@ -1,18 +1,17 @@
 # upstrea.me
 
-Game engine, pixel art canvas, and various bits of game code that make up
-http://upstrea.me
+Game engine, pixel art canvas, and various bits of game code
 
 ## Games ("game" used loosely for now)
 
-### invaders: http://upstrea.me/invaders
+### invaders
 
 A Galaga like top down space shooter. Created as a demo to stimulate development
 of the core engine.
 
 Code can be found in /public/scripts/invaders/
 
-### submersion: http://upstrea.me/submersion
+### submersion
 
 A submarine exploration game. Development in process.
 
@@ -20,7 +19,7 @@ Code can be found in /public/scripts/submersion/
 
 ## Tools
 
-### pixeleditor: http://upstrea.me/pixeleditor
+### pixeleditor
 
 A tool for creating pixel art in a JSON format that the core engine expects.
 
